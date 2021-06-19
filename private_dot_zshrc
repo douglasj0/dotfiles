@@ -358,7 +358,10 @@ Linux)  # Based off of Ubuntu
 if [[ ! -z $PS1 ]]; then echo ".linux zshrc loaded"; fi # interactive
 
 # Load Linux aliases
-source $HOME/.dotfiles/linux_shell_aliases
+#source $HOME/.dotfiles/linux_shell_aliases
+if [ -f $HOME/.aliases.linux ]; then
+    . $HOME/.aliases.linux
+fi
 
 ## Open like command for Linux:  xdg-open or see
 function open { xdg-open "$1" &> /dev/null & }
