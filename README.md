@@ -6,5 +6,5 @@ Dotfiles managed with [`chezmoi`](https://github.com/twpayne/chezmoi).
 Clone this repo into `~/.local/share/chezmoi`:
 
 ```
-chezmoi init https://github.com:douglasj0/dotfiles.git
+chezmoi init git@github.com:douglasj0/dotfiles.git
 ```
