@@ -140,7 +140,11 @@ MORE=p
 LESS="-XgmR"
 
 # Load general aliases
-source $HOME/.dotfiles/shell_aliases
+#source $HOME/.dotfiles/shell_aliases
+if [ -f $HOME/.aliases ]; then
+    . $HOME/.aliases
+fi
+
 
 # Functions
 # setenv for csh junkies (including tset)
@@ -282,7 +286,10 @@ Darwin)  # Darwin Environment
 if [[ ! -z $PS1 ]]; then echo ".darwin zshrc loaded"; fi  # Interactive
 
 # Load Darwin aliases
-source $HOME/.dotfiles/darwin_shell_aliases
+#source $HOME/.dotfiles/darwin_shell_aliases
+if [ -f $HOME/.aliases.darwin ]; then
+    . $HOME/.aliases.darwin
+fi
 
 if [[ $INSIDE_EMACS ]]; then
   echo "..Inside Emacs"
