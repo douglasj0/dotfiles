@@ -339,7 +339,7 @@ if command -v /opt/homebrew/bin/brew 1>/dev/null 2>&1; then
 fi
 
 # pyenv local git install (manage multiple python versions)
-if [ ! -z "${PYENV_ROOT}" ]; then
+if [ -z "${PYENV_ROOT}" ]; then
   echo "..pyenv initalize"
   eval "$(pyenv init -)"
 fi
