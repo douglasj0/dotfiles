@@ -2093,3 +2093,50 @@ NOTE: erc non-encrypted port = 6667, encrypted is 6697
        (msg (s-trim (s-collapse-whitespace message))))
   (alert (concat nick ": " msg) :title title)))
 #+end_src
+
+* lsp
+Language Server Protocol Support for Emacs
+Homepage: https://emacs-lsp.github.io/lsp-mode/
+Installation: https://emacs-lsp.github.io/lsp-mode/page/installation/
+git repo: https://github.com/emacs-lsp/lsp-mode
+mattduck install notes: https://www.mattduck.com/lsp-python-getting-started.html
+
+Installing python lsp in venv:
+  pyenv versions
+  pyenv virtualenv 3.9.5 emacs
+  pyenv global emacs
+  pip install --upgrade pip
+  pip install 'python-language-server[all]'
+  pip list
+  pyenv global 3.9.5  # revert back
+  pip list
+
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l") ;; was org-stored-link
+  :hook (python-mode . lsp-deferred)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration)
+  :commands lsp lsp-deferred
+  :config
+  (setq lsp-pyls-plugins-flake8-enabled t
+        lsp-enable-symbol-highlighting t)
+)
+
+;; optionally
+(use-package lsp-ui
+  :commands lsp-ui-mode)
+
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+;; use pyvenv to manage multiple projects
+(use-package pyvenv
+  :demand t
+  :config
+  (setq pyvenv-workon "emacs")  ; Default venv
+  (pyvenv-tracking-mode 1))  ; Automatically use pyvenv-workon via dir-locals
+#+end_src
