@@ -455,7 +455,10 @@ Mac: brew install aspell
   :hook ((prog-mode . flyspell-prog-mode)
          (org-mode  . turn-off-flyspell)
          (text-mode . flyspell-mode))
+  ;:bind ("s-$" . ispell-word)
   :config
+  (global-unset-key (kbd "M-$")) ; on mac screenshot region
+  (global-set-key (kbd "s-$") 'ispell-word)
   (progn
     (setq ispell-program-name "aspell")
     (setq ispell-list-command "--list")
