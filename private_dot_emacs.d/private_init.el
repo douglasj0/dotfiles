@@ -48,6 +48,8 @@
 ;; Use straight.el for use-package expressions
 (straight-use-package 'use-package)
 
+;; install packages without the need for adding :straight t
+;; equivalent to setting use-package-always-ensure to t.
 (setq straight-use-package-by-default t)
 
 ;; Load the helper package for commands like `straight-x-clean-unused-repos'
