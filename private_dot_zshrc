@@ -338,15 +338,16 @@ if command -v /opt/homebrew/bin/brew 1>/dev/null 2>&1; then
   eval $(/opt/homebrew/bin/brew shellenv)
 fi
 
+# pyenv: https://github.com/pyenv/pyenv
 # pyenv local git install (manage multiple python versions)
-#if command -v ~/.pyenv/bin/pyenv 1>/dev/null 2>&1; then
-if [ -z "${PYENV_ROOT}" ]; then # this fails if not installed, but faster
-  echo "..pyenv initalize"
+# pyenv's PATH is setup in .profile
+if [[ ! -z "${PYENV_ROOT}" ]]; then
+  #echo ".zshrc pyenv initialize"
   eval "$(pyenv init -)"
 fi
-
+# pyenv-virtualenv: https://github.com/pyenv/pyenv-virtualenv
 if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 1>/dev/null 2>&1; then
-  echo "..pyenv-virtualenv initalize"
+  #echo ".zshrc pyenv-virtualenv initialize"
   eval "$(pyenv virtualenv-init -)"
 fi
 
