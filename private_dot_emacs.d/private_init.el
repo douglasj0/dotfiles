@@ -48,18 +48,10 @@
 ;; Use straight.el for use-package expressions
 (straight-use-package 'use-package)
 
-;; install packages without the need for adding :straight t
-;; equivalent to setting use-package-always-ensure to t.
 (setq straight-use-package-by-default t)
 
 ;; Load the helper package for commands like `straight-x-clean-unused-repos'
 (require 'straight-x)
-
-;; Upgrading packages with straight.el:
-; M-x straight-pull-package will pull a single package to upgrade it
-; M-x straight-pull-package-and-deps will pull a package its dependencies
-; M-x straight-pull-all will upgrade all of your active packages
-; If you want to activate the upgraded version of a package while Emacs is running, you can run M-x straight-check-package (or M-x straight-check-all).
 
 ;; install no-littering as early as possible
 ; Help keeping ~/.emacs.d clean
