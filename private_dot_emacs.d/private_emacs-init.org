@@ -739,6 +739,7 @@ NOTE: Install the fonts as well: M-x all-the-icons-install-fonts
 ** doom-modeline
 A fancy and fast mode-line inspired by minimalism design.
 https://seagle0128.github.io/doom-modeline/
+NOTE: Run (all-the-icons-install-fonts) one time after installing
 
 #+begin_src emacs-lisp
 (use-package doom-modeline
@@ -751,6 +752,31 @@ https://seagle0128.github.io/doom-modeline/
     (+ (frame-char-height) 1))
   (advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
 )
+#+end_src
+
+** perspective
+The Perspective package provides multiple named workspaces (or "perspectives") in Emacs, similar to multiple desktops in window managers like Awesome and XMonad, and Spaces on the Mac.
+https://github.com/nex3/perspective-el
+
+Commands: prefix C-x x
+s - switch or create
+` - switch by number
+k - remove buffer
+c - kill
+r - rename
+
+#+begin_src emacs-lisp
+(use-package perspective
+  :bind
+  ("C-x C-b" . persp-list-buffers)   ; or use a nicer switcher, see below
+  ;:config
+  ;(persp-mode)
+  :custom
+  (persp-initial-frame-name "Main")
+  :config
+  ;; Running `persp-mode' multiple times resets the perspective list...
+  (unless (equal persp-mode t)
+    (persp-mode)))
 #+end_src
 
 * Productivity
@@ -1680,9 +1706,8 @@ https://org-roam.readthedocs.io/en/master/
 
 #+end_src
 
-* Programming
-** source control
-*** magit
+* Development
+** magit
 It's Magit! A Git porcelain inside Emacs. https://magit.vc
 https://github.com/magit/magit
 
@@ -1700,7 +1725,7 @@ https://github.com/magit/magit
      ("C-c M-g" . global-magit-file-mode))
 )
 #+end_src
-*** git gutter
+** git gutter
 Emacs port of GitGutter which is Sublime Text Plugin
 Show change information from git
 https://github.com/syohex/emacs-git-gutter
@@ -1718,6 +1743,111 @@ https://github.com/magnars/s.el
 #+BEGIN_SRC emacs-lisp
 (use-package s)
 #+END_SRC
+
+** smartparens
+Smartparens is a minor mode for dealing with pairs in Emacs.
+https://github.com/Fuco1/smartparens
+
+NOTE: changed smartparens-global-mode to show-smartparens-global-mode
+https://github.com/Fuco1/smartparens/wiki/Show-smartparens-mode
+
+Cheatsheat
+https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
+
+#+begin_src emacs-lisp
+;(use-package smartparens
+;  :hook (after-init . show-smartparens-global-mode)
+;  :config (require 'smartparens-config)
+;    (add-hook 'python-mode-hook #'smartparens-mode)
+;)
+
+(use-package smartparens
+  :hook (prog-mode . smartparens-mode))
+#+end_src
+
+** language server
+Language Server Protocol Support for Emacs
+Homepage: https://emacs-lsp.github.io/lsp-mode/
+Installation: https://emacs-lsp.github.io/lsp-mode/page/installation/
+git repo: https://github.com/emacs-lsp/lsp-mode
+mattduck install notes: https://www.mattduck.com/lsp-python-getting-started.html
+
+TODO:
+- investigate lsp-treemacs (ex. lsp-treemacs-symbols)
+- evil-nerd-commentor: https://github.com/redguardtoo/evil-nerd-commenter
+- lsp for TeX, texlab, install using brew
+- lsp for go, gopls, install using brew
+
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :hook ((python-mode) . lsp-deferred)
+        (lsp-mode . lsp-enable-which-key-integration)
+  :init
+  (setq lsp-keymap-prefix "C-c l") ;; or 'C-l', 's-l'
+  :config
+  (setq lsp-pyls-plugins-flake8-enabled t
+        lsp-enable-symbol-highlighting t
+        ;lsp-headerline-breadcrumb-mode t
+  )
+)
+
+;; optionally
+(use-package lsp-ui
+  :commands (lsp-ui-mode)
+  :hook (lsp-mode . lsp-ui-mode)
+        (python-mode-hook . flycheck-mode)
+  :bind
+  ("<M-f1>" . lsp-ui-doc-show)
+  :custom
+  (lsp-ui-flycheck-enable t)
+  (lsp-ui-doc-enable nil)
+  (lsp-ui-doc-position 'bottom)
+  ;(lsp-ui-doc-delay 5)
+  (lsp-ui-sideline-enable t)
+  (lsp-ui-sideline-show-hover nil)
+  (lsp-ui-sideline-ignore-duplicate t)
+  (lsp-ui-sideline-show-code-actions t)
+  (lsp-ui-sideline-show-hover t)
+)
+
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+;; use pyvenv to manage multiple projects
+(use-package pyvenv
+  :config
+  (setenv "WORKON_HOME" "~/.pyenv/versions")
+  (setq pyvenv-workon "emacs") ;; Set default venv from versions
+  ;(pyvenv-tracking-mode 1) ;; Use pyvenv-workon via .dir-locals.el
+  ;(setq pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] "))) ;; Show python venv name in modeline
+  (pyvenv-mode t) ;; enable pyvenv-mode
+)
+#+end_src
+
+** company mode
+Modular in-buffer completion framework for Emacs
+https://company-mode.github.io/
+Automatic completions for lsp-mode
+
+#+begin_src emacs-lisp
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map
+         ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1) ; characters to type for completions
+  (company-idle-delay 0.0) ; delay to show completions
+)
+
+;; Improve company aesthetic
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+#+end_src
 
 ** shell script
 shell-script-mode is a major mode for shell script editing.
@@ -1737,22 +1867,78 @@ https://www.emacswiki.org/emacs/ShMode
   (after-save . executable-make-buffer-file-executable-if-script-p))
 #+end_src
 
-** smartparens
-Smartparens is a minor mode for dealing with pairs in Emacs.
-https://github.com/Fuco1/smartparens
+** python
 
-NOTE: changed smartparens-global-mode to show-smartparens-global-mode
-https://github.com/Fuco1/smartparens/wiki/Show-smartparens-mode
+Installing python lsp in a venv:
+#+begin_src shell
+  pyenv versions
+  pyenv virtualenv 3.9.5 emacs
+  pyenv global emacs
+  pip install --upgrade pip
+  #pip install 'python-language-server[all]'  # pyls (unmaintained)
+  pip install 'python-lsp-server[all]'        # pylsp (maintained fork)
+  pip list
+  pyenv global 3.9.5  # revert back
+  pip list
+#+end_src
 
-Cheatsheat
-https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
+** c/c++
+#+begin_src emacs-lisp
+;(use-package ccls
+;  :hook ((c-mode c++-mode objc-mode cuda-mode) .
+;         (lambda () (require 'ccls) (lsp))))
+#+end_src
+
+** go
+#+begin_src emacs-lisp
+;(use-package go-mode
+;  :hook (go-mode . lsp-deferred))
+#+end_src
+
+** markdown
+#+begin_src emacs-lisp
+;(use-package markdown-mode
+;  :straight t
+;  :mode "\\.md\\'"
+;  :config
+;  (setq markdown-command "marked")
+;  (defun dw/set-markdown-header-font-sizes ()
+;    (dolist (face '((markdown-header-face-1 . 1.2)
+;                    (markdown-header-face-2 . 1.1)
+;                    (markdown-header-face-3 . 1.0)
+;                    (markdown-header-face-4 . 1.0)
+;                    (markdown-header-face-5 . 1.0)))
+;      (set-face-attribute (car face) nil :weight 'normal :height (cdr face))))
+;
+;  (defun dw/markdown-mode-hook ()
+;    (dw/set-markdown-header-font-sizes))
+;
+;  (add-hook 'markdown-mode-hook 'dw/markdown-mode-hook))
+#+end_src
+
+** html
+#+begin_src emacs-lisp
+;(use-package web-mode
+;  :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
+;  :config
+;  (setq-default web-mode-code-indent-offset 2)
+;  (setq-default web-mode-markup-indent-offset 2)
+;  (setq-default web-mode-attribute-indent-offset 2))
+;
+;;; 1. Start the server with `httpd-start'
+;;; 2. Use `impatient-mode' on any buffer
+;(use-package impatient-mode
+;  :straight t)
+;
+;(use-package skewer-mode
+;  :straight t)
+#+end_src
+
+** yaml
 
 #+begin_src emacs-lisp
-(use-package smartparens
-  :hook (after-init . show-smartparens-global-mode)
-  :config (require 'smartparens-config)
-    (add-hook 'python-mode-hook #'smartparens-mode)
-)
+(use-package yaml-mode
+  :mode "\\.ya?ml\\'")
 #+end_src
 
 * -- Testing --
@@ -2092,51 +2278,4 @@ NOTE: erc non-encrypted port = 6667, encrypted is 6697
                 (concat nick " (" channel ")")))
        (msg (s-trim (s-collapse-whitespace message))))
   (alert (concat nick ": " msg) :title title)))
-#+end_src
-
-* lsp
-Language Server Protocol Support for Emacs
-Homepage: https://emacs-lsp.github.io/lsp-mode/
-Installation: https://emacs-lsp.github.io/lsp-mode/page/installation/
-git repo: https://github.com/emacs-lsp/lsp-mode
-mattduck install notes: https://www.mattduck.com/lsp-python-getting-started.html
-
-Installing python lsp in venv:
-  pyenv versions
-  pyenv virtualenv 3.9.5 emacs
-  pyenv global emacs
-  pip install --upgrade pip
-  pip install 'python-language-server[all]'
-  pip list
-  pyenv global 3.9.5  # revert back
-  pip list
-
-#+begin_src emacs-lisp
-(use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l") ;; was org-stored-link
-  :hook (python-mode . lsp-deferred)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration)
-  :commands lsp lsp-deferred
-  :config
-  (setq lsp-pyls-plugins-flake8-enabled t
-        lsp-enable-symbol-highlighting t)
-)
-
-;; optionally
-(use-package lsp-ui
-  :commands lsp-ui-mode)
-
-;; optionally if you want to use debugger
-(use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-;; use pyvenv to manage multiple projects
-(use-package pyvenv
-  :demand t
-  :config
-  (setq pyvenv-workon "emacs")  ; Default venv
-  (pyvenv-tracking-mode 1))  ; Automatically use pyvenv-workon via dir-locals
 #+end_src
