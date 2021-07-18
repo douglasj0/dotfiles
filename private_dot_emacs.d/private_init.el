@@ -80,3 +80,6 @@
   (org-babel-load-file (expand-file-name "emacs-init.org"
                        user-emacs-directory))
 )
+
+;; disable org-roam v2 alert message
+(setq org-roam-v2-ack t)

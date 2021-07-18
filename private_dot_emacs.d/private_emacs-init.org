@@ -1586,58 +1586,106 @@ Modified for org-roam 20200601
 #+end_src
 
 ** org-roam
-Rudimentary Roam replica with Org-mode
+Org-roam is a plain-text knowledge management system. (now v2)
 https://github.com/org-roam/org-roam
 https://org-roam.readthedocs.io/en/master/
 
+Upgrade to org-roam v2 broke it, commented out for now
+https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog/
+
 #+begin_src emacs-lisp
 (use-package org-roam
-  :requires (org)
-  :hook
-  (after-init . org-roam-mode) ; error on start stringp, nil
-  ((org-mode . org-roam-mode)
-   (after-init . org-roam--build-cache-async))
-  :custom
-  (org-roam-link-title-format "R:%s")
-  ;(make-directory "~/org-roam")
-  ;(org-roam-directory "~/org-roam/")
-  (org-roam-directory org-roam-directory-location)
-  (org-roam-db-location "~/.emacs.d/var/org-roam.db")
-  (org-roam-index-file "index.org")
-  (org-roam-completion-system 'default) ; default, ido, ivy, helm
-  :bind (:map org-roam-mode-map
-          (("C-c n l" . org-roam)
-           ("C-c n t" . org-roam-dailies-today)
-           ("C-c n f" . org-roam-find-file)
-           ("C-c n j" . org-roam-jump-to-index)
-           ("C-c n b" . org-roam-switch-to-buffer)
-           ;("C-c n g" . org-roam-show-graph)
-           ("C-c n g" . org-roam-graph)
-           ("C-c n c" . org-roam-db-build-cache))
-          :map org-mode-map
-          (("C-c n i" . org-roam-insert))
-          (("C-c n I" . org-roam-insert-immediate)))
-  :config
-  (setq org-roam-capture-templates
-    '(("d" "default" plain (function org-roam-capture--get-point)
-       "%?"
-       :file-name "%<%Y%m%d>-${slug}"
-       :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n\n- tags :: \n\n"
-       :unnarrowed t)))
+      :straight t
+      :requires (org)
+      :custom
+      ;(org-roam-directory (file-truename "/path/to/org-files/"))
+      (org-roam-directory "~/org-roam/")
+      (org-roam-db-location "~/.emacs.d/var/org-roam.db")
+      (org-roam-index-file "index.org")
+      :bind (("C-c n l" . org-roam-buffer-toggle)
+             ("C-c n f" . org-roam-node-find)
+             ("C-c n g" . org-roam-graph)
+             ("C-c n i" . org-roam-node-insert)
+             ("C-c n c" . org-roam-capture)
+             ;; Dailies
+             ("C-c n j" . org-roam-dailies-capture-today))
+      :config
+      (org-roam-setup)
+      ;; If using org-roam-protocol
+      ;(require 'org-roam-protocol)
 
-  ;; Update a field (#+LAST_MODIFIED: ) at save using bulit in time-stamp
-  ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
-  (add-hook 'org-mode-hook (lambda ()
-                           (setq-local time-stamp-active t
-                                       time-stamp-line-limit 18
-                                       time-stamp-start "^#\\+LAST_MODIFIED: [ \t]*"
-                                       time-stamp-end "$"
-                                       time-stamp-format "\[%Y-%m-%d %a %H:%M\]")
-                           (add-hook 'before-save-hook 'time-stamp nil 'local)))
+      ;; Configure default capture template
+      (setq org-roam-capture-templates
+      '(("d" "default" plain "%?"
+         :if-new (file+head "%<%Y%m%d>-${slug}.org"
+                            "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n\n- tags :: \n\n")
+         :unnarrowed t)))
 
-
+      ;; Update a field (#+LAST_MODIFIED: ) at save using bulit in time-stamp
+      ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
+      (add-hook 'org-mode-hook (lambda ()
+                               (setq-local time-stamp-active t
+                                           time-stamp-line-limit 18
+                                           time-stamp-start "^#\\+LAST_MODIFIED: [ \t]*"
+                                           time-stamp-end "$"
+                                           time-stamp-format "\[%Y-%m-%d %a %H:%M\]")
+                               (add-hook 'before-save-hook 'time-stamp nil 'local)))
 )
 
+
+;;;
+;; previous v1 config
+;;;
+;(use-package org-roam
+;  :requires (org)
+;  :hook
+;  (after-init . org-roam-mode) ; error on start stringp, nil
+;  ((org-mode . org-roam-mode)
+;   (after-init . org-roam--build-cache-async))
+;  :custom
+;  (org-roam-link-title-format "R:%s")
+;  ;(make-directory "~/org-roam")
+;  ;(org-roam-directory "~/org-roam/")
+;  (org-roam-directory org-roam-directory-location)
+;  (org-roam-db-location "~/.emacs.d/var/org-roam.db")
+;  (org-roam-index-file "index.org")
+;  (org-roam-completion-system 'default) ; default, ido, ivy, helm
+;  :bind (:map org-roam-mode-map
+;          (("C-c n l" . org-roam)
+;           ("C-c n t" . org-roam-dailies-today)
+;           ("C-c n f" . org-roam-find-file)
+;           ("C-c n j" . org-roam-jump-to-index)
+;           ("C-c n b" . org-roam-switch-to-buffer)
+;           ;("C-c n g" . org-roam-show-graph)
+;           ("C-c n g" . org-roam-graph)
+;           ("C-c n c" . org-roam-db-build-cache))
+;          :map org-mode-map
+;          (("C-c n i" . org-roam-insert))
+;          (("C-c n I" . org-roam-insert-immediate)))
+;  :config
+;  (setq org-roam-capture-templates
+;    '(("d" "default" plain (function org-roam-capture--get-point)
+;       "%?"
+;       :file-name "%<%Y%m%d>-${slug}"
+;       :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n\n- tags :: \n\n"
+;       :unnarrowed t)))
+;
+;  ;; Update a field (#+LAST_MODIFIED: ) at save using bulit in time-stamp
+;  ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
+;  (add-hook 'org-mode-hook (lambda ()
+;                           (setq-local time-stamp-active t
+;                                       time-stamp-line-limit 18
+;                                       time-stamp-start "^#\\+LAST_MODIFIED: [ \t]*"
+;                                       time-stamp-end "$"
+;                                       time-stamp-format "\[%Y-%m-%d %a %H:%M\]")
+;                           (add-hook 'before-save-hook 'time-stamp nil 'local)))
+;
+;
+;)
+#+end_src
+
+#+begin_src text
+;; not used, reference
 ;  (setq org-roam-capture-templates
 ;    '(("n" "Note" plain (function org-roam--capture-get-point) "%?"
 ;       :file-name "Note-%<%Y%m%d>-${slug}"
@@ -1703,7 +1751,6 @@ https://org-roam.readthedocs.io/en/master/
 ;  ;  ;;(deft)
 ;  ;  ;;(deft-refresh)
 ;  ;)
-
 #+end_src
 
 * Development
