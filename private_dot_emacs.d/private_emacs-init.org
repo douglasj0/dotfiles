@@ -1772,6 +1772,21 @@ https://github.com/magit/magit
      ("C-c M-g" . global-magit-file-mode))
 )
 #+end_src
+
+#+begin_src text
+PriorOutcome
+
+I often find myself wanting to be able to switch between master and a feature branch in magit quickly:
+
+(defun lw-magit-checkout-last (&optional start-point)
+    (interactive)
+    (magit-branch-checkout "-" start-point))
+(transient-append-suffix 'magit-branch "w"
+  '("-" "last branch" lw-magit-checkout-last))
+
+So that C-x g b - switches to the last branch I was on, similar to cd -.
+#+end_src
+
 ** git gutter
 Emacs port of GitGutter which is Sublime Text Plugin
 Show change information from git
