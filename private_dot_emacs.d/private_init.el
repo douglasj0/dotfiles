@@ -82,4 +82,4 @@
 )
 
 ;; disable org-roam v2 alert message
-(setq org-roam-v2-ack t)
+;(setq org-roam-v2-ack t)
