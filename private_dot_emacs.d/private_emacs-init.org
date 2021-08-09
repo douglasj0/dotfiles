@@ -113,6 +113,9 @@ Moved use-package and org-plus-contrib back to init.el to fix org-version issue
 ** global settings
 #+begin_src emacs-lisp
 
+;; add org-roam-directory to safe variables
+(add-to-list 'safe-local-variable-values '(org-roam-directory . "."))
+
 ;; set default shell to zsh
 (setq explicit-shell-file-name "/bin/zsh")
 (setq shell-file-name "zsh")
@@ -1600,6 +1603,8 @@ https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog
   :init
   (setq org-roam-v2-ack t)
   :custom
+  ;; setup org-roam-daily directory
+  (org-roam-dailies-directory "~/org-roam/daily/")
   ;(org-roam-directory (file-truename "/path/to/org-files/"))
   (org-roam-directory "~/org-roam/")
   (org-roam-db-location "~/.emacs.d/var/org-roam.db")
@@ -1620,8 +1625,15 @@ https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog
   (setq org-roam-capture-templates
   '(("d" "default" plain "%?"
      :if-new (file+head "%<%Y%m%d>-${slug}.org"
-                        "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n")
+                        "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n#+filetags: \n")
      :unnarrowed t)))
+
+  ;; Configure default dailies capture template, from docs
+  (setq org-roam-dailies-capture-templates
+        '(("d" "default" entry
+           "* %?"
+           :if-new (file+head "%<%Y-%m-%d>.org"
+                              "#+startup: overview\n#+title: %<%Y-%m-%d>\n"))))
 
   ;; Update a field (#+LAST_MODIFIED: ) at save using bulit in time-stamp
   ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
@@ -2342,4 +2354,14 @@ NOTE: erc non-encrypted port = 6667, encrypted is 6697
                 (concat nick " (" channel ")")))
        (msg (s-trim (s-collapse-whitespace message))))
   (alert (concat nick ": " msg) :title title)))
+#+end_src
+
+* ag.el
+An Emacs frontend to The Silver Searcher
+https://github.com/Wilfred/ag.el
+
+#+begin_src emacs-lisp
+(use-package ag
+  :straight t
+  :commands (ag ag-regexp ag-project))
 #+end_src
