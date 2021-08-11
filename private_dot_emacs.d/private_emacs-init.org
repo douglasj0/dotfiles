@@ -37,8 +37,16 @@ Moved use-package and org-plus-contrib back to init.el to fix org-version issue
     (load custom-file))
 
 ;;;; Add 'info' and 'elisp' to load-path (C-h v load-path RET)
-(add-to-list 'Info-default-directory-list "~/.emacs.d/info")
-(add-to-list 'load-path "~/.emacs.d/elisp/") ;; elisp packages not in pkg manager
+;Info directories (INFOPATH):
+;  /Applications/Emacs.app/Contents/Resources/info/
+;  /usr/share/info/
+;  /opt/homebrew/share/info/
+;  ~/.local/share/info/
+;
+;(add-to-list 'Info-directory-list "~/Sync/my_homedir_files/emacs.d/info")
+(add-to-list 'Info-additional-directory-list
+   "~/Sync/my_homedir_files/emacs.d/info")
+(add-to-list 'load-path "~/.emacs.d/elisp/") ;; elisp packages not in pkg mgr
 
 ;;; Reload .emacs file with: M-x reload-config
 (defun reload-config () "Reloads .emacs interactively."
@@ -1214,6 +1222,12 @@ Mminimum commands to start benefitting
 ** eshell
 
 #+begin_src emacs-lisp
+;; Little quality of life improvement if you work with multiple eshell buffers:
+(defun eshell-buffer-name ()
+  (rename-buffer (concat "*eshell*<" (eshell/pwd) ">") t))
+(add-hook 'eshell-directory-change-hook #'eshell-buffer-name)
+(add-hook 'eshell-prompt-load-hook #'eshell-buffer-name)
+
 (defun efs/configure-eshell ()
   ;; Save command history when commands are entered
   (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
