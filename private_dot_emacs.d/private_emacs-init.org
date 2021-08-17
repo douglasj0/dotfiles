@@ -1176,6 +1176,18 @@ folder, otherwise delete a word"
 )
 #+end_src
 
+consult-dir - switch directories easily in Emacs
+https://github.com/karthink/consult-dir
+NOTE: wasn't able to pull for Melpa, using github for now
+#+begin_src emacs-lisp
+(use-package consult-dir
+  :straight (consult-dir :type git :host github :repo "karthink/consult-dir")
+  :bind (("C-x C-d" . consult-dir)
+         :map vertico-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+#+end_src
+
 ** projectile (project Management)
 https://github.com/bbatsov/projectile
 http://batsov.com/projectile/
