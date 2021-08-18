@@ -83,4 +83,8 @@
 ;; silence warnings?
 (setq comp-async-report-warnings-errors nil)
 
+;; straight.el identify files that were changed since the last time
+;; a package depending on them was built, don't check on startup
+(setq straight-check-for-modifications '(check-on-save find-when-checking))
+
 (provide 'early-init)
