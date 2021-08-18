@@ -163,6 +163,13 @@ encode64 () {
   echo "$1" | base64 ; echo
 }
 
+# change line of space separated text into text and underscores
+# useful for converting JIRA ticket names for directories
+function underscore(){
+  str=`echo "$*" | tr -s ' ' | tr ' ' '_' | tee >(pbcopy)`
+  echo $str
+}
+
 # repeat last command with sudo
 fucking() {
      LAST_CMD=`fc -nl -1`
