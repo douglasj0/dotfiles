@@ -1649,6 +1649,7 @@ https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog
          ("C-c n d v" . org-roam-dailies-capture-date)
          ("C-c n d y" . org-roam-dailies-goto-yesterday)
          ("C-c n d t" . org-roam-dailies-goto-tomorrow)
+         ("C-c n d o" . org-roam-dailies-goto-today)
          ("C-c n d d" . org-roam-dailies-goto-date)
          ("C-c n d f" . org-roam-dailies-goto-next-note)
          ("C-c n d b" . org-roam-dailies-goto-previous-note))
