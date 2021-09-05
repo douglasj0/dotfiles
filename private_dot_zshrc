@@ -341,9 +341,9 @@ if [[ -f ~/Library/mysql/com.mysql.mysqld.plist ]]; then
 fi
 
 # Enable Homebrew for M1 Mac if installed
-if command -v /opt/homebrew/bin/brew 1>/dev/null 2>&1; then
-  eval $(/opt/homebrew/bin/brew shellenv)
-fi
+#if command -v /opt/homebrew/bin/brew 1>/dev/null 2>&1; then
+#  eval $(/opt/homebrew/bin/brew shellenv)
+#fi
 
 # pyenv: https://github.com/pyenv/pyenv
 # pyenv local git install (manage multiple python versions)
