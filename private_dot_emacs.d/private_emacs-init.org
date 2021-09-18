@@ -1,15 +1,12 @@
--*- mode: org; fill-column: 78; -*-
-#+STARTUP: overview
-#+PROPERTY: header-args :comments yes :results silent
-#+PROPERTY: header-args:emacs-lisp :tangle ./emacs-init.el :mkdirp yes
-
 * Startup
 ** initialization
 Transfered from original ~/.emacs.d/init.el
 Moved use-package and org-plus-contrib back to init.el to fix org-version issue
+Removed unneeded org conf that was breaking lexical-binding in .el file
 
 #+begin_src emacs-lisp
-;;; init.el --- -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
+;;; init.el
 ;;  Author: Douglas Jackson
 ;;; Commentary:
 ;;  My Emacs configuration
@@ -402,36 +399,25 @@ NOTE: Installed in elisp, no package
 a minor mode that builds a list of recently opened files
 https://www.emacswiki.org/emacs/RecentFiles
 
-#+begin_src emacs-lisp
-;(use-package recentf
-;  :straight (:type built-in)
-;  :bind ("\C-x\ \C-r" . recentf-open-files)
-;  :config
-;  (setq ;recentf-save-file "~/.emacs.d/var/cache/recentf"
-;        ;recentf-save-file (expand-file-name "recentf" "~/.emacs.d/var")
-;        recentf-max-saved-items 500
-;        recentf-max-menu-items 15
-;        ;; disable recentf-cleanup on Emacs start, because it can cause
-;        ;; problems with remote files
-;        recentf-auto-cleanup 'never)
-;  (add-to-list 'recentf-exclude '(".*-autoloads\\.el\\'"
-;                                  "[/\\]\\.elpa/"))
-;  (recentf-mode +1))
-#+end_src
-
-** ace-window
-The [[https://github.com/abo-abo/ace-window][ace-window]] package provides functions to quickly switch between
-windows. The main =ace-window= command will either switch to the one
-other open window or let you select another window by typing the first
-letters of the its label. Additionally, this package can swap and
-delete windows.
+Relacing open read-only key binding
 
 #+begin_src emacs-lisp
-(use-package ace-window
+(use-package recentf
   :straight (:type built-in)
-  :init (setq aw-scope 'frame)
-  :bind (("M-o" . ace-window)))
+  :bind ("\C-x\ \C-r" . recentf-open-files)
+  :config
+  (setq recentf-save-file "~/.emacs.d/var/recentf"
+        ;recentf-save-file (expand-file-name "recentf" "~/.emacs.d/var")
+        recentf-max-saved-items 500
+        recentf-max-menu-items 15
+        ;; disable recentf-cleanup on Emacs start, because it can cause
+        ;; problems with remote files
+        recentf-auto-cleanup 'never)
+  (add-to-list 'recentf-exclude '(".*-autoloads\\.el\\'"
+                                  "[/\\]\\.elpa/"))
+  (recentf-mode +1))
 #+end_src
+
 ** flycheck (program syntax)
 Modern on-the-fly syntax checking extension for GNU Emacs
 https://github.com/flycheck/flycheck
@@ -724,20 +710,6 @@ https://www.reddit.com/r/emacs/comments/he55jl/whats_the_funky_character_on_the_
 )
 #+end_src
 
-** zenburn theme
-zenburn-theme
-https://github.com/bbatsov/zenburn-emacs
-
-#+begin_src emacs-lisp
-(use-package zenburn-theme
-  ;:config
-  ;(if (display-graphic-p)
-  ;   (load-theme 'zenburn :no-confirm)   ; Emacs in own window
-  ; (load-theme 'wheatgrass :no-confirm)  ; Emacs in tty
-  ;
-)
-#+end_src
-
 ** all-the-icons
 All-the-icons
 https://github.com/domtronn/all-the-icons.el
@@ -763,31 +735,6 @@ NOTE: Run (all-the-icons-install-fonts) one time after installing
     (+ (frame-char-height) 1))
   (advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
 )
-#+end_src
-
-** perspective
-The Perspective package provides multiple named workspaces (or "perspectives") in Emacs, similar to multiple desktops in window managers like Awesome and XMonad, and Spaces on the Mac.
-https://github.com/nex3/perspective-el
-
-Commands: prefix C-x x
-s - switch or create
-` - switch by number
-k - remove buffer
-c - kill
-r - rename
-
-#+begin_src emacs-lisp
-(use-package perspective
-  :bind
-  ("C-x C-b" . persp-list-buffers)   ; or use a nicer switcher, see below
-  ;:config
-  ;(persp-mode)
-  :custom
-  (persp-initial-frame-name "Main")
-  :config
-  ;; Running `persp-mode' multiple times resets the perspective list...
-  (unless (equal persp-mode t)
-    (persp-mode)))
 #+end_src
 
 * Productivity
@@ -979,25 +926,6 @@ Search all marked buffers
 )
 #+end_src
 
-** finance
-#+begin_src emacs-lisp
-(use-package ledger-mode
-  :mode "\\.lgr\\'"
-  :bind (:map ledger-mode-map
-              ("TAB" . completion-at-point))
-  :custom
-  (ledger-reports '(("bal" "%(binary) -f %(ledger-file) bal")
-                    ("bal this quarter" "%(binary) -f %(ledger-file) --period \"this quarter\" bal")
-                    ("bal last quarter" "%(binary) -f %(ledger-file) --period \"last quarter\" bal")
-                    ("reg" "%(binary) -f %(ledger-file) reg")
-                    ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
-                    ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
-
-(use-package hledger-mode
-  :straight t
-  :bind (:map hledger-mode-map
-              ("TAB" . completion-at-point)))
-#+end_src
 * File mananagement
 ** dired-x
 https://www.gnu.org/software/emacs/manual/dired-x.html
@@ -1088,7 +1016,7 @@ https://github.com/Wilfred/ag.el
 #+end_src
 
 * Completions
-** vertico/corfu/consult (completions)
+** vertico/corfu/consult
 vertico.el - VERTical Interactive COmpletion
 https://github.com/minad/vertico
 
@@ -1215,48 +1143,6 @@ NOTE: wasn't able to pull for Melpa, using github for now
          :map vertico-map
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file)))
-#+end_src
-
-** projectile (project Management)
-https://github.com/bbatsov/projectile
-http://batsov.com/projectile/
-projectile - project managent (works with helm)
-Project navigation and management library for Emacs
-Keybindings: https://projectile.readthedocs.io/en/latest/usage/
-
-Mminimum commands to start benefitting
--  Find file in current project (s-p f)
--  Switch project (s-p p) (you can also switch between open projects with s-p q)
--  Grep (search for text/regexp) in project (s-p s g) (grep alternatives like ag, pt and rg are also supported)
--  Replace in project (s-p r)
--  Invoke any Projectile command via the Projectile Commander (s-p m)
--  Toggle between implementation and test (s-p t)
--  Toggle between related files (e.g. foo.h <→ foo.c and Gemfile <→ Gemfile.lock) (s-p a)
--  Run a shell command in the root of the project (s-p ! for a sync command and s-p & for an async command)
--  Run various pre-defined project commands like:
-   -  build/compile project (s-p c)
-   -  test project (s-p T)
-- If you ever forget any of Projectile’s keybindings just do a (s-p C-h)
-- Open up project directory in Dired (s-p D)
-
-#+begin_src emacs-lisp
-(use-package projectile
-  :init
-  (projectile-mode +1)
-  :bind (:map projectile-mode-map
-              ;("s-p" . projectile-command-map) ; super-p
-              ("C-c p" . projectile-command-map))
-  :config
-  (setq projectile-enable-caching nil) ; don't enable caching
-  (setq projectile-indexing-method 'alien) ; external cmd for indexing
-
-  ;; set a list of folders for projectile to automatically check
-  (setq projectile-project-search-path '("~/education" "~/projects/" "~/work/"))
-
-  ;; To change the remote file exists cache expire to 10 min use this code:
-  (setq projectile-file-exists-remote-cache-expire (* 10 60))
-
-)
 #+end_src
 
 * Terminal
@@ -1652,7 +1538,16 @@ https://org-roam.readthedocs.io/en/master/
 Upgrade to org-roam v2 broke it, commented out for now
 https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog/
 
+NOTE: can use  sub-directories by adding to capture templates, has to exist first
+ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
+
 #+begin_src emacs-lisp
+;; Set org-roam-directory based on system-name
+(if (string= (system-name) "lothlorien.local")
+    (setq org-roam-directory-location "~/org-roam-home/")
+  (setq org-roam-directory-location "~/org-roam/")
+)
+
 (use-package org-roam
   :straight t
   :requires (org)
@@ -1662,14 +1557,21 @@ https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog
   ;; setup org-roam-daily directory
   (org-roam-dailies-directory "~/org-roam/daily/")
   ;(org-roam-directory (file-truename "/path/to/org-files/"))
-  (org-roam-directory "~/org-roam/")
+  (org-roam-directory org-roam-directory-location)
+  (org-roam-completion-everywhere t)
+  ;
   (org-roam-db-location "~/.emacs.d/var/org-roam.db")
   (org-roam-index-file "index.org")
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
          ("C-c n i" . org-roam-node-insert)
+         ("C-c n g" . org-roam-graph)
          ("C-c n c" . org-roam-capture)
+         ("C-c n I" . completion-at-point)
+         ;; Testing hacks from System Crafters
+         ("C-c n p" . my/org-roam-find-project)
+         ("C-c n t" . my/org-roam-capture-task)
+         ("C-c n b" . my/org-roam-capture-inbox)
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today)
          ("C-c n d j" . org-roam-dailies-capture-today)
@@ -1684,14 +1586,116 @@ https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog
          ("C-c n d b" . org-roam-dailies-goto-previous-note))
   :config
   (org-roam-setup)
+  (org-roam-db-autosync-mode)
   ;; If using org-roam-protocol
   ;(require 'org-roam-protocol)
 
+  ;;
+  ;; from org-roam hacks
+  ;; https://systemcrafters.net/build-a-second-brain-in-emacs/5-org-roam-hacks/
+  ;;
+  (defun org-roam-node-insert-immediate (arg &rest args)
+    (interactive "P")
+    (let ((args (push arg args))
+          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                    '(:immediate-finish t)))))
+      (apply #'org-roam-node-insert args)))
+
+  (defun my/org-roam-filter-by-tag (tag-name)
+    (lambda (node)
+      (member tag-name (org-roam-node-tags node))))
+
+  (defun my/org-roam-list-notes-by-tag (tag-name)
+    (mapcar #'org-roam-node-file
+            (seq-filter
+             (my/org-roam-filter-by-tag tag-name)
+             (org-roam-node-list))))
+
+  (defun my/org-roam-refresh-agenda-list ()
+    (interactive)
+    (setq org-agenda-files (my/org-roam-list-notes-by-tag "Project")))
+
+  ;; Build the agenda list the first time for the session
+  (my/org-roam-refresh-agenda-list)
+
+  (defun my/org-roam-project-finalize-hook ()
+    "Adds the captured project file to `org-agenda-files' if the
+  capture was not aborted."
+    ;; Remove the hook since it was added temporarily
+    (remove-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+
+    ;; Add project file to the agenda list if the capture was confirmed
+    (unless org-note-abort
+      (with-current-buffer (org-capture-get :buffer)
+        (add-to-list 'org-agenda-files (buffer-file-name)))))
+
+  (defun my/org-roam-find-project ()
+    (interactive)
+    ;; Add the project file to the agenda after capture is finished
+    (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+
+    ;; Select a project file to open, creating it if necessary
+    (org-roam-node-find
+     nil
+     nil
+     (my/org-roam-filter-by-tag "Project")
+     :templates
+     '(("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+        :unnarrowed t))))
+
+  (defun my/org-roam-capture-inbox ()
+    (interactive)
+    (org-roam-capture- :node (org-roam-node-create)
+                       :templates '(("i" "inbox" plain "* %?"
+                                    :if-new (file+head "Inbox.org" "#+title: Inbox\n")))))
+
+  (defun my/org-roam-capture-task ()
+    (interactive)
+    ;; Add the project file to the agenda after capture is finished
+    (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+
+    ;; Capture the new task, creating the project file if necessary
+    (org-roam-capture- :node (org-roam-node-read
+                              nil
+                              (my/org-roam-filter-by-tag "Project"))
+                       :templates '(("p" "project" plain "** TODO %?"
+                                     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                                            "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
+                                                            ("Tasks"))))))
+
+  (defun my/org-roam-copy-todo-to-today ()
+    (interactive)
+    (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+          (org-roam-dailies-capture-templates
+            '(("t" "tasks" entry "%?"
+               :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+          (org-after-refile-insert-hook #'save-buffer)
+          today-file
+          pos)
+      (save-window-excursion
+        (org-roam-dailies--capture (current-time) t)
+        (setq today-file (buffer-file-name))
+        (setq pos (point)))
+
+      ;; Only refile if the target file is different than the current file
+      (unless (equal (file-truename today-file)
+                     (file-truename (buffer-file-name)))
+        (org-refile nil nil (list "Tasks" today-file nil pos)))))
+
+  (add-to-list 'org-after-todo-state-change-hook
+               (lambda ()
+                 (when (equal org-state "DONE")
+                   (my/org-roam-copy-todo-to-today))))
+
+
+  ;;
   ;; Configure default capture template
+  ;;
   (setq org-roam-capture-templates
   '(("d" "default" plain "%?"
      :if-new (file+head "%<%Y%m%d>-${slug}.org"
-                        "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n#+filetags: \n")
+                        "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n#+category: ${title}\n#+filetags: \n")
      :unnarrowed t)))
 
   ;; Configure default dailies capture template, from docs
@@ -1701,8 +1705,10 @@ https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog
            :if-new (file+head "%<%Y-%m-%d>.org"
                               "#+startup: overview\n#+title: %<%Y-%m-%d>\n"))))
 
+  ;;
   ;; Update a field (#+LAST_MODIFIED: ) at save using bulit in time-stamp
   ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
+  ;;
   (add-hook 'org-mode-hook (lambda ()
                            (setq-local time-stamp-active t
                                        time-stamp-line-limit 18
@@ -1711,126 +1717,6 @@ https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog
                                        time-stamp-format "\[%Y-%m-%d %a %H:%M\]")
                            (add-hook 'before-save-hook 'time-stamp nil 'local)))
 )
-
-
-;;;
-;; previous v1 config
-;;;
-;(use-package org-roam
-;  :requires (org)
-;  :hook
-;  (after-init . org-roam-mode) ; error on start stringp, nil
-;  ((org-mode . org-roam-mode)
-;   (after-init . org-roam--build-cache-async))
-;  :custom
-;  (org-roam-link-title-format "R:%s")
-;  ;(make-directory "~/org-roam")
-;  ;(org-roam-directory "~/org-roam/")
-;  (org-roam-directory org-roam-directory-location)
-;  (org-roam-db-location "~/.emacs.d/var/org-roam.db")
-;  (org-roam-index-file "index.org")
-;  (org-roam-completion-system 'default) ; default, ido, ivy, helm
-;  :bind (:map org-roam-mode-map
-;          (("C-c n l" . org-roam)
-;           ("C-c n t" . org-roam-dailies-today)
-;           ("C-c n f" . org-roam-find-file)
-;           ("C-c n j" . org-roam-jump-to-index)
-;           ("C-c n b" . org-roam-switch-to-buffer)
-;           ;("C-c n g" . org-roam-show-graph)
-;           ("C-c n g" . org-roam-graph)
-;           ("C-c n c" . org-roam-db-build-cache))
-;          :map org-mode-map
-;          (("C-c n i" . org-roam-insert))
-;          (("C-c n I" . org-roam-insert-immediate)))
-;  :config
-;  (setq org-roam-capture-templates
-;    '(("d" "default" plain (function org-roam-capture--get-point)
-;       "%?"
-;       :file-name "%<%Y%m%d>-${slug}"
-;       :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n\n- tags :: \n\n"
-;       :unnarrowed t)))
-;
-;  ;; Update a field (#+LAST_MODIFIED: ) at save using bulit in time-stamp
-;  ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
-;  (add-hook 'org-mode-hook (lambda ()
-;                           (setq-local time-stamp-active t
-;                                       time-stamp-line-limit 18
-;                                       time-stamp-start "^#\\+LAST_MODIFIED: [ \t]*"
-;                                       time-stamp-end "$"
-;                                       time-stamp-format "\[%Y-%m-%d %a %H:%M\]")
-;                           (add-hook 'before-save-hook 'time-stamp nil 'local)))
-;
-;
-;)
-#+end_src
-
-#+begin_src text
-;; not used, reference
-;  (setq org-roam-capture-templates
-;    '(("n" "Note" plain (function org-roam--capture-get-point) "%?"
-;       :file-name "Note-%<%Y%m%d>-${slug}"
-;       :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+STARTUP: overview\n#+ROAM_ALIAS: \n\n- tags :: \n\n"
-;       :unnarrowed t)
-;      ("p" "paper" plain (function org-roam--capture-get-point) "%?"
-;       :file-name "Paper-%<%Y%m%d>-${slug}"
-;       ;:head "#+TITLE: ${title}\n - tags :: [[file:paper.org][R:Paper]]\n"
-;       :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+STARTUP: overview\n#+ROAM_ALIAS: \n\n- tags :: \n\n"
-;       :unnarrowed t)
-;      ("j" "project" plain (function org-roam--capture-get-point) "%?"
-;       :file-name "Proj-%<%Y%m%d>-${slug}"
-;       ;:head "#+TITLE: ${title}\n - tags :: [[file:project.org][R:Project]]\n"
-;       :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+STARTUP: overview\n#+ROAM_ALIAS: \n\n- tags :: \n\n"
-;       :unnarrowed t)
-;      ("s" "proposal" plain (function org-roam--capture-get-point) "%?"
-;       :file-name "Proposal-%<%Y%m%d>-${slug}"
-;       ;:head "#+TITLE: ${title}\n - tags :: [[file:proposal.org][R:Proposal]]\n"
-;       :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+STARTUP: overview\n#+ROAM_ALIAS: \n\n- tags :: \n\n"
-;       :unnarrowed t)
-;      ("d" "Default" plain (function org-roam--capture-get-point) "%?"
-;       :file-name "%<%Y%m%d>-${slug}"
-;       :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+STARTUP: overview\n#+ROAM_ALIAS: \n\n- tags :: \n\n"
-;       :unnarrowed t)
-;       ))
-
-;    :config
-;    (setq org-roam-capture-templates
-;      '(("d" "default" plain (function org-roam-capture--get-point)
-;         "%?"
-;         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-;         :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n\n- tags :: \n\n"
-;         :unnarrowed t)
-;
-;  ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
-;  ;      ("a" "daily" plain (function org-roam-capture--get-point)
-;  ;        ""
-;  ;       :immediate-finish t
-;  ;       :file-name "dailies/%<%Y-%m-%d>"
-;  ;       :head "#+TITLE: %<%Y-%m-%d>")
-;
-;  ; --
-;
-;  ;; how to modify last_modified tag in file
-;  ;;https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321/9
-;  ;(require 'time-stamp)
-;  ;(add-hook 'write-file-functions 'time-stamp)
-;
-;  ;--
-;
-;  ;; where no roam has gone before - oldfxiny
-;  ;; https://www.reddit.com/r/emacs/comments/h9zoy9/weekly_tipstricketc_thread/
-;
-;  ;(setq my/roam-dir-list '(
-;  ;  "~/org-roam/"
-;  ;  "~/org-roam-wip/"))
-;  ;
-;  ;(defun my/pick-roam-dir ()
-;  ;  "Select directories from a list"
-;  ;  (interactive)
-;  ;  (setq org-roam-directory
-;  ;  (completing-read "Select directory: " my/roam-dir-list))
-;  ;  ;;(deft)
-;  ;  ;;(deft-refresh)
-;  ;)
 #+end_src
 
 * Development
@@ -1878,14 +1764,6 @@ https://github.com/syohex/emacs-git-gutter
     (global-git-gutter-mode t)
 )
 #+end_src
-** s
-The long lost Emacs string manipulation library
-https://github.com/magnars/s.el
-
-#+BEGIN_SRC emacs-lisp
-(use-package s)
-#+END_SRC
-
 ** smartparens
 Smartparens is a minor mode for dealing with pairs in Emacs.
 https://github.com/Fuco1/smartparens
@@ -1907,91 +1785,7 @@ https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
   :hook (prog-mode . smartparens-mode))
 #+end_src
 
-** language server
-Language Server Protocol Support for Emacs
-Homepage: https://emacs-lsp.github.io/lsp-mode/
-Installation: https://emacs-lsp.github.io/lsp-mode/page/installation/
-git repo: https://github.com/emacs-lsp/lsp-mode
-mattduck install notes: https://www.mattduck.com/lsp-python-getting-started.html
-
-TODO:
-- investigate lsp-treemacs (ex. lsp-treemacs-symbols)
-- evil-nerd-commentor: https://github.com/redguardtoo/evil-nerd-commenter
-- lsp for TeX, texlab, install using brew
-- lsp for go, gopls, install using brew
-
-#+begin_src emacs-lisp
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :hook ((python-mode) . lsp-deferred)
-        (lsp-mode . lsp-enable-which-key-integration)
-  :init
-  (setq lsp-keymap-prefix "C-c l") ;; or 'C-l', 's-l'
-  :config
-  (setq lsp-pyls-plugins-flake8-enabled t
-        lsp-enable-symbol-highlighting t
-        ;lsp-headerline-breadcrumb-mode t
-  )
-)
-
-;; optionally
-(use-package lsp-ui
-  :commands (lsp-ui-mode)
-  :hook (lsp-mode . lsp-ui-mode)
-        (python-mode-hook . flycheck-mode)
-  :bind
-  ("<M-f1>" . lsp-ui-doc-show)
-  :custom
-  (lsp-ui-flycheck-enable t)
-  (lsp-ui-doc-enable nil)
-  (lsp-ui-doc-position 'bottom)
-  ;(lsp-ui-doc-delay 5)
-  (lsp-ui-sideline-enable t)
-  (lsp-ui-sideline-show-hover nil)
-  (lsp-ui-sideline-ignore-duplicate t)
-  (lsp-ui-sideline-show-code-actions t)
-  (lsp-ui-sideline-show-hover t)
-)
-
-;; optionally if you want to use debugger
-(use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-;; use pyvenv to manage multiple projects
-(use-package pyvenv
-  :config
-  (setenv "WORKON_HOME" "~/.pyenv/versions")
-  (setq pyvenv-workon "emacs") ;; Set default venv from versions
-  ;(pyvenv-tracking-mode 1) ;; Use pyvenv-workon via .dir-locals.el
-  ;(setq pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] "))) ;; Show python venv name in modeline
-  (pyvenv-mode t) ;; enable pyvenv-mode
-)
-#+end_src
-
-** company mode
-Modular in-buffer completion framework for Emacs
-https://company-mode.github.io/
-Automatic completions for lsp-mode
-
-#+begin_src emacs-lisp
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
-  :custom
-  (company-minimum-prefix-length 1) ; characters to type for completions
-  (company-idle-delay 0.0) ; delay to show completions
-)
-
-;; Improve company aesthetic
-(use-package company-box
-  :hook (company-mode . company-box-mode))
-#+end_src
-
-** shell script
+** shell-script-mode
 shell-script-mode is a major mode for shell script editing.
 https://www.emacswiki.org/emacs/ShMode
 
@@ -2009,82 +1803,8 @@ https://www.emacswiki.org/emacs/ShMode
   (after-save . executable-make-buffer-file-executable-if-script-p))
 #+end_src
 
-** python
-
-Installing python lsp in a venv:
-#+begin_src shell
-  pyenv versions
-  pyenv virtualenv 3.9.5 emacs
-  pyenv global emacs
-  pip install --upgrade pip
-  #pip install 'python-language-server[all]'  # pyls (unmaintained)
-  pip install 'python-lsp-server[all]'        # pylsp (maintained fork)
-  pip list
-  pyenv global 3.9.5  # revert back
-  pip list
-#+end_src
-
-** c/c++
-#+begin_src emacs-lisp
-;(use-package ccls
-;  :hook ((c-mode c++-mode objc-mode cuda-mode) .
-;         (lambda () (require 'ccls) (lsp))))
-#+end_src
-
-** go
-#+begin_src emacs-lisp
-;(use-package go-mode
-;  :hook (go-mode . lsp-deferred))
-#+end_src
-
-** markdown
-#+begin_src emacs-lisp
-;(use-package markdown-mode
-;  :straight t
-;  :mode "\\.md\\'"
-;  :config
-;  (setq markdown-command "marked")
-;  (defun dw/set-markdown-header-font-sizes ()
-;    (dolist (face '((markdown-header-face-1 . 1.2)
-;                    (markdown-header-face-2 . 1.1)
-;                    (markdown-header-face-3 . 1.0)
-;                    (markdown-header-face-4 . 1.0)
-;                    (markdown-header-face-5 . 1.0)))
-;      (set-face-attribute (car face) nil :weight 'normal :height (cdr face))))
-;
-;  (defun dw/markdown-mode-hook ()
-;    (dw/set-markdown-header-font-sizes))
-;
-;  (add-hook 'markdown-mode-hook 'dw/markdown-mode-hook))
-#+end_src
-
-** html
-#+begin_src emacs-lisp
-;(use-package web-mode
-;  :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
-;  :config
-;  (setq-default web-mode-code-indent-offset 2)
-;  (setq-default web-mode-markup-indent-offset 2)
-;  (setq-default web-mode-attribute-indent-offset 2))
-;
-;;; 1. Start the server with `httpd-start'
-;;; 2. Use `impatient-mode' on any buffer
-;(use-package impatient-mode
-;  :straight t)
-;
-;(use-package skewer-mode
-;  :straight t)
-#+end_src
-
-** yaml
-
-#+begin_src emacs-lisp
-(use-package yaml-mode
-  :mode "\\.ya?ml\\'")
-#+end_src
-
-* -- Testing --
-* mu4e
+* Applications
+** mu4e
 Load the mu4e.el file if it exists
 
 #+begin_src emacs-lisp
@@ -2099,7 +1819,7 @@ Load the mu4e.el file if it exists
 )
 #+end_src
 
-* ERC
+** ERC
 Emacs IRC Client
 https://www.emacswiki.org/emacs/ERC
 (Setup for irc.libera.chat)
@@ -2225,3 +1945,5 @@ NOTE: erc non-encrypted port = 6667, encrypted is 6697
        (msg (s-trim (s-collapse-whitespace message))))
   (alert (concat nick ": " msg) :title title)))
 #+end_src
+
+* -- Testing --
