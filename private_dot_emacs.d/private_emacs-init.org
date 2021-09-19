@@ -404,7 +404,8 @@ Relacing open read-only key binding
 #+begin_src emacs-lisp
 (use-package recentf
   :straight (:type built-in)
-  :bind ("\C-x\ \C-r" . recentf-open-files)
+  ;:bind ("\C-x\ \C-r" . recentf-open-files)
+  :bind ("\C-x\ \C-r" . consult-recent-file)
   :config
   (setq recentf-save-file "~/.emacs.d/var/recentf"
         ;recentf-save-file (expand-file-name "recentf" "~/.emacs.d/var")
@@ -1046,10 +1047,16 @@ folder, otherwise delete a word"
         (delete-minibuffer-contents))
       (backward-kill-word arg)))
 
+;; https://www.reddit.com/r/emacs/comments/opf1kk/switched_to_vertigo_consult_and_minibuffer/
 (use-package vertico
   :bind (:map minibuffer-local-map
          ;("<backspace>" . dw/minibuffer-backward-kill)
-         ("C-h" . dw/minibuffer-backward-kill)) ; works in cli
+         ("C-h" . dw/minibuffer-backward-kill) ; works in cli
+         ;:map vertico-map
+         ("C-j" . vertico-next)
+         ("C-k" . vertico-previous)
+         ("C-v" . vertico-scroll-up)
+         ("M-v" . vertico-scroll-down))
   :init
   (vertico-mode))
 
@@ -1060,7 +1067,8 @@ folder, otherwise delete a word"
   :init
   (setq completion-styles '(orderless)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles . (partial-completion))))))
+        completion-category-overrides '((file (styles partial-completion)))))
+        ;;completion-category-overrides '((file (styles . (partial-completion))))))
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
