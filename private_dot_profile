@@ -17,14 +17,22 @@ Darwin)  # Darwin Environment
 #For pkg-config to find ruby you may need to set:
 #  export PKG_CONFIG_PATH="/usr/local/opt/ruby/lib/pkgconfig"
 
-PATH=$HOME/bin:/Applications/Emacs.app/Contents/MacOS:/Applications/Emacs.app/Contents/MacOS/bin:/Applications/Xcode.app/Contents/Developer/Tools:/usr/local/lib/ruby/gems/3.0.0/bin:/usr/local/opt/ruby/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/openssl/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
-MANPATH=/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man
-TMPDIR=/tmp
+PATH="${HOME}/bin:${HOME}:scripts\
+/Applications/Emacs.app/Contents/MacOS:\
+/Applications/Emacs.app/Contents/MacOS/bin:\
+/Applications/Xcode.app/Contents/Developer/Tools:\
+/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin"
+MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man"
+TMPDIR="/tmp"
 export PATH MANPATH TMPDIR
 
-# Add homebrew to path if M1 Mac
-if [ "$(uname -m)" = "arm64" ]; then
-  PATH+=":/opt/homebrew/bin"
+# Set Homebrew and usr local on Mac
+if [[ "$(uname -a)" = Darwin*arm64 ]]; then
+  # We're running on a M1 Mac, homebrew no in /opt
+  PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:${PATH}"
+else
+  # Everything else, default /usr/local
+  PATH="/usr/local/lib/ruby/gems/3.0.0/bin:/usr/local/opt/ruby/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/openssl/bin:${PATH}"
 fi
 
 # pyenv path setup
@@ -39,10 +47,12 @@ fi
 Linux)  # Based off of Ubuntu
 echo ".linux profile loaded"
 
-PATH=${HOME}/bin:${HOME}/scripts:${HOME}/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/jdk:/opt/jdk/bin:/usr/java/bin:/usr/local/java/bin
-MANPATH=/usr/local/share/man:/usr/share/man:/usr/X11R6/man
-TMPDIR=/tmp
-
+PATH="${HOME}/bin:${HOME}/scripts:${HOME}/.local/bin:\
+/usr/local/sbin:/usr/local/bin:\
+/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:\
+/opt/jdk:/opt/jdk/bin:/usr/java/bin:/usr/local/java/bin"
+MANPATH="/usr/local/share/man:/usr/share/man:/usr/X11R6/man"
+TMPDIR="/tmp"
 export PATH MANPATH TMPDIR
 
 # pyenv path setup
