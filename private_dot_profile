@@ -17,7 +17,7 @@ Darwin)  # Darwin Environment
 #For pkg-config to find ruby you may need to set:
 #  export PKG_CONFIG_PATH="/usr/local/opt/ruby/lib/pkgconfig"
 
-PATH="${HOME}/bin:${HOME}:scripts\
+PATH="${HOME}/bin:${HOME}:/scripts\
 /Applications/Emacs.app/Contents/MacOS:\
 /Applications/Emacs.app/Contents/MacOS/bin:\
 /Applications/Xcode.app/Contents/Developer/Tools:\
