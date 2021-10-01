@@ -1972,3 +1972,140 @@ https://github.com/fourier/ztree
 ;         ("f" . ztree-dir-narrow-to-dir)
 ;         ("b" . ztree-dir-widen-to-parent)))
 #+end_src
+* Python
+Installing python lsp in a venv:
+#+begin_src shell
+  pyenv versions
+  pyenv virtualenv 3.9.5 emacs
+  pyenv global emacs
+  pip install --upgrade pip
+  #pip install 'python-language-server[all]'  # pyls (unmaintained)
+  pip install 'python-lsp-server[all]'        # pylsp (maintained fork)
+  pip list
+  pyenv global 3.9.5  # revert back
+  pip list
+#+end_src
+
+** Packages built and installed for lsp-mode
+#+begin_src text
+drwxr-xr-x   38 douglas  staff  1216 Sep 19 12:47 lsp-mode
+drwxr-xr-x   11 douglas  staff   352 Sep 19 12:47 ht.el
+drwxr-xr-x    7 douglas  staff   224 Sep 19 12:47 spinner
+drwxr-xr-x   15 douglas  staff   480 Sep 19 12:48 markdown-mode
+drwxr-xr-x   16 douglas  staff   512 Sep 19 12:48 hydra
+drwxr-xr-x   23 douglas  staff   736 Sep 19 12:48 lsp-ui
+drwxr-xr-x   42 douglas  staff  1344 Sep 19 12:48 dap-mode
+drwxr-xr-x   16 douglas  staff   512 Sep 19 12:48 bui.el
+drwxr-xr-x   14 douglas  staff   448 Sep 19 12:48 lsp-treemacs
+drwxr-xr-x   15 douglas  staff   480 Sep 19 12:48 treemacs
+drwxr-xr-x    9 douglas  staff   288 Sep 19 12:48 ace-window
+drwxr-xr-x   11 douglas  staff   352 Sep 19 12:48 avy
+drwxr-xr-x    6 douglas  staff   192 Sep 19 12:48 pfuture
+drwxr-xr-x    8 douglas  staff   256 Sep 19 12:48 cfrs
+drwxr-xr-x    8 douglas  staff   256 Sep 19 12:48 posframe
+drwxr-xr-x   12 douglas  staff   384 Sep 19 12:48 pyvenv
+
+--
+
+Cloning lsp-mode...done
+Building lsp-mode...
+Building lsp-mode → Cloning ht.el...done
+Building lsp-mode → Building ht...done
+Building lsp-mode → Cloning spinner...done
+Building lsp-mode → Building spinner...done
+Building lsp-mode → Cloning markdown-mode...done
+Building lsp-mode → Building markdown-mode...done
+Building lsp-mode → Cloning hydra (for lv)...done
+Building lsp-mode → Building lv...done
+Building lsp-mode...done
+
+Cloning lsp-ui...done
+Building lsp-ui...done
+
+Cloning dap-mode...done
+Building dap-mode...
+Building dap-mode → Cloning bui.el...done
+Building dap-mode → Building bui...done
+Building dap-mode → Cloning lsp-treemacs...done
+Building dap-mode → Building lsp-treemacs...
+Building dap-mode → Building lsp-treemacs → Cloning treemacs...done
+Building dap-mode → Building lsp-treemacs → Building treemacs...
+Building dap-mode → Building lsp-treemacs → Building treemacs → Cloning ace-window...
+Building dap-mode → Building lsp-treemacs → Building treemacs → Cloning ace-window...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building ace-window...
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building ace-window → Cloning avy...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building ace-window → Building avy...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building ace-window...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Cloning pfuture...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building pfuture...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building hydra...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Cloning cfrs...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building cfrs...
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building cfrs → Cloning posframe...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building cfrs → Building posframe...done
+Building dap-mode → Building lsp-treemacs → Building treemacs → Building cfrs...done
+Building dap-mode → Building lsp-treemacs → Building treemacs...done
+Building dap-mode → Building lsp-treemacs...done
+Building dap-mode...done
+#+end_src
+
+** language server
+Language Server Protocol Support for Emacs
+Homepage: https://emacs-lsp.github.io/lsp-mode/
+Installation: https://emacs-lsp.github.io/lsp-mode/page/installation/
+git repo: https://github.com/emacs-lsp/lsp-mode
+mattduck install notes: https://www.mattduck.com/lsp-python-getting-started.html
+
+TODO:
+- investigate lsp-treemacs (ex. lsp-treemacs-symbols)
+- evil-nerd-commentor: https://github.com/redguardtoo/evil-nerd-commenter
+- lsp for TeX, texlab, install using brew
+- lsp for go, gopls, install using brew
+
+#+begin_src emacs-lisp
+;(use-package lsp-mode
+;  :commands (lsp lsp-deferred)
+;  :hook ((python-mode) . lsp-deferred)
+;        (lsp-mode . lsp-enable-which-key-integration)
+;  :init
+;  (setq lsp-keymap-prefix "C-c l") ;; or 'C-l', 's-l'
+;  :config
+;  (setq lsp-pyls-plugins-flake8-enabled t
+;        lsp-enable-symbol-highlighting t
+;        ;lsp-headerline-breadcrumb-mode t
+;  )
+;)
+;
+;;; optionally
+;(use-package lsp-ui
+;  :commands (lsp-ui-mode)
+;  :hook (lsp-mode . lsp-ui-mode)
+;        (python-mode-hook . flycheck-mode)
+;  :bind
+;  ("<M-f1>" . lsp-ui-doc-show)
+;  :custom
+;  (lsp-ui-flycheck-enable t)
+;  (lsp-ui-doc-enable nil)
+;  (lsp-ui-doc-position 'bottom)
+;  ;(lsp-ui-doc-delay 5)
+;  (lsp-ui-sideline-enable t)
+;  (lsp-ui-sideline-show-hover nil)
+;  (lsp-ui-sideline-ignore-duplicate t)
+;  (lsp-ui-sideline-show-code-actions t)
+;  (lsp-ui-sideline-show-hover t)
+;)
+;
+;;; optionally if you want to use debugger
+;(use-package dap-mode)
+;;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+;
+;;; use pyvenv to manage multiple projects
+;(use-package pyvenv
+;  :config
+;  (setenv "WORKON_HOME" "~/.pyenv/versions")
+;  (setq pyvenv-workon "emacs") ;; Set default venv from versions
+;  ;(pyvenv-tracking-mode 1) ;; Use pyvenv-workon via .dir-locals.el
+;  ;(setq pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] "))) ;; Show python venv name in modeline
+;  (pyvenv-mode t) ;; enable pyvenv-mode
+;)
+#+end_src
