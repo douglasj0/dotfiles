@@ -12,6 +12,9 @@ Removed unneeded org conf that was breaking lexical-binding in .el file
 ;;  My Emacs configuration
 ;;; Code:
 
+;;; Note: Some Performance Advantages of Lexical Scope:
+;;; https://nullprogram.com/blog/2016/12/22/
+
 ;; whoami?
 (setq
  user-full-name "Douglas Jackson"
@@ -31,6 +34,13 @@ Removed unneeded org conf that was breaking lexical-binding in .el file
     (load custom-file))
 
 ;;;; Add 'info' and 'elisp' to load-path (C-h v load-path RET)
+;Info directories (INFOPATH):
+;  /Applications/Emacs.app/Contents/Resources/info/
+;  /usr/share/info/
+;  /opt/homebrew/share/info/
+;  ~/.local/share/info/
+;
+;(add-to-list 'Info-directory-list "~/Sync/my_homedir_files/emacs.d/info")
 (add-to-list 'Info-additional-directory-list
    "~/Sync/my_homedir_files/emacs.d/info")
 (add-to-list 'load-path "~/.emacs.d/elisp/") ;; elisp packages not in pkg mgr
@@ -81,10 +91,10 @@ Removed unneeded org conf that was breaking lexical-binding in .el file
 
 ;;; test out electric buffer mode - disabled, nice, but navigation highlighted every line
 ;;; also, buffer management (deleting, etc) wasn't as polisihed as iBuffer
-;(global-set-key (kbd "C-x C-b") 'electric-buffer-list)
+(global-set-key (kbd "C-x C-b") 'electric-buffer-list)
 
 ;;; https://stackoverflow.com/questions/93058/emacs-switching-to-another-frame-mac-os-x
-; Re-enable swap frames with M-`, seems to come from railwaycat's port now
+; Re-enable swap frames with M-`
 ;(global-set-key "\M-`" 'other-frame)
 
 ;; Open an Emacs eshell, shell, term, or ansi-term
@@ -141,6 +151,15 @@ Removed unneeded org conf that was breaking lexical-binding in .el file
           '(lambda ()
             (whitespace-mode 1)))
 
+;;; Mouse wheel and keyboard scroll settings
+;;; scroll one line at a time (less "jumpy" than defaults)
+;(setq mouse-wheel-follow-mouse 't)     ;scroll window under mouse
+;(setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil))) ;1 line
+;(setq mouse-wheel-progressive-speed 'nil) ;'nil disables accelerated scrolling
+;;(setq scroll-step 1                    ;keyboard scroll one line at a time
+;;      scroll-preserve-screen-position t
+;;      scroll-conservatively 10000)     ;smooth scrolling
+
 ;;; Enable holidays in Calendar
 (setq mark-holidays-in-calendar t)
 
@@ -185,15 +204,15 @@ Removed unneeded org conf that was breaking lexical-binding in .el file
 (setq default-major-mode 'text-mode)
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode) ;replaces longlines in 23
 
-;;; aAuto-scroll in *Compilation* buffer
+;;; Auto-scroll in *Compilation* buffer
 (setq compilation-scroll-output t)
 
-;;; Make Emacs always indent using SPC characters and never TABs
+;;; make Emacs always indent using SPC characters and never TABs
 ;;; i.e. use spaces instead of tabs
 ;;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Just-Spaces.html
 (setq-default indent-tabs-mode nil)
 
-;;; Allow "y or n" instead of "yes or no"
+;;; "y or n" instead of "yes or no"
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;;; Highlight regions and add special behaviors to regions.
@@ -202,11 +221,11 @@ Removed unneeded org conf that was breaking lexical-binding in .el file
 ;(setq transient-mark-mode nil)
 (setq transient-mark-mode t)
 
-;;; Display line and column numbers in the mode-line
+;;; Display line and column numbers in the mode line
 (setq line-number-mode    t
       column-number-mode  t)
 
-;;; Disable blinking cursor
+;;; Stop blinking cursor
 (blink-cursor-mode 0)
 
 ;;; Explicitly show the end of a buffer (indicated on left fringe of window)
@@ -219,8 +238,15 @@ Removed unneeded org conf that was breaking lexical-binding in .el file
 (setq truncate-lines t
       truncate-partial-width-windows nil)
 
+;; Create new scratch buffer if needed
+(run-with-idle-timer 1 t
+    '(lambda () (get-buffer-create "*scratch*")))
+
 ;; allow scroll-down/up-command to move point to buffer end/beginning
 ;(setq scroll-error-top-bottom 'true)
+
+;; New json-mode
+(setq auto-mode-alist (cons '("\\.json\\'" . js-mode) auto-mode-alist))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bookmarks
@@ -236,17 +262,6 @@ Removed unneeded org conf that was breaking lexical-binding in .el file
 
 ** functions
 #+begin_src emacs-lisp
-;;; ---------------------------------------------------------------------------
-;;; Rather the re-create the scratch buffer if killed, just empty its contents
-;;; https://www.emacswiki.org/emacs/RecreateScratchBuffer
-(defun unkillable-scratch-buffer ()
-	(if (equal (buffer-name (current-buffer)) "*scratch*")
-	    (progn
-	      (delete-region (point-min) (point-max))
-	      nil)
-	  t))
-(add-hook 'kill-buffer-query-functions 'unkillable-scratch-buffer)
-
 ;;; ---------------------------------------------------------------------------
 ;;; https://stackoverflow.com/questions/8881649/how-to-force-org-mode-to-open-a-link-in-another-frame
 ;;; Open link at point in new frame
@@ -298,6 +313,17 @@ Removed unneeded org conf that was breaking lexical-binding in .el file
 ;(global-set-key (kbd "<C-S-up>") 'move-line-up)
 (global-set-key (kbd "<M-S-down>") 'move-line-down)
 (global-set-key (kbd "<M-S-up>") 'move-line-up)
+
+;;; ---------------------------------------------------------------------------
+;;; Match Paren / based on the vim command using %
+;;; emacs for vi users: http://grok2.tripod.com
+(defun match-paren (arg)
+  "Go to the matching paren if on a paren; otherwise insert %."
+  (interactive "p")
+  (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
+        ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
+        (t (self-insert-command (or arg 1)))))
+(global-set-key "%" 'match-paren)
 
 ;;; ---------------------------------------------------------------------------
 (defun intelligent-close ()
@@ -393,135 +419,6 @@ Relacing open read-only key binding
   (recentf-mode +1))
 #+end_src
 
-** which-key
-Emacs package that displays available keybindings in popup
-https://github.com/justbur/emacs-which-key
-
-Paging: C-h
-    Cycle through the pages forward with n (or C-n)
-    Cycle backwards with p (or C-p)
-    Undo the last entered key (!) with u (or C-u)
-    Call the default command bound to C-h, usually describe-prefix-bindings, with h (or C-h)
-
-#+begin_src emacs-lisp
-(use-package which-key
-  :init (which-key-mode)
-  :config
-  (setq which-key-idle-delay 1)
-  (setq which-key-setup-side-window-bottom t) ; Default
-  (setq which-key-popup-type 'side-window) ;Default
-)
-#+end_src
-
-** ibuffer
-https://www.emacswiki.org/emacs/IbufferMode
-ibuffer - *Nice* buffer switching
-
-Search all marked buffers
-  ‘M-s a C-s’ - Do incremental search in the marked buffers.
-  ‘M-s a C-M-s’ - Isearch for regexp in the marked buffers.
-  ‘U’ - Replace by regexp in each of the marked buffers.
-  ‘Q’ - Query replace in each of the marked buffers.
-  ‘I’ - As above, with a regular expression.
-
-#+begin_src emacs-lisp
-(use-package ibuffer
-  :straight (:type built-in)
-  :bind ("C-x C-b" . ibuffer) ; replaces electric-buffer-list
-  :config
-    ;; Don't show empty buffer groups
-    (setq ibuffer-show-empty-filter-groups nil)
-
-    ;; work groups for ibuffer
-    (setq ibuffer-saved-filter-groups
-          '(("default"
-             ("version control" (or (mode . svn-status-mode)
-                       (mode . svn-log-edit-mode)
-                       (name . "^\\*svn-")
-                       (name . "^\\*vc\\*$")
-                       (name . "^\\*Annotate")
-                       (name . "^\\*vc-")
-                       (name . "^\\*git-")
-                       (name . "^\\*magit")))
-             ("emacs" (or (name . "^\\*scratch\\*$")
-                          (name . "^\\*Messages\\*$")
-                          (name . "^TAGS\\(<[0-9]+>\\)?$")
-                          (name . "^\\*info\\*$")
-                          (name . "^\\*Occur\\*$")
-                          (name . "^\\*grep\\*$")
-                          (name . "^\\*Compile-Log\\*$")
-                          (name . "^\\*Backtrace\\*$")
-                          (name . "^\\*Process List\\*$")
-                          (name . "^\\*gud\\*$")
-                          (name . "^\\*Man")
-                          (name . "^\\*WoMan")
-                          (name . "^\\*Kill Ring\\*$")
-                          (name . "^\\*Completions\\*$")
-                          (name . "^\\*tramp")
-                          (name . "^\\*shell\\*$")
-                          (name . "^\\*compilation\\*$")))
-             ("Helm" (or (name . "\*helm\*")))
-             ("Help" (or (name . "\*Help\*")
-                         (name . "\*Apropos\*")
-                         (name . "\*info\*")))
-             ("emacs-source" (or (mode . emacs-lisp-mode)
-                                 (filename . "/Applications/Emacs.app")
-                                 (filename . "/bin/emacs")))
-             ("emacs-config" (or (filename . ".emacs.d")
-                                 (filename . "emacs-config")))
-            ("org" (or (name . "^\\*org-")
-                        (name . "^\\*Org")
-                        (mode . org-mode)
-                        (mode . muse-mode)
-                        (name . "^\\*Calendar\\*$")
-                        (name . "^+current$")
-                        (name . "^diary$")
-                        (name . "^\\*Agenda")))
-             ("latex" (or (mode . latex-mode)
-                          (mode . LaTeX-mode)
-                          (mode . bibtex-mode)
-                          (mode . reftex-mode)))
-             ("dired" (or (mode . dired-mode)))
-             ("perl" (mode . cperl-mode))
-             ("erc" (mode . erc-mode))
-             ("shell" (or (mode . shell-mode)
-                            (name . "^\\*terminal\\*$")
-                            (name . "^\\*ansi-term\\*$")
-                            (name . "^\\*shell\\*$")
-                            (name . "^\\*eshell\\*$")))
-             ("gnus" (or (name . "^\\*gnus trace\\*$")
-                            (mode . message-mode)
-                            (mode . bbdb-mode)
-                            (mode . mail-mode)
-                            (mode . gnus-group-mode)
-                            (mode . gnus-summary-mode)
-                            (mode . gnus-article-mode)
-                            (name . "^\\.bbdb$")
-                            (name . "^\\.newsrc-dribble"))))))
-
-    ;; Order the groups so the order is : [Default], [agenda], [emacs]
-    (defadvice ibuffer-generate-filter-groups (after reverse-ibuffer-groups ()
-                                                     activate)
-      (setq ad-return-value (nreverse ad-return-value)))
-
-    ;; Hide the following buffers
-    ;;(setq ibuffer-never-show-predicates
-    ;;      (list "\\*Completions\\*"
-    ;;            "\\*vc\\*"))
-
-    ;; Enable ibuffer expert mode, don't prompt on buffer deletes
-    (setq ibuffer-expert t)
-
-    ;; Load the 'work' group, can set to load groups by location
-    ;; ibuffer-auto-mode is a minor mode that automatically keeps the buffer
-    ;; list up to date. I turn it on in my ibuffer-mode-hook:
-    (add-hook 'ibuffer-mode-hook
-              '(lambda ()
-                 (ibuffer-auto-mode 1)
-                 (ibuffer-switch-to-saved-filter-groups "default")))
-)
-#+end_src
-
 ** flycheck (program syntax)
 Modern on-the-fly syntax checking extension for GNU Emacs
 https://github.com/flycheck/flycheck
@@ -577,11 +474,19 @@ Mac: brew install aspell
 ** MacOS
 #+begin_src emacs-lisp
 (cond ((eq system-type 'darwin)
+;	(setq mac-command-modifier 'meta
+;	      mac-option-modifier 'alt
+;	      mac-right-option-modifier 'super)
+
+;; enable srgb mode if compiled in
+;(setq ns-use-srgb-colorspace t)
+;; or turn off if causing problems
+;(setq ns-use-srgb-colorspace nil)
 
 ;; set keys for Apple keyboard, for emacs in OS X
-(setq mac-command-modifier 'meta     ; make cmd key do Meta
-      mac-option-modifier  'super    ; make opt key do Super (alt)
-      mac-control-modifier 'control) ; make Control key do Control
+(setq mac-command-modifier 'meta) ; make cmd key do Meta
+(setq mac-option-modifier 'super) ; make opt key do Super
+(setq mac-control-modifier 'control) ; make Control key do Control
 ;(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
 
 ;; Use meta +/- to change text size
@@ -589,7 +494,7 @@ Mac: brew install aspell
 (bind-key "M-=" 'text-scale-increase)
 (bind-key "M--" 'text-scale-decrease)
 
-;; Reset text-scale back to original
+;; This is copied from
 ;; https://zzamboni.org/post/my-emacs-configuration-with-commentary/
 (defun my/text-scale-reset ()
   "Reset text-scale to 0."
@@ -603,9 +508,19 @@ Mac: brew install aspell
 ;(set-face-attribute 'default (selected-frame) :height 150)
 (set-face-attribute 'default nil :height 150)
 
-;;; Ensure environment variables inside Emacs look the same as in the user's shell
-;; https://github.com/purcell/exec-path-from-shell
-;; Needed to find aspell and probably others
+;; Osx-trash
+;; Make Emacs' delete-by-moving-to-trash do what you expect it to do on OS X.
+;; https://github.com/lunaryorn/osx-trash.el
+;(use-package osx-trash
+;   :ensure t
+;   :config
+;   (setq delete-by-moving-to-trash t)
+;   (osx-trash-setup)
+;)
+
+;A GNU Emacs library to ensure environment variables inside Emacs look the same as in the user's shell
+;https://github.com/purcell/exec-path-from-shell
+;Needed to find aspell and probably others
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
   :config
@@ -615,7 +530,7 @@ Mac: brew install aspell
   (setq exec-path-from-shell-variables '("PATH" "MANPATH"))
   (exec-path-from-shell-initialize))
 
-;; Disable railwaycat's tab bar (and the + to make new tabs) 2018
+;; Disable railwaycat's tab bar
 ;; https://github.com/railwaycat/homebrew-emacsmacport/issues/123
 (defvar mac-frame-tabbing)
 (setq mac-frame-tabbing nil)
@@ -639,7 +554,7 @@ Mac: brew install aspell
 ;; http://lists.gnu.org/archive/html/help-gnu-emacs/2006-07/msg00220.html
 (global-set-key (kbd "C-c I") (function overwrite-mode))
 
-;;; Open up URLs in mac brower
+;;; Open up URLs in mac browser
 (setq browse-url-browser-function 'browse-url-default-macosx-browser)
 ; (setq browse-url-browser-function 'browse-url-default-windows-browser)
 
@@ -666,12 +581,43 @@ Mac: brew install aspell
 (global-set-key [C-x C-y] 'pt-pbpaste)
 (global-set-key [C-x M-w] 'pt-pbcopy)
 
+;; add the missing man page path for woman
+;; https://www.reddit.com/r/emacs/comments/ig7zzo/weekly_tipstricketc_thread/
+;(add-to-list 'woman-manpath
+;             "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/share/man")
+;(add-to-list 'woman-manpath
+;             "/Applications/Xcode.app/Contents/Developer/usr/share/man")
+;(add-to-list 'woman-manpath
+;             "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man")
+
+;; On a Mac: make Emacs detect if you have light or dark mode enabled system wide.
+;;If you have two themes, a light one and a dark one, and you want the dark theme by default unless you have light mode enabled, add this to your init.el:
+
+;; If we're on a Mac and the file "~/bin/get_dark.osascript" exists
+;; and it outputs "false", activate light mode. Otherwise activate
+;; dark mode.
+;(cond ((and (file-exists-p "~/bin/get_dark.osascript")
+;	     (string> (shell-command-to-string "command -v osascript") "")
+;	     (equal "false\n"
+;		    (shell-command-to-string "osascript ~/bin/get_dark.osascript")))
+;	(mcj/theme-set-light))
+;      (t (mcj/theme-set-dark)))
+
+;; (mcj/theme-set-light and mcj/theme-set-light are functions that enable the light and the dark theme, respectively).
+
+;;~/bin/get_dark.osascript contains the following:
+;;
+;;tell application "System Events"
+;;	  tell appearance preferences
+;;		get dark mode
+;;	  end tell
+;;end tell
 ))
 #+end_src
 
 ** Linux
 #+begin_src emacs-lisp
-;; Linux specific settings
+;; -=Linux specific settings
 (cond ((eq system-type 'gnu/linux)
 (defvar browse-url-browser-function)
 (defvar browse-url-browser-program)
@@ -683,6 +629,10 @@ Mac: brew install aspell
 ;;; Open up URLs in browser using gnome-open (errors on bytecompile)
 ;(setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "gnome-open")
 (setq browse-url-browser-function 'browse-url-firefox)
+
+;;; Problems with minibuffer font size display in KDE/Crunchbang/Unity(?), explictily set font
+;;; List fonts with M-x descript-font
+;(set-default-font "Monospace-10")
 ))
 #+end_src
 * Look and feel
@@ -848,6 +798,135 @@ last sentence."
 ;; Please call if you have any questions.
 #+end_src
 
+** which-key
+Emacs package that displays available keybindings in popup
+https://github.com/justbur/emacs-which-key
+
+Paging: C-h
+    Cycle through the pages forward with n (or C-n)
+    Cycle backwards with p (or C-p)
+    Undo the last entered key (!) with u (or C-u)
+    Call the default command bound to C-h, usually describe-prefix-bindings, with h (or C-h)
+
+#+begin_src emacs-lisp
+(use-package which-key
+  :init (which-key-mode)
+  :config
+  (setq which-key-idle-delay 1)
+  (setq which-key-setup-side-window-bottom t) ; Default
+  (setq which-key-popup-type 'side-window) ;Default
+)
+#+end_src
+
+** ibuffer
+https://www.emacswiki.org/emacs/IbufferMode
+ibuffer - *Nice* buffer switching
+
+Search all marked buffers
+  ‘M-s a C-s’ - Do incremental search in the marked buffers.
+  ‘M-s a C-M-s’ - Isearch for regexp in the marked buffers.
+  ‘U’ - Replace by regexp in each of the marked buffers.
+  ‘Q’ - Query replace in each of the marked buffers.
+  ‘I’ - As above, with a regular expression.
+
+#+begin_src emacs-lisp
+(use-package ibuffer
+  :straight (:type built-in)
+  :bind ("C-x C-b" . ibuffer) ; replaces electric-buffer-list
+  :config
+    ;; Don't show empty buffer groups
+    (setq ibuffer-show-empty-filter-groups nil)
+
+    ;; work groups for ibuffer
+    (setq ibuffer-saved-filter-groups
+          '(("default"
+             ("version control" (or (mode . svn-status-mode)
+                       (mode . svn-log-edit-mode)
+                       (name . "^\\*svn-")
+                       (name . "^\\*vc\\*$")
+                       (name . "^\\*Annotate")
+                       (name . "^\\*vc-")
+                       (name . "^\\*git-")
+                       (name . "^\\*magit")))
+             ("emacs" (or (name . "^\\*scratch\\*$")
+                          (name . "^\\*Messages\\*$")
+                          (name . "^TAGS\\(<[0-9]+>\\)?$")
+                          (name . "^\\*info\\*$")
+                          (name . "^\\*Occur\\*$")
+                          (name . "^\\*grep\\*$")
+                          (name . "^\\*Compile-Log\\*$")
+                          (name . "^\\*Backtrace\\*$")
+                          (name . "^\\*Process List\\*$")
+                          (name . "^\\*gud\\*$")
+                          (name . "^\\*Man")
+                          (name . "^\\*WoMan")
+                          (name . "^\\*Kill Ring\\*$")
+                          (name . "^\\*Completions\\*$")
+                          (name . "^\\*tramp")
+                          (name . "^\\*shell\\*$")
+                          (name . "^\\*compilation\\*$")))
+             ("Helm" (or (name . "\*helm\*")))
+             ("Help" (or (name . "\*Help\*")
+                         (name . "\*Apropos\*")
+                         (name . "\*info\*")))
+             ("emacs-source" (or (mode . emacs-lisp-mode)
+                                 (filename . "/Applications/Emacs.app")
+                                 (filename . "/bin/emacs")))
+             ("emacs-config" (or (filename . ".emacs.d")
+                                 (filename . "emacs-config")))
+            ("org" (or (name . "^\\*org-")
+                        (name . "^\\*Org")
+                        (mode . org-mode)
+                        (mode . muse-mode)
+                        (name . "^\\*Calendar\\*$")
+                        (name . "^+current$")
+                        (name . "^diary$")
+                        (name . "^\\*Agenda")))
+             ("latex" (or (mode . latex-mode)
+                          (mode . LaTeX-mode)
+                          (mode . bibtex-mode)
+                          (mode . reftex-mode)))
+             ("dired" (or (mode . dired-mode)))
+             ("perl" (mode . cperl-mode))
+             ("erc" (mode . erc-mode))
+             ("shell" (or (mode . shell-mode)
+                            (name . "^\\*terminal\\*$")
+                            (name . "^\\*ansi-term\\*$")
+                            (name . "^\\*shell\\*$")
+                            (name . "^\\*eshell\\*$")))
+             ("gnus" (or (name . "^\\*gnus trace\\*$")
+                            (mode . message-mode)
+                            (mode . bbdb-mode)
+                            (mode . mail-mode)
+                            (mode . gnus-group-mode)
+                            (mode . gnus-summary-mode)
+                            (mode . gnus-article-mode)
+                            (name . "^\\.bbdb$")
+                            (name . "^\\.newsrc-dribble"))))))
+
+    ;; Order the groups so the order is : [Default], [agenda], [emacs]
+    (defadvice ibuffer-generate-filter-groups (after reverse-ibuffer-groups ()
+                                                     activate)
+      (setq ad-return-value (nreverse ad-return-value)))
+
+    ;; Hide the following buffers
+    ;;(setq ibuffer-never-show-predicates
+    ;;      (list "\\*Completions\\*"
+    ;;            "\\*vc\\*"))
+
+    ;; Enable ibuffer expert mode, don't prompt on buffer deletes
+    (setq ibuffer-expert t)
+
+    ;; Load the 'work' group, can set to load groups by location
+    ;; ibuffer-auto-mode is a minor mode that automatically keeps the buffer
+    ;; list up to date. I turn it on in my ibuffer-mode-hook:
+    (add-hook 'ibuffer-mode-hook
+              '(lambda ()
+                 (ibuffer-auto-mode 1)
+                 (ibuffer-switch-to-saved-filter-groups "default")))
+)
+#+end_src
+
 * File mananagement
 ** dired-x
 https://www.gnu.org/software/emacs/manual/dired-x.html
@@ -962,8 +1041,7 @@ NOTE: emacs in a terminal settings to use backspace in minibuffer:
 folder, otherwise delete a word"
   (interactive "p")
   (if minibuffer-completing-file-name
-  ;; Borrowed from
-  ;; https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+      ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
       (if (string-match-p "/." (minibuffer-contents))
           (zap-up-to-char (- arg) ?/)
         (delete-minibuffer-contents))
@@ -975,10 +1053,10 @@ folder, otherwise delete a word"
          ;("<backspace>" . dw/minibuffer-backward-kill)
          ("C-h" . dw/minibuffer-backward-kill) ; works in cli
          ;:map vertico-map
-         ;("C-n" . vertico-next)
-         ;("C-p" . vertico-previous)
+         ("C-j" . vertico-next)
+         ("C-k" . vertico-previous)
          ("C-v" . vertico-scroll-up)
-         ("M-v" . vertico-scroll-down)  )
+         ("M-v" . vertico-scroll-down))
   :init
   (vertico-mode))
 
@@ -1428,6 +1506,38 @@ SCHEDULED: %^t
 )))
 #+end_src
 
+** deft
+deft - an Emacs mode for quickly browsing, filtering, and editing
+directories of plain text notes.  http://jblevins.org/projects/deft/
+http://jblevins.org/git/deft.git
+
+Modified for org-roam 20200601
+
+Currently needs work with Org-Roam v2 update, only showing ID
+#+begin_src emacs-lisp
+;; Set org-roam directory in one place to prevent madness
+;(setq org-roam-directory-location "~/org-roam/")
+;
+;(use-package deft
+;  :requires (org)
+;  :bind
+;  ("C-c n d" . deft)
+;  :custom
+;  ;(deft-directory "~/org-roam/")
+;  (deft-directory org-roam-directory-location)
+;  (deft-recursive t)
+;  (deft-use-filename-as-title nil)
+;  (deft-use-filter-string-for-filename t)
+;  ;(deft-org-mode-title-prefix t)
+;  (deft-file-naming-rules '((noslash . "-")
+;                            (nospace . "-")
+;                            (case-fn . downcase)))
+;  (deft-extensions '("org" "txt" "text" "md" "markdown" "org.gpg"))
+;  (deft-default-extension "org")
+;  (deft-text-mode 'org-mode)
+;)
+#+end_src
+
 ** org-roam
 Org-roam is a plain-text knowledge management system. (now v2)
 https://github.com/org-roam/org-roam
@@ -1662,14 +1772,6 @@ https://github.com/syohex/emacs-git-gutter
     (global-git-gutter-mode t)
 )
 #+end_src
-** s (string manipulation)
-The long lost Emacs string manipulation library
-https://github.com/magnars/s.el
-
-#+BEGIN_SRC emacs-lisp
-(use-package s)
-#+END_SRC
-
 ** smartparens
 Smartparens is a minor mode for dealing with pairs in Emacs.
 https://github.com/Fuco1/smartparens
@@ -1853,140 +1955,20 @@ NOTE: erc non-encrypted port = 6667, encrypted is 6697
 #+end_src
 
 * -- Testing --
-* Python
-Installing python lsp in a venv:
-#+begin_src shell
-  pyenv versions
-  pyenv virtualenv 3.9.5 emacs
-  pyenv global emacs
-  pip install --upgrade pip
-  #pip install 'python-language-server[all]'  # pyls (unmaintained)
-  pip install 'python-lsp-server[all]'        # pylsp (maintained fork)
-  pip list
-  pyenv global 3.9.5  # revert back
-  pip list
-#+end_src
-
-** Packages built and installed for lsp-mode
-#+begin_src text
-drwxr-xr-x   38 douglas  staff  1216 Sep 19 12:47 lsp-mode
-drwxr-xr-x   11 douglas  staff   352 Sep 19 12:47 ht.el
-drwxr-xr-x    7 douglas  staff   224 Sep 19 12:47 spinner
-drwxr-xr-x   15 douglas  staff   480 Sep 19 12:48 markdown-mode
-drwxr-xr-x   16 douglas  staff   512 Sep 19 12:48 hydra
-drwxr-xr-x   23 douglas  staff   736 Sep 19 12:48 lsp-ui
-drwxr-xr-x   42 douglas  staff  1344 Sep 19 12:48 dap-mode
-drwxr-xr-x   16 douglas  staff   512 Sep 19 12:48 bui.el
-drwxr-xr-x   14 douglas  staff   448 Sep 19 12:48 lsp-treemacs
-drwxr-xr-x   15 douglas  staff   480 Sep 19 12:48 treemacs
-drwxr-xr-x    9 douglas  staff   288 Sep 19 12:48 ace-window
-drwxr-xr-x   11 douglas  staff   352 Sep 19 12:48 avy
-drwxr-xr-x    6 douglas  staff   192 Sep 19 12:48 pfuture
-drwxr-xr-x    8 douglas  staff   256 Sep 19 12:48 cfrs
-drwxr-xr-x    8 douglas  staff   256 Sep 19 12:48 posframe
-drwxr-xr-x   12 douglas  staff   384 Sep 19 12:48 pyvenv
-
---
-
-Cloning lsp-mode...done
-Building lsp-mode...
-Building lsp-mode → Cloning ht.el...done
-Building lsp-mode → Building ht...done
-Building lsp-mode → Cloning spinner...done
-Building lsp-mode → Building spinner...done
-Building lsp-mode → Cloning markdown-mode...done
-Building lsp-mode → Building markdown-mode...done
-Building lsp-mode → Cloning hydra (for lv)...done
-Building lsp-mode → Building lv...done
-Building lsp-mode...done
-
-Cloning lsp-ui...done
-Building lsp-ui...done
-
-Cloning dap-mode...done
-Building dap-mode...
-Building dap-mode → Cloning bui.el...done
-Building dap-mode → Building bui...done
-Building dap-mode → Cloning lsp-treemacs...done
-Building dap-mode → Building lsp-treemacs...
-Building dap-mode → Building lsp-treemacs → Cloning treemacs...done
-Building dap-mode → Building lsp-treemacs → Building treemacs...
-Building dap-mode → Building lsp-treemacs → Building treemacs → Cloning ace-window...
-Building dap-mode → Building lsp-treemacs → Building treemacs → Cloning ace-window...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building ace-window...
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building ace-window → Cloning avy...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building ace-window → Building avy...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building ace-window...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Cloning pfuture...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building pfuture...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building hydra...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Cloning cfrs...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building cfrs...
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building cfrs → Cloning posframe...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building cfrs → Building posframe...done
-Building dap-mode → Building lsp-treemacs → Building treemacs → Building cfrs...done
-Building dap-mode → Building lsp-treemacs → Building treemacs...done
-Building dap-mode → Building lsp-treemacs...done
-Building dap-mode...done
-#+end_src
-
-** language server
-Language Server Protocol Support for Emacs
-Homepage: https://emacs-lsp.github.io/lsp-mode/
-Installation: https://emacs-lsp.github.io/lsp-mode/page/installation/
-git repo: https://github.com/emacs-lsp/lsp-mode
-mattduck install notes: https://www.mattduck.com/lsp-python-getting-started.html
-
-TODO:
-- investigate lsp-treemacs (ex. lsp-treemacs-symbols)
-- evil-nerd-commentor: https://github.com/redguardtoo/evil-nerd-commenter
-- lsp for TeX, texlab, install using brew
-- lsp for go, gopls, install using brew
+* ztree
+ztree-diff and ztree-dir (the basis of ztree-diff)
+https://github.com/fourier/ztree
 
 #+begin_src emacs-lisp
-;(use-package lsp-mode
-;  :commands (lsp lsp-deferred)
-;  :hook ((python-mode) . lsp-deferred)
-;        (lsp-mode . lsp-enable-which-key-integration)
-;  :init
-;  (setq lsp-keymap-prefix "C-c l") ;; or 'C-l', 's-l'
-;  :config
-;  (setq lsp-pyls-plugins-flake8-enabled t
-;        lsp-enable-symbol-highlighting t
-;        ;lsp-headerline-breadcrumb-mode t
-;  )
-;)
-;
-;;; optionally
-;(use-package lsp-ui
-;  :commands (lsp-ui-mode)
-;  :hook (lsp-mode . lsp-ui-mode)
-;        (python-mode-hook . flycheck-mode)
-;  :bind
-;  ("<M-f1>" . lsp-ui-doc-show)
-;  :custom
-;  (lsp-ui-flycheck-enable t)
-;  (lsp-ui-doc-enable nil)
-;  (lsp-ui-doc-position 'bottom)
-;  ;(lsp-ui-doc-delay 5)
-;  (lsp-ui-sideline-enable t)
-;  (lsp-ui-sideline-show-hover nil)
-;  (lsp-ui-sideline-ignore-duplicate t)
-;  (lsp-ui-sideline-show-code-actions t)
-;  (lsp-ui-sideline-show-hover t)
-;)
-;
-;;; optionally if you want to use debugger
-;(use-package dap-mode)
-;;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-;
-;;; use pyvenv to manage multiple projects
-;(use-package pyvenv
-;  :config
-;  (setenv "WORKON_HOME" "~/.pyenv/versions")
-;  (setq pyvenv-workon "emacs") ;; Set default venv from versions
-;  ;(pyvenv-tracking-mode 1) ;; Use pyvenv-workon via .dir-locals.el
-;  ;(setq pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] "))) ;; Show python venv name in modeline
-;  (pyvenv-mode t) ;; enable pyvenv-mode
-;)
+(use-package ztree
+  :bind (("<f8>"   . ztree-dir)
+         ("C-<f8>" . ztree-diff))
+)
+
+;         :map ztree-mode-map
+;         ("n" . next-line)
+;         ("p" . previous-line)
+;         :map ztreedir-mode-map
+;         ("f" . ztree-dir-narrow-to-dir)
+;         ("b" . ztree-dir-widen-to-parent)))
 #+end_src
