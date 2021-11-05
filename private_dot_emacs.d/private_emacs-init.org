@@ -1954,6 +1954,47 @@ NOTE: erc non-encrypted port = 6667, encrypted is 6697
   (alert (concat nick ": " msg) :title title)))
 #+end_src
 
+** ERC rework
+https://www.reddit.com/r/emacs/comments/qgjfoi/how_to_make_erc_fill_the_buffer_with_the_text/
+How to make ERC fill the buffer with the text, like other IRC clients?
+Set erc-fill-column to a large number.
+
+https://github.com/crzjp/.dots/tree/master/.emacs.d#erc
+#+begin_src text
+(use-package erc
+  :straight (:type built-in)
+  :defer t
+  :config
+  (setq erc-modules '(services
+                      notifications
+                      autojoin
+                      button
+                      completion
+                      fill
+                      list
+                      match
+                      menu
+                      move-to-prompt
+                      noncommands
+                      readonly
+                      stamp
+                      track
+                      irccontrols
+                      hl-nicks
+                      image)
+        erc-nick "crzjp"
+        erc-server "irc.libera.chat"
+;	erc-prompt-for-nickserv-password nil
+        erc-fill-function 'erc-fill-static
+        erc-fill-column 167
+        erc-kill-buffer-on-part t
+        erc-fill-static-center 10))
+
+(defun crz-erc ()
+  (interactive)
+  (erc-tls :server "irc.libera.chat" :port 6697 :nick "crzjp"))
+#+end_src
+
 * -- Testing --
 * ztree
 ztree-diff and ztree-dir (the basis of ztree-diff)
