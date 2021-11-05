@@ -999,11 +999,19 @@ https://github.com/jtbm37/all-the-icons-dired
 Plus the fix for sub-directories?
 https://www.reddit.com/r/emacs/comments/imy9f1/all_the_icons_dired_subtree/
 
+Disabled on remote directories for now due to tramp slowdown issues
+
 #+begin_src emacs-lisp
 (use-package all-the-icons-dired
   :config
-  (if window-system
-    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)))
+  ;(if window-system
+  ;  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              (interactive)
+              (unless (file-remote-p default-directory)
+                (all-the-icons-dired-mode))))
+)
 #+end_src
 
 ** ag.el
@@ -2149,4 +2157,52 @@ TODO:
 ;  ;(setq pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] "))) ;; Show python venv name in modeline
 ;  (pyvenv-mode t) ;; enable pyvenv-mode
 ;)
+#+end_src
+
+* Tramp
+It seems very slow (on MacOS?)
+https://github.com/mpereira/.emacs.d/blob/master/configuration.org
+
+More debugging
+https://emacs.stackexchange.com/questions/33845/magit-with-tramp-is-slow
+
+#+begin_src emacs-lisp
+; Disable version control on tramp buffers to avoid freezes.
+(setq vc-ignore-dir-regexp
+      (format "\\(%s\\)\\|\\(%s\\)"
+              vc-ignore-dir-regexp
+              tramp-file-name-regexp))
+
+; Don’t clean up recentf tramp buffers.
+(setq recentf-auto-cleanup 'never)
+
+; make emacs not crazy slow under tramp
+(defadvice projectile-project-root (around ignore-remote first activate)
+  (unless (file-remote-p default-directory 'no-identification) ad-do-it))
+
+; This is supposedly faster than the default, scp.
+(setq tramp-default-method "ssh")
+
+; SSH controlmaster settings are set in ~/.ssh/config.
+(setq tramp-use-ssh-controlmaster-options nil)
+
+; This will put in effect PATH changes in the remote ~/.profile.
+(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+
+; Store TRAMP auto-save files locally.
+(setq tramp-auto-save-directory
+      (expand-file-name "tramp-auto-save" user-emacs-directory))
+
+; A more representative name for this file.
+(setq tramp-persistency-file-name
+      (expand-file-name "tramp-connection-history" user-emacs-directory))
+
+; Cache SSH passwords during the whole Emacs session.
+(setq password-cache-expiry nil)
+
+; Reuse SSH connections. Taken from the TRAMP FAQ.
+(customize-set-variable 'tramp-ssh-controlmaster-options
+                        (concat
+                         "-o ControlPath=/tmp/ssh-tramp-%%r@%%h:%%p "
+                         "-o ControlMaster=auto -o ControlPersist=yes"))
 #+end_src
