@@ -26,13 +26,17 @@ MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man"
 TMPDIR="/tmp"
 export PATH MANPATH TMPDIR
 
-# Set Homebrew and usr local on Mac
+# Set Homebrew to opt on arm macs and /usr/local otherwise
 if [[ "$(uname -a)" = Darwin*arm64 ]]; then
   # We're running on a M1 Mac, homebrew no in /opt
-  PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:${PATH}"
+  PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/openssl/bin:/usr/local/sbin:/usr/local/bin :${PATH}"
+  #export LDFLAGS="-L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/bzip2/lib"
+  #export CPPFLAGS="-I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/bzip2/include"
 else
   # Everything else, default /usr/local
-  PATH="/usr/local/lib/ruby/gems/3.0.0/bin:/usr/local/opt/ruby/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/openssl/bin:${PATH}"
+  PATH="/usr/local/lib/ruby/gems/3.0.0/bin:/usr/local/opt/ruby/bin:/usr/local/sbin:/usr/local/bin:/usr/local/opt/openssl/bin:${PATH}"
+  export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
+  export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
 fi
 
 # pyenv path setup
