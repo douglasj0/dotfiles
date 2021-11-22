@@ -37,7 +37,7 @@ fi
 
 # pyenv path setup
 if command -v ~/.pyenv/bin/pyenv 1>/dev/null 2>&1; then
-  #echo ".profile pyenv path setup"
+  echo ".profile pyenv path setup"
   export PYENV_ROOT="$HOME/.pyenv"
   export PATH="$PYENV_ROOT/bin:$PATH"
   eval "$(pyenv init --path)"

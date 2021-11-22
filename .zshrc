@@ -349,14 +349,15 @@ fi
 # pyenv local git install (manage multiple python versions)
 # pyenv's PATH is setup in .profile
 if [[ ! -z "${PYENV_ROOT}" ]]; then
-  #echo ".zshrc pyenv initialize"
+  echo ".zshrc pyenv initialize"
   eval "$(pyenv init -)"
+  # setup LDFLAGS and CPPFLAGS for python compilation
   export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
   export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
 fi
 # pyenv-virtualenv: https://github.com/pyenv/pyenv-virtualenv
 if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 1>/dev/null 2>&1; then
-  #echo ".zshrc pyenv-virtualenv initialize"
+  echo ".zshrc pyenv-virtualenv initialize"
   eval "$(pyenv virtualenv-init -)"
 fi
 
@@ -412,8 +413,8 @@ googlesay(){ curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" |mp
 #export PATH="$PYENV_ROOT/bin:$PATH"
 #eval "$(pyenv init -)"
 #eval "$(pyenv virtualenv-init -)"
-if file ~/.pyenv/bin/pyenv > /dev/null; then PYENV_ROOT="$HOME/.pyenv"; PATH="$PYENV_ROOT/bin:$PATH"; eval "$(pyenv init -)"; fi
-if file ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+#if file ~/.pyenv/bin/pyenv > /dev/null; then PYENV_ROOT="$HOME/.pyenv"; PATH="$PYENV_ROOT/bin:$PATH"; eval "$(pyenv init -)"; fi
+#if file ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 ;; # end Linux
 
 *)
