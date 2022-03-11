@@ -177,6 +177,14 @@ fucking() {
      sudo zsh -c $LAST_CMD
 }
 
+# remove ssh key for failed login attempt
+damnit () {
+  LAST_FIELD=`fc -nl -1 | awk '{print $NF}'`
+  ssh-keygen -R $LAST_FIELD
+  echo ssh $LAST_FIELD
+  ssh $LAST_FIELD
+}
+
 psg () { ps -aef | grep $* | grep -v grep }
 
 flip() {
