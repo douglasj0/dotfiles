@@ -329,6 +329,9 @@ export EDITOR="${HOME}/bin/edit"
 export ALTERNATE_EDITOR="mg"
 export GROOVY_HOME=/usr/local/opt/groovy/libexec
 
+# Tell homebrew to not autoupdate every single time I run it (just once a week).
+export HOMEBREW_AUTO_UPDATE_SECS=604800
+
 function ediff {
     emacs --eval "(ediff \"$1\" \"$2\")"
 }
