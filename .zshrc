@@ -385,6 +385,10 @@ then
   eval "$(pyenv virtualenv-init -)"
 fi
 
+# fix for 'brew doctor' picking up pyenv path
+# Caveats, it breaks zsh-completions
+alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
+
 # jenv darwin (manage multiple java versions)
 #if file ~/.jenv/bin/jenv > /dev/null; then export PATH="$HOME/.jenv/bin:$PATH"; eval "$(jenv init -)"; echo ".jenv loaded"; fi
 
