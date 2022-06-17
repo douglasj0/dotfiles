@@ -35,7 +35,7 @@ if [ "${arch_name}" = "x86_64" ]; then
   export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
 elif [ "${arch_name}" = "arm64" ]; then
   # We're running on a M1 Mac, homebrew no in /opt
-  PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/openssl/bin:/usr/local/sbin:/usr/local/bin:${PATH}"
+  PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/openssl@1.1/bin:/usr/local/sbin:/usr/local/bin:${PATH}"
   #export LDFLAGS="-L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/bzip2/lib"
   #export CPPFLAGS="-I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/bzip2/include"
 else

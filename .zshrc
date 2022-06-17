@@ -327,7 +327,7 @@ alias ec="emacsclient -s $EMACS_SOCKET -n -a emacs" # do not start a new frame
 
 export EDITOR="${HOME}/bin/edit"
 export ALTERNATE_EDITOR="mg"
-export GROOVY_HOME=/usr/local/opt/groovy/libexec
+#export GROOVY_HOME=/usr/local/opt/groovy/libexec
 
 # Tell homebrew to not autoupdate every single time I run it (just once a week).
 export HOMEBREW_AUTO_UPDATE_SECS=604800
@@ -388,6 +388,9 @@ fi
 # fix for 'brew doctor' picking up pyenv path
 # Caveats, it breaks zsh-completions
 alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
+# homebrew command for x86 on arm64
+alias brew86="arch -x86_64 /usr/local/bin/brew"
+alias pyenv86="arch -x86_64 pyenv"
 
 # jenv darwin (manage multiple java versions)
 #if file ~/.jenv/bin/jenv > /dev/null; then export PATH="$HOME/.jenv/bin:$PATH"; eval "$(jenv init -)"; echo ".jenv loaded"; fi
