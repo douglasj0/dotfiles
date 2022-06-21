@@ -2,3 +2,7 @@
 LICENSE
 README.md
 \.personal-emacs.d
+\.MacOSX
+\.launchd.conf
+\.bash_profile
+\.bashrc
