@@ -383,6 +383,26 @@ if [ -f ~/ASDF ]; then
   ## Temp fix for pip in 3.10.x
   alias pip='python -m pip $@'
   alias pip3='python3 -m pip $@'
+
+function venv {
+  # from pyenv: pyenv virtualenv "${PYVER}" ${VENV}
+  # example usage: venv 3.6.15 testvenv
+
+  PYVER=$1
+  VENV=$2
+
+  # Check for python version
+  asdf list python | grep ${PYVER} > /dev/null
+  if [ "$?" != 0 ]; then
+    echo "Python version ${PYVER} not installed, aborting!"
+  else
+    mkdir -p $HOME/.virtualenvs
+    python_bin="${HOME}/.asdf/installs/python/${PYVER}/bin/python"
+    echo "Creating virtualenv ${VENV}"
+    $python_bin -m venv ${HOME}/.virtualenvs/${VENV}
+    source ${HOME}/.virtualenvs/${VENV}/bin/activate
+  fi
+}
   echo ".. asdf activated"
 else
   if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
