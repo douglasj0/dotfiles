@@ -372,25 +372,40 @@ fi
 ##  eval "$(pyenv virtualenv-init -)"
 ##fi
 ## Trying to all pyenv in .zshrc, and expand for readability
-if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
-then
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init --path)"
-  eval "$(pyenv init -)"
-fi
 
-if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 2>&1 > /dev/null
-then
-  eval "$(pyenv virtualenv-init -)"
+if [ -f ~/ASDF ]; then
+  ## Testing asdf
+  source $HOME/.asdf/asdf.sh
+  # append completions to fpath
+  #fpath=(${ASDF_DIR}/completions $fpath)
+  # initialise completions with ZSH's compinit
+  #autoload -Uz compinit && compinit
+  ## Temp fix for pip in 3.10.x
+  alias pip='python -m pip $@'
+  alias pip3='python3 -m pip $@'
+  echo ".. asdf activated"
+else
+  if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
+  then
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+  fi
+  
+  if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 2>&1 > /dev/null
+  then
+    eval "$(pyenv virtualenv-init -)"
+  fi
+  alias pyenv86="arch -x86_64 pyenv"
+  echo ".. pyenv activated"
 fi
 
 # fix for 'brew doctor' picking up pyenv path
 # Caveats, it breaks zsh-completions
-alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
+##alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
 # homebrew command for x86 on arm64
 alias brew86="arch -x86_64 /usr/local/bin/brew"
-alias pyenv86="arch -x86_64 pyenv"
 
 # jenv darwin (manage multiple java versions)
 #if file ~/.jenv/bin/jenv > /dev/null; then export PATH="$HOME/.jenv/bin:$PATH"; eval "$(jenv init -)"; echo ".jenv loaded"; fi
