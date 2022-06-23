@@ -298,7 +298,7 @@ fi
 ###################
 case "$(uname)" in
 Darwin)  # Darwin Environment
-if [[ ! -z $PS1 ]]; then echo ".darwin zshrc loaded"; fi  # Interactive
+if [[ ! -z $PS1 ]]; then echo ". darwin zshrc loaded"; fi  # Interactive
 
 # Load Darwin aliases
 #source $HOME/.dotfiles/darwin_shell_aliases
@@ -373,8 +373,23 @@ fi
 ##fi
 ## Trying to all pyenv in .zshrc, and expand for readability
 
-if [ -f ~/ASDF ]; then
-  ## Testing asdf
+if [ -f ~/PYENV ]; then
+  if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
+  then
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+  fi
+
+  if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 2>&1 > /dev/null
+  then
+    eval "$(pyenv virtualenv-init -)"
+  fi
+  alias pyenv86="arch -x86_64 pyenv"
+  echo ".. pyenv activated"
+else
+  ## asdf
   source $HOME/.asdf/asdf.sh
   # append completions to fpath
   #fpath=(${ASDF_DIR}/completions $fpath)
@@ -384,9 +399,9 @@ if [ -f ~/ASDF ]; then
   alias pip='python -m pip $@'
   alias pip3='python3 -m pip $@'
 
-function venv {
+function asdf-venv {
   # from pyenv: pyenv virtualenv "${PYVER}" ${VENV}
-  # example usage: venv 3.6.15 testvenv
+  # example usage: asdf-venv 3.6.15 testvenv
 
   PYVER=$1
   VENV=$2
@@ -396,29 +411,14 @@ function venv {
   if [ "$?" != 0 ]; then
     echo "Python version ${PYVER} not installed, aborting!"
   else
-    mkdir -p $HOME/.virtualenvs
+    mkdir -p $HOME/.venvs
     python_bin="${HOME}/.asdf/installs/python/${PYVER}/bin/python"
-    echo "Creating virtualenv ${VENV}"
-    $python_bin -m venv ${HOME}/.virtualenvs/${VENV}
-    source ${HOME}/.virtualenvs/${VENV}/bin/activate
+    echo "Creating virtual env ${VENV}"
+    $python_bin -m venv ${HOME}/.venvs/${VENV}
+    source ${HOME}/.venvs/${VENV}/bin/activate
   fi
 }
   echo ".. asdf activated"
-else
-  if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
-  then
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init --path)"
-    eval "$(pyenv init -)"
-  fi
-  
-  if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 2>&1 > /dev/null
-  then
-    eval "$(pyenv virtualenv-init -)"
-  fi
-  alias pyenv86="arch -x86_64 pyenv"
-  echo ".. pyenv activated"
 fi
 
 # fix for 'brew doctor' picking up pyenv path
