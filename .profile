@@ -47,13 +47,6 @@ else
 fi
 export PATH MANPATH TMPDIR
 
-# pyenv path setup
-##if command -v ~/.pyenv/bin/pyenv 1>/dev/null 2>&1; then
-##  echo ".profile pyenv path setup"
-##  export PYENV_ROOT="$HOME/.pyenv"
-##  export PATH="$PYENV_ROOT/bin:$PATH"
-##  eval "$(pyenv init --path)"
-##fi
 ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
@@ -67,13 +60,13 @@ MANPATH="/usr/local/share/man:/usr/share/man:/usr/X11R6/man"
 TMPDIR="/tmp"
 export PATH MANPATH TMPDIR
 
-# pyenv path setup
-if command -v ~/.pyenv/bin/pyenv 1>/dev/null 2>&1; then
-  #echo ".profile pyenv path setup"
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init --path)"
-fi
+# pyenv path setup (commented out until I can test in Linux)
+#if command -v ~/.pyenv/bin/pyenv 1>/dev/null 2>&1; then
+#  #echo ".profile pyenv path setup"
+#  export PYENV_ROOT="$HOME/.pyenv"
+#  export PATH="$PYENV_ROOT/bin:$PATH"
+#  eval "$(pyenv init --path)"
+#fi
 ;; # end Linux
 
 *)
