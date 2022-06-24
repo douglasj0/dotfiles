@@ -25,23 +25,27 @@ PATH="${HOME}/bin:${HOME}/scripts:\
 /usr/bin:/bin:/usr/sbin:/sbin:.emacs.d/bin:/opt/X11/bin"
 MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man"
 TMPDIR="/tmp"
-export PATH MANPATH TMPDIR
 
 # Set architecture-specific paths.
+# NOTE might need to add to compile against brew openssl:
+#   export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
+#   export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
 arch_name="$(uname -m)"
 if [ "${arch_name}" = "x86_64" ]; then
   #  # X86, default /usr/local
-  PATH="/usr/local/lib/ruby/gems/3.0.0/bin:/usr/local/opt/ruby/bin:/usr/local/sbin:/usr/local/bin:/usr/local/opt/openssl/bin:${PATH}"
-  export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
-  export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
+  #  removed: /usr/local/lib/ruby/gems/3.0.0/bin:/usr/local/opt/ruby/bin
+  PATH="/usr/local/sbin:/usr/local/bin:/usr/local/opt/openssl@1.1/bin:${PATH}"
+  #export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
+  #export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
 elif [ "${arch_name}" = "arm64" ]; then
-  # We're running on a M1 Mac, homebrew no in /opt
-  PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/openssl/bin:/usr/local/sbin:/usr/local/bin:${PATH}"
+  # We're running on a M1 Mac, homebrew now in /opt
+  PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/openssl@1.1/bin:${PATH}"
   #export LDFLAGS="-L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/bzip2/lib"
   #export CPPFLAGS="-I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/bzip2/include"
 else
-    echo "Unknown architecture: ${arch_name}"
+    echo "Error unknown architecture: ${arch_name}"
 fi
+export PATH MANPATH TMPDIR
 
 # pyenv path setup
 ##if command -v ~/.pyenv/bin/pyenv 1>/dev/null 2>&1; then
