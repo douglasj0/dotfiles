@@ -1,10 +1,10 @@
 # -*- mode: sh; -*-
 #
-# my rc file for zsh 2.2
+# my rc file for zsh
 # all this runs in interactive shells only
-#
 
-# `.zshrc' is sourced in interactive shells. It should contain commands to set up aliases, functions, options, key bindings, etc.
+# `.zshrc' is sourced in interactive shells. It should contain commands to set
+# up aliases, functions, options, key bindings, etc.
 
 # where to look for function definitions
 # fpath=(~/func)
@@ -241,8 +241,8 @@ ssh-del-work () { ssh-add -d ${HOME}/.ssh/id_rsa_work; }   # delete work key
 ssh-add-home () { ssh-add ${HOME}/.ssh/id_rsa_home; }      # add home github key
 ssh-del-home () { ssh-add -d ${HOME}/.ssh/id_rsa_home; }   # delete home github key
 
-#grepp: grep by paragraph, http://www.commandlinefu.com/commands/view/4547/
-grepp() {
+#greppara: grep by paragraph, http://www.commandlinefu.com/commands/view/4547/
+greppara() {
     [ $# -eq 1 ] && perl -00ne "print if /$1/i" || perl -00ne "print if /$1/i" < "$2"
 }
 
@@ -284,15 +284,6 @@ if [ -e ${HOME}/.workrc ]; then
 fi
 
 
-###
-# pyenv functions
-###
-#rt-activate() {
-#  pyenv activate research-tools
-#  cd ~/projects/CBT/research_tools
-#}
-
-
 ###################
 #   OS Specific   #
 ###################
@@ -303,6 +294,7 @@ if [[ ! -z $PS1 ]]; then echo ". darwin zshrc loaded"; fi  # Interactive
 # Load Darwin aliases
 #source $HOME/.dotfiles/darwin_shell_aliases
 if [ -f $HOME/.aliases.darwin ]; then
+    #echo ".. aliases.darwin"
     . $HOME/.aliases.darwin
 fi
 
@@ -352,26 +344,11 @@ if [[ -f ~/Library/mysql/com.mysql.mysqld.plist ]]; then
 fi
 
 # Enable Homebrew for M1 Mac if installed
+## sets HOMEBREW_PREFIX, HOMEBREW_CELLER, HOMEBREW_REPOSITORY
+##      PATH, MANPATH, INFOPATH
 #if command -v /opt/homebrew/bin/brew 1>/dev/null 2>&1; then
 #  eval $(/opt/homebrew/bin/brew shellenv)
 #fi
-
-# pyenv: https://github.com/pyenv/pyenv
-# pyenv local git install (manage multiple python versions)
-# pyenv's PATH is setup in .profile
-##if [[ ! -z "${PYENV_ROOT}" ]]; then
-##  echo ".zshrc pyenv initialize"
-##  eval "$(pyenv init -)"
-##  # setup LDFLAGS and CPPFLAGS for python compilation
-##  export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
-##  export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
-##fi
-# pyenv-virtualenv: https://github.com/pyenv/pyenv-virtualenv
-##if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 1>/dev/null 2>&1; then
-##  echo ".zshrc pyenv-virtualenv initialize"
-##  eval "$(pyenv virtualenv-init -)"
-##fi
-## Trying to all pyenv in .zshrc, and expand for readability
 
 if [ -f ~/PYENV ]; then
   if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
@@ -387,43 +364,46 @@ if [ -f ~/PYENV ]; then
     eval "$(pyenv virtualenv-init -)"
   fi
   alias pyenv86="arch -x86_64 pyenv"
+
+  # fix for 'brew doctor' picking up pyenv path
+  # Caveats, it breaks zsh-completions
+  alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
+
   echo ".. pyenv activated"
 else
-  ## asdf
+  ## asdf config
   source $HOME/.asdf/asdf.sh
-  # append completions to fpath
-  #fpath=(${ASDF_DIR}/completions $fpath)
-  # initialise completions with ZSH's compinit
-  #autoload -Uz compinit && compinit
-  ## Temp fix for pip in 3.10.x
+  ## Temp fix for 'No preset version' in 3.10.x
   alias pip='python -m pip $@'
   alias pip3='python3 -m pip $@'
 
-function asdf-venv {
-  # from pyenv: pyenv virtualenv "${PYVER}" ${VENV}
-  # example usage: asdf-venv 3.6.15 testvenv
+  function asdf-venv {
+    # from pyenv: pyenv virtualenv "${PYVER}" ${VENV}
+    # example usage: asdf-venv 3.6.15 testvenv
 
-  PYVER=$1
-  VENV=$2
+    PYVER=$1
+    VENV=$2
 
-  # Check for python version
-  asdf list python | grep ${PYVER} > /dev/null
-  if [ "$?" != 0 ]; then
-    echo "Python version ${PYVER} not installed, aborting!"
-  else
-    mkdir -p $HOME/.venvs
-    python_bin="${HOME}/.asdf/installs/python/${PYVER}/bin/python"
-    echo "Creating virtual env ${VENV}"
-    $python_bin -m venv ${HOME}/.venvs/${VENV}
-    source ${HOME}/.venvs/${VENV}/bin/activate
-  fi
-}
+    # Check for python version
+    asdf list python | grep ${PYVER} > /dev/null
+    if [ "$?" != 0 ]; then
+      echo "Python version ${PYVER} not installed, aborting!"
+    else
+      mkdir -p $HOME/.venvs
+      python_bin="${HOME}/.asdf/installs/python/${PYVER}/bin/python"
+      echo "Creating virtual env ${VENV}"
+      $python_bin -m venv ${HOME}/.venvs/${VENV}
+      source ${HOME}/.venvs/${VENV}/bin/activate
+    fi
+  }
+
+  # fix for 'brew doctor' picking up asdf path
+  # Caveats, it breaks zsh-completions
+  alias brew-doctor="env PATH=${PATH//.asdf/shims:/} brew doctor"
+
   echo ".. asdf activated"
 fi
 
-# fix for 'brew doctor' picking up pyenv path
-# Caveats, it breaks zsh-completions
-##alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
 # homebrew command for x86 on arm64
 alias brew86="arch -x86_64 /usr/local/bin/brew"
 
@@ -438,6 +418,7 @@ if [[ ! -z $PS1 ]]; then echo ".linux zshrc loaded"; fi # interactive
 # Load Linux aliases
 #source $HOME/.dotfiles/linux_shell_aliases
 if [ -f $HOME/.aliases.linux ]; then
+    #echo ".. aliases.linux"
     . $HOME/.aliases.linux
 fi
 
@@ -472,7 +453,7 @@ dmesg_with_human_timestamps () {
 }
 alias dmesght=dmesg_with_human_timestamps
 
-googlesay(){ curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" |mpg123 -; };
+googlesay(){ curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" | mpg123 -; };
 
 # pyenv linux
 if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
@@ -490,7 +471,7 @@ fi
 ;; # end Linux
 
 *)
-echo "uname not reporing Darwin or Linux.  Where are we?"
+echo "Error: uname not reporing Darwin or Linux.  Where are we?"
 ;;
 
 esac  # End System Specific case statement

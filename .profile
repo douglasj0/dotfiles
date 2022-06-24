@@ -8,7 +8,7 @@
 ###################
 case $(uname) in
 Darwin)  # Darwin Environment
-echo ". darwin profile loaded"
+#echo ".. darwin profile loaded"
 
 #For compilers to find ruby you may need to set:
 #  export LDFLAGS="-L/usr/local/opt/ruby/lib"
@@ -57,7 +57,7 @@ export PATH MANPATH TMPDIR
 ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
-echo ". linux profile loaded"
+#echo ".. linux profile loaded"
 
 PATH="${HOME}/bin:${HOME}/scripts:${HOME}/.local/bin:\
 /usr/local/sbin:/usr/local/bin:\
