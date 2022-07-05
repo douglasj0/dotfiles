@@ -44,8 +44,8 @@
 
 [git]
 repos = [
-    "~/.my_dotfiles",
     "~/.dotfiles",
+    "~/.asdf",
     "~/.pyenv",
     "~/.pyenv/plugins/pyenv-virtualenv"
 ]
