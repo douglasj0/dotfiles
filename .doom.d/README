@@ -1,3 +1,12 @@
+Install Notes:
+https://github.com/doomemacs/doomemacs
+
+Install:
+git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
+~/.emacs.d/bin/doom install
+
+
+
 But before you doom yourself, here are some things you should know:
 
 1. Don't forget to run 'doom sync', then restart Emacs, after modifying
