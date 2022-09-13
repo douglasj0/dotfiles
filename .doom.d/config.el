@@ -317,3 +317,6 @@ last sentence."
 ;; mac 'ls' doesn't support --dired
 (when (string= system-type "darwin")       
   (setq dired-use-ls-dired nil))
+
+;; switch to treemacs window
+(global-set-key (kbd "C-x p") 'treemacs-select-window)
