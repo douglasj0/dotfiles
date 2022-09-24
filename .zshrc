@@ -299,7 +299,7 @@ if [ -f $HOME/.aliases.darwin ]; then
 fi
 
 if [[ $INSIDE_EMACS ]]; then
-  echo "..Inside Emacs"
+  echo ".. Inside Emacs"
   export TERM=vt100
   #alias ls='ls --color=none'
   #alias grep='grep'
