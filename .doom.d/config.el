@@ -179,8 +179,8 @@ last sentence."
 ;; However, Doom disables lsp-ui-doc-enable by default because it's redundant
 ;; with the +lookup/documentation command bound to the K key (in normal mode)
 ;; or C-c c k if you don't use evil. To enable it:
-(after! lsp-ui
-  (setq lsp-ui-doc-enable t))
+;;(after! lsp-ui
+;;  (setq lsp-ui-doc-enable t))
 
 ;;; ---------------------------------------------------------------------------
 ;; org-mode
