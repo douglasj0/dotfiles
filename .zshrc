@@ -97,6 +97,11 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-
 # Other
 setopt prompt_subst
 
+# test command line editing module
+autoload -z edit-command-line
+zle -N edit-command-line
+bindkey "^X^E" edit-command-line
+# also: You can use fc to edit the last command in history.
 
 #MAILCHECK=30
 #HISTSIZE=600
