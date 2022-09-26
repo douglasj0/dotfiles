@@ -320,3 +320,13 @@ last sentence."
 
 ;; switch to treemacs window
 (global-set-key (kbd "C-x p") 'treemacs-select-window)
+
+;; eglot
+;; https://github.com/joaotavora/eglot
+;; Install langauge server pylsp
+;; https://github.com/python-lsp/python-lsp-server
+;; $ pip3 install python-lsp-server
+;; Verify: pylsp --help
+;; eglot doesn't seen able to find it, set as default
+;(set-eglot-client! 'python-mode '("pylsp"))
+(set-eglot-client! 'python-mode '("~/.asdf/shims/pylsp"))
