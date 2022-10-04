@@ -330,3 +330,7 @@ last sentence."
 ;; eglot doesn't seen able to find it, set as default
 ;(set-eglot-client! 'python-mode '("pylsp"))
 (set-eglot-client! 'python-mode '("~/.asdf/shims/pylsp"))
+
+;; paste into vterm
+;(global-set-key (kbd "C-v") 'vterm-yank)
+(global-set-key (kbd "C-y") 'vterm-yank)
