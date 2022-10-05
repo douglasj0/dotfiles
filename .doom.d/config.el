@@ -331,6 +331,7 @@ last sentence."
 ;(set-eglot-client! 'python-mode '("pylsp"))
 (set-eglot-client! 'python-mode '("~/.asdf/shims/pylsp"))
 
-;; paste into vterm
-;(global-set-key (kbd "C-v") 'vterm-yank)
-(global-set-key (kbd "C-y") 'vterm-yank)
+;; paste into vterm when it is active
+(defun dj-vterm-keys ()
+  (local-set-key (kbd "C-y") 'vterm-yank))
+(add-hook 'vterm-mode-hook #'dj-vterm-keys)
