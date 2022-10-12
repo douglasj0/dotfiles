@@ -22,7 +22,7 @@ PATH="${HOME}/bin:${HOME}/scripts:\
 /Applications/Emacs.app/Contents/MacOS/bin:\
 /Applications/Xcode.app/Contents/Developer/Tools:\
 /Library/TeX/texbin:\
-/usr/bin:/bin:/usr/sbin:/sbin:.emacs.d/bin:/opt/X11/bin"
+/usr/bin:/bin:/usr/sbin:/sbin:${HOME}/.emacs.d/bin:/opt/X11/bin"
 MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man"
 TMPDIR="/tmp"
 
