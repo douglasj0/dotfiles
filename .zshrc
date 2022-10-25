@@ -246,6 +246,9 @@ ssh-del-work () { ssh-add -d ${HOME}/.ssh/id_rsa_work; }   # delete work key
 ssh-add-home () { ssh-add ${HOME}/.ssh/id_rsa_home; }      # add home github key
 ssh-del-home () { ssh-add -d ${HOME}/.ssh/id_rsa_home; }   # delete home github key
 
+# aws ssh function
+assh() { AWSIP=$(echo $1 | sed -e 's/ip-//' -e 's/-/./g'); ssh ${AWSIP} }
+
 #greppara: grep by paragraph, http://www.commandlinefu.com/commands/view/4547/
 greppara() {
     [ $# -eq 1 ] && perl -00ne "print if /$1/i" || perl -00ne "print if /$1/i" < "$2"
