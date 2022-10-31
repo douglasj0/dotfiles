@@ -247,7 +247,8 @@ ssh-add-home () { ssh-add ${HOME}/.ssh/id_rsa_home; }      # add home github key
 ssh-del-home () { ssh-add -d ${HOME}/.ssh/id_rsa_home; }   # delete home github key
 
 # aws ssh function
-assh() { AWSIP=$(echo $1 | sed -e 's/ip-//' -e 's/-/./g'); ssh ${AWSIP} }
+sssh() { AWSIP=$(echo $1 | sed -e 's/ip-//' -e 's/-/./g'); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
+assh() { AWSIP=$(echo $1 | awk -F"-" '{print $2"."$3"."$4"."$5}'); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
 
 #greppara: grep by paragraph, http://www.commandlinefu.com/commands/view/4547/
 greppara() {
