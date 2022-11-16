@@ -335,3 +335,11 @@ last sentence."
 (defun dj-vterm-keys ()
   (local-set-key (kbd "C-y") 'vterm-yank))
 (add-hook 'vterm-mode-hook #'dj-vterm-keys)
+
+;; Using flymake https://discourse.doomemacs.org/t/moving-from-flycheck-checkers-syntax-to-flymake/2879
+;; Start flymake in prog-modes.
+(add-hook! prog-mode #'flymake-mode)
+
+;; Once you start using lsp, check the information in that link about telling flymake about lsp.
+;(after! lsp-mode
+;  (setq lsp-diagnostics-provider :flymake))
