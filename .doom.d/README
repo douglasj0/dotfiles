@@ -5,6 +5,12 @@ Install:
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 
+Install Notes:
+If getting errors accessing github.com
+check with: curl -I https://github.com
+Can try killing the DNS cache: sudo killall -HUP mDNSResponder
+
+
 
 
 But before you doom yourself, here are some things you should know:

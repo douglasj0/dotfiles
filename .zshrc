@@ -328,6 +328,9 @@ alias ecw="emacsEclient -s $EMACS_SOCKET -n -c -a emacs" # start a windowed fram
 alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
 alias ec="emacsclient -s $EMACS_SOCKET -n -a emacs" # do not start a new frame
 
+# visual studio alias
+alias vs="/Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron"
+
 export EDITOR="${HOME}/bin/edit"
 export ALTERNATE_EDITOR="mg"
 #export GROOVY_HOME=/usr/local/opt/groovy/libexec
