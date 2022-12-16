@@ -363,59 +363,41 @@ fi
 #  eval $(/opt/homebrew/bin/brew shellenv)
 #fi
 
-if [ -f ~/PYENV ]; then
-    if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
-    then
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init --path)"
-        eval "$(pyenv init -)"
+
+## pyenv config
+#  if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
+#  then
+#       export PYENV_ROOT="$HOME/.pyenv"
+#       command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+#       eval "$(pyenv init -)"
+#       eval "$(pyenv virtualenv-init -)"
+#  fi
+#  alias pyenv86="arch -x86_64 pyenv"
+
+# zsh lazy load pyenv (wraps in a function until used)
+# https://www.reddit.com/r/zsh/comments/ygh7qp/why_my_zsh_take_too_much_time_to_load/
+PYENV_ROOT="${HOME}/.pyenv"
+if [[ -d "${PYENV_ROOT}" ]]; then
+  pyenv () {
+    if ! (($path[(Ie)${PYENV_ROOT}/bin])); then
+      path[1,0]="${PYENV_ROOT}/bin"
     fi
-
-    if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 2>&1 > /dev/null
-    then
-        eval "$(pyenv virtualenv-init -)"
-    fi
-    alias pyenv86="arch -x86_64 pyenv"
-
-    # fix for 'brew doctor' picking up pyenv path
-    # Caveats, it breaks zsh-completions
-    alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
-
-    echo ".. pyenv activated"
+    eval "$(command pyenv init -)"
+    eval "$(command pyenv virtualenv-init -)"
+    pyenv "$@"
+    unfunction pyenv
+  }
 else
-    ## asdf config
-    source $HOME/.asdf/asdf.sh
-    ## Temp fix for 'No preset version' in 3.10.x
-    alias pip='python -m pip $@'
-    alias pip3='python3 -m pip $@'
-
-    function asdf-venv {
-        # from pyenv: pyenv virtualenv "${PYVER}" ${VENV}
-        # example usage: asdf-venv 3.6.15 testvenv
-
-        PYVER=$1
-        VENV=$2
-
-        # Check for python version
-        asdf list python | grep ${PYVER} > /dev/null
-        if [ "$?" != 0 ]; then
-            echo "Python version ${PYVER} not installed, aborting!"
-        else
-            mkdir -p $HOME/.venvs
-            python_bin="${HOME}/.asdf/installs/python/${PYVER}/bin/python"
-            echo "Creating virtual env ${VENV}"
-            $python_bin -m venv ${HOME}/.venvs/${VENV}
-            source ${HOME}/.venvs/${VENV}/bin/activate
-        fi
-    }
-
-    # fix for 'brew doctor' picking up asdf path
-    # Caveats, it breaks zsh-completions
-    alias brew-doctor="env PATH=${PATH//.asdf/shims:/} brew doctor"
-
-    echo ".. asdf activated"
+  unset PYENV_ROOT
 fi
+
+# Fix for 'brew doctor' picking up pyenv path (slows shell loading time, disabled)
+# Caveat: it breaks zsh-completions
+#alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
+alias pyenv86="arch -x86_64 pyenv"
+
+echo ".. pyenv ready"
+
 
 # homebrew command for x86 on arm64
 alias brew86="arch -x86_64 /usr/local/bin/brew"
