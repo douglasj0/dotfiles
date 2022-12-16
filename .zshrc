@@ -365,36 +365,58 @@ fi
 
 
 ## pyenv config
-#  if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
-#  then
-#       export PYENV_ROOT="$HOME/.pyenv"
-#       command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-#       eval "$(pyenv init -)"
-#       eval "$(pyenv virtualenv-init -)"
-#  fi
-#  alias pyenv86="arch -x86_64 pyenv"
+if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
+then
+     export PYENV_ROOT="$HOME/.pyenv"
+     command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+     eval "$(pyenv init -)"
+     eval "$(pyenv virtualenv-init -)"
+fi
+alias pyenv86="arch -x86_64 pyenv"
 
+#-- not using currently due to pyenv86 issues --
 # zsh lazy load pyenv (wraps in a function until used)
 # https://www.reddit.com/r/zsh/comments/ygh7qp/why_my_zsh_take_too_much_time_to_load/
-PYENV_ROOT="${HOME}/.pyenv"
-if [[ -d "${PYENV_ROOT}" ]]; then
-  pyenv () {
-    if ! (($path[(Ie)${PYENV_ROOT}/bin])); then
-      path[1,0]="${PYENV_ROOT}/bin"
-    fi
-    eval "$(command pyenv init -)"
-    eval "$(command pyenv virtualenv-init -)"
-    pyenv "$@"
-    unfunction pyenv
-  }
-else
-  unset PYENV_ROOT
-fi
+#PYENV_ROOT="${HOME}/.pyenv"
+#if [[ -d "${PYENV_ROOT}" ]]; then
+#  pyenv () {
+#    if ! (($path[(Ie)${PYENV_ROOT}/bin])); then
+#      path[1,0]="${PYENV_ROOT}/bin"
+#    fi
+#    eval "$(command pyenv init -)"
+#    eval "$(command pyenv virtualenv-init -)"
+#    pyenv "$@"
+#    unfunction pyenv
+#  }
+#else
+#  unset PYENV_ROOT
+#fi
 
 # Fix for 'brew doctor' picking up pyenv path (slows shell loading time, disabled)
 # Caveat: it breaks zsh-completions
 #alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
-alias pyenv86="arch -x86_64 pyenv"
+#alias pyenv86="arch -x86_64 pyenv"
+
+# Function to manage venvs for pyenv
+function pyenv-venv {
+    # from pyenv-virtualenv: pyenv virtualenv ${PYVER} ${VENV}
+    # example usage: pyenv-venv 3.6.15 testvenv
+
+    PYVER=$1
+    VENV=$2
+
+    # Check for python version
+    pyenv versions | grep ${PYVER} > /dev/null
+    if [ "$?" != 0 ]; then
+        echo "Python version ${PYVER} not installed, aborting!"
+    else
+        mkdir -p $HOME/.venvs
+        python_bin="${HOME}/.pyenv/versions/${PYVER}/bin/python"
+        echo "Creating new venv ~/.venvs/${VENV}"
+        ${python_bin} -m venv ${HOME}/.venvs/${VENV}
+        source ${HOME}/.venvs/${VENV}/bin/activate
+    fi
+}
 
 echo ".. pyenv ready"
 
