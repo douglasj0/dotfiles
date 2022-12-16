@@ -35,3 +35,8 @@ git_repo_remaster () {
   git checkout ${BRANCH}
   git rebase $1 master
 }
+
+# Recreate yolo sudo last command
+alias yolo='sudo $(fc -nl -1)'
+
+

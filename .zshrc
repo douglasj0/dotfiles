@@ -3,7 +3,7 @@
 # my rc file for zsh
 # all this runs in interactive shells only
 
-# `.zshrc' is sourced in interactive shells. It should contain commands to set
+# '.zshrc' is sourced in interactive shells. It should contain commands to set
 # up aliases, functions, options, key bindings, etc.
 
 # where to look for function definitions
@@ -182,11 +182,10 @@ fucking() {
      sudo zsh -c $LAST_CMD
 }
 
-alias yolo='sudo $(fc -nl -1)'
-
-# remove ssh key for failed login attempt
+# remove ssh key for failed login attempt and try again
 damnit () {
-  LAST_FIELD=`fc -nl -1 | awk '{print $NF}'`
+  LAST_CMD=`fc -nl -1`
+  LAST_FIELD=$(echo $LAST_CMD | awk '{print $NF}')
   ssh-keygen -R $LAST_FIELD
   echo ssh $LAST_FIELD
   ssh $LAST_FIELD
@@ -209,9 +208,9 @@ delhost() { ssh-keygen -R $@; }  # remove entry from ~/.ssh/known_hosts
 
 rot13() {  # For some reason, rot13 pops up everywhere
     if [ $# -eq 0 ]; then
-	tr '[a-m][n-z][A-M][N-Z]' '[n-z][a-m][N-Z][A-M]'
+        tr '[a-m][n-z][A-M][N-Z]' '[n-z][a-m][N-Z][A-M]'
     else
-	echo $* | tr '[a-m][n-z][A-M][N-Z]' '[n-z][a-m][N-Z][A-M]'
+        echo $* | tr '[a-m][n-z][A-M][N-Z]' '[n-z][a-m][N-Z][A-M]'
     fi
 }
 
@@ -365,57 +364,57 @@ fi
 #fi
 
 if [ -f ~/PYENV ]; then
-  if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
-  then
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init --path)"
-    eval "$(pyenv init -)"
-  fi
-
-  if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 2>&1 > /dev/null
-  then
-    eval "$(pyenv virtualenv-init -)"
-  fi
-  alias pyenv86="arch -x86_64 pyenv"
-
-  # fix for 'brew doctor' picking up pyenv path
-  # Caveats, it breaks zsh-completions
-  alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
-
-  echo ".. pyenv activated"
-else
-  ## asdf config
-  source $HOME/.asdf/asdf.sh
-  ## Temp fix for 'No preset version' in 3.10.x
-  alias pip='python -m pip $@'
-  alias pip3='python3 -m pip $@'
-
-  function asdf-venv {
-    # from pyenv: pyenv virtualenv "${PYVER}" ${VENV}
-    # example usage: asdf-venv 3.6.15 testvenv
-
-    PYVER=$1
-    VENV=$2
-
-    # Check for python version
-    asdf list python | grep ${PYVER} > /dev/null
-    if [ "$?" != 0 ]; then
-      echo "Python version ${PYVER} not installed, aborting!"
-    else
-      mkdir -p $HOME/.venvs
-      python_bin="${HOME}/.asdf/installs/python/${PYVER}/bin/python"
-      echo "Creating virtual env ${VENV}"
-      $python_bin -m venv ${HOME}/.venvs/${VENV}
-      source ${HOME}/.venvs/${VENV}/bin/activate
+    if command -v ~/.pyenv/bin/pyenv 2>&1 >/dev/null
+    then
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$(pyenv init --path)"
+        eval "$(pyenv init -)"
     fi
-  }
 
-  # fix for 'brew doctor' picking up asdf path
-  # Caveats, it breaks zsh-completions
-  alias brew-doctor="env PATH=${PATH//.asdf/shims:/} brew doctor"
+    if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 2>&1 > /dev/null
+    then
+        eval "$(pyenv virtualenv-init -)"
+    fi
+    alias pyenv86="arch -x86_64 pyenv"
 
-  echo ".. asdf activated"
+    # fix for 'brew doctor' picking up pyenv path
+    # Caveats, it breaks zsh-completions
+    alias brew-doctor="env PATH=${PATH//$(pyenv root)/shims:/} brew doctor"
+
+    echo ".. pyenv activated"
+else
+    ## asdf config
+    source $HOME/.asdf/asdf.sh
+    ## Temp fix for 'No preset version' in 3.10.x
+    alias pip='python -m pip $@'
+    alias pip3='python3 -m pip $@'
+
+    function asdf-venv {
+        # from pyenv: pyenv virtualenv "${PYVER}" ${VENV}
+        # example usage: asdf-venv 3.6.15 testvenv
+
+        PYVER=$1
+        VENV=$2
+
+        # Check for python version
+        asdf list python | grep ${PYVER} > /dev/null
+        if [ "$?" != 0 ]; then
+            echo "Python version ${PYVER} not installed, aborting!"
+        else
+            mkdir -p $HOME/.venvs
+            python_bin="${HOME}/.asdf/installs/python/${PYVER}/bin/python"
+            echo "Creating virtual env ${VENV}"
+            $python_bin -m venv ${HOME}/.venvs/${VENV}
+            source ${HOME}/.venvs/${VENV}/bin/activate
+        fi
+    }
+
+    # fix for 'brew doctor' picking up asdf path
+    # Caveats, it breaks zsh-completions
+    alias brew-doctor="env PATH=${PATH//.asdf/shims:/} brew doctor"
+
+    echo ".. asdf activated"
 fi
 
 # homebrew command for x86 on arm64
