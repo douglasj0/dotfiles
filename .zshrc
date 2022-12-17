@@ -399,16 +399,22 @@ alias pyenv86="arch -x86_64 pyenv"
 
 # Function to manage venvs for pyenv
 function pyenv-venv {
-    # from pyenv-virtualenv: pyenv virtualenv ${PYVER} ${VENV}
-    # example usage: pyenv-venv 3.6.15 testvenv
+    if [[ $# -ne 2 ]]
+    then
+        echo "Error: Incorrect number of arguments (2 required)"
+        echo "Usage: $0 PYVER VENV"
+        echo "   ex: $0 3.9.7 mytestvenv"
+        return 0
+    fi
 
     PYVER=$1
     VENV=$2
 
     # Check for python version
-    pyenv versions | grep ${PYVER} > /dev/null
+    pyenv versions --bare | grep ${PYVER} > /dev/null
     if [ "$?" != 0 ]; then
-        echo "Python version ${PYVER} not installed, aborting!"
+        echo "Python version ${PYVER} is not installed, aborting!"
+        return 1
     else
         mkdir -p $HOME/.venvs
         python_bin="${HOME}/.pyenv/versions/${PYVER}/bin/python"
