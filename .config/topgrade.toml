@@ -46,7 +46,8 @@
 repos = [
     "~/.dotfiles",
     "~/.pyenv",
-    "~/.pyenv/plugins/pyenv-virtualenv"
+    "~/.pyenv/plugins/pyenv-virtualenv",
+    "~/.pyenv/plugins/pyenv-alias"
 ]
 
 # Don't pull the predefined git repos

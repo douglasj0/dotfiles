@@ -193,7 +193,7 @@ last sentence."
 
 ;; lsp / python
 ;(setenv "WORKON_HOME" "~/.pyenv/versions")
-;(set pyvenv-workon "emacs") ;; Set default venv from versions
+;(set pyvenv-workon "emacs-venv") ;; Set default venv from versions
 ;(pyvenv-mode t) ;; enable pyvenv-mode
 
 ;; You don't need to do anything besides enable the :tools lsp module.
