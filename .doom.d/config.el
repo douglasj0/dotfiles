@@ -191,12 +191,12 @@ last sentence."
 (global-set-key (kbd "<f9>") 'daily-log)
 
 
-;; lsp / python
-;(setenv "WORKON_HOME" "~/.pyenv/versions")
-;(set pyvenv-workon "emacs-venv") ;; Set default venv from versions
+;;; lsp / python
+(setenv "WORKON_HOME" "~/.pyenv/versions")
+;(setq pyvenv-workon "emacs-venv") ;; Set default venv from versions
 ;(pyvenv-mode t) ;; enable pyvenv-mode
 
-;; You don't need to do anything besides enable the :tools lsp module.
+;;; You don't need to do anything besides enable the :tools lsp module.
 ;; lsp-ui-mode is enabled for you.
 ;; However, Doom disables lsp-ui-doc-enable by default because it's redundant
 ;; with the +lookup/documentation command bound to the K key (in normal mode)
