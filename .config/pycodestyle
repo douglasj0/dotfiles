@@ -1,0 +1,10 @@
+[pycodestyle]
+# Adjust to taste ;)
+max-line-length = 240
+show-source = true
+ignore = E128,E121,E123,E126,E226,E24,E203,E402,E704,E722,E741,W503,W504,W605
+
+[pylsp]
+# The python language server used by eglot also use this config
+# file. So for example you can add stuff like:
+plugins.yapf.enabled: true
