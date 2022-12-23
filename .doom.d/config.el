@@ -357,6 +357,10 @@ last sentence."
 ;(set-eglot-client! 'python-mode '("~/.asdf/shims/pylsp"))
 ;(set-eglot-client! 'python-mode '("~/.pyenv/shims/pylsp"))
 
+;; ipython and jupyter args
+(setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
+(setq +python-jupyter-repl-args '("--simple-prompt"))
+
 ;; paste into vterm when it is active
 (defun dj-vterm-keys ()
   (local-set-key (kbd "C-y") 'vterm-yank))
