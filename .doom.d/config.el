@@ -345,8 +345,16 @@ last sentence."
 
 ;; eglot
 ;; https://github.com/joaotavora/eglot
-;; install black, tox, flake8, pyflakes, isort, black, #pyright
-;; pip install --upgrade black tox flake8 pyflakes isort black
+;;
+;; install black, tox, flake8, pyflakes, isort   #pyright
+;; $ pip install --upgrade black tox isort flake8
+;;   black - reports code errors and also fixes them
+;;   tox - automate standard testing in python
+;;   flake8 - linter, python version specific
+;;     "wrapper which verifies pep8, pyflakes and circular complexity"
+;;   pyflakes - linter, faster then pylint (needed by flake8?)
+;;   isort - sort imports alphabetically and by type
+;;   pyright - another language server (like pylsp)
 ;;
 ;; Install langauge server pylsp
 ;; https://github.com/python-lsp/python-lsp-server
@@ -369,6 +377,14 @@ last sentence."
 ;; Using flymake https://discourse.doomemacs.org/t/moving-from-flycheck-checkers-syntax-to-flymake/2879
 ;; Start flymake in prog-modes.
 (add-hook! prog-mode #'flymake-mode)
+
+;; use flake8 with flymake
+;; if pyflakes is installed, flymake uses it, but cli flake8 fails without it
+;; seems to work now?
+;(setq flymake-python-pyflakes-executable "flake8")
+;(setq flymake-python-pyflakes-extra-arguments '("--ignore=W806"))
+;(setq python-check-command "flake8")
+
 
 ;; Once you start using lsp, check the information in that link about telling flymake about lsp.
 ;(after! lsp-mode
