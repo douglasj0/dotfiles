@@ -345,13 +345,17 @@ last sentence."
 
 ;; eglot
 ;; https://github.com/joaotavora/eglot
+;; install black, tox, flake8
+;; pip install --upgrade black tox flake8
+;;
 ;; Install langauge server pylsp
 ;; https://github.com/python-lsp/python-lsp-server
 ;; $ pip3 install python-lsp-server
 ;; Verify: pylsp --help
 ;; eglot doesn't seen able to find it, set as default
-;(set-eglot-client! 'python-mode '("pylsp"))
-(set-eglot-client! 'python-mode '("~/.asdf/shims/pylsp"))
+(set-eglot-client! 'python-mode '("pylsp"))
+;(set-eglot-client! 'python-mode '("~/.asdf/shims/pylsp"))
+;(set-eglot-client! 'python-mode '("~/.pyenv/shims/pylsp"))
 
 ;; paste into vterm when it is active
 (defun dj-vterm-keys ()
