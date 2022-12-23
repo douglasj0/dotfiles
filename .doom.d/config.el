@@ -345,8 +345,8 @@ last sentence."
 
 ;; eglot
 ;; https://github.com/joaotavora/eglot
-;; install black, tox, flake8
-;; pip install --upgrade black tox flake8
+;; install black, tox, flake8, pyflakes, isort, black, #pyright
+;; pip install --upgrade black tox flake8 pyflakes isort black
 ;;
 ;; Install langauge server pylsp
 ;; https://github.com/python-lsp/python-lsp-server
