@@ -424,6 +424,19 @@ function pyenv-venv {
     fi
 }
 
+# venv notification is being removed from pyenv-virtualenv, use this to add back
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+export BASE_PROMPT=$PS1
+function updatePrompt {
+    if [[ $PYENV_VIRTUAL_ENV ]]; then
+        export PS1="($PYENV_VERSION) "$BASE_PROMPT
+    else
+        export PS1=$BASE_PROMPT
+    fi
+}
+export PROMPT_COMMAND='updatePrompt'
+precmd() { eval '$PROMPT_COMMAND' } # this line is necessary for zsh
+
 echo ".. pyenv ready"
 
 

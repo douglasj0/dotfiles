@@ -265,8 +265,9 @@ last sentence."
 
 ;;; ---------------------------------------------------------------------------
 ;; org-roam
-;; Set org-roam-directory based on system-name
-(if (string= (system-name) "lothlorien.jacksonspub.com")
+;; Set org-roam-directory based on system-name.
+;; Was: lothlorien.jacksonspub.com, but .local seems to work better.
+(if (string= (system-name) "lothlorien.local")
     (setq org-roam-directory "~/org-roam-home")
   (setq org-roam-directory "~/org-roam/")
 )
