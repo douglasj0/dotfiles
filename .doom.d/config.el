@@ -193,7 +193,7 @@ last sentence."
 
 ;;; lsp / python
 (setenv "WORKON_HOME" "~/.pyenv/versions")
-;(setq pyvenv-workon "emacs-venv") ;; Set default venv from versions
+(setq pyvenv-workon "emacs-venv") ;; Set default venv from versions
 ;(pyvenv-mode t) ;; enable pyvenv-mode
 
 ;;; You don't need to do anything besides enable the :tools lsp module.
@@ -266,8 +266,9 @@ last sentence."
 ;;; ---------------------------------------------------------------------------
 ;; org-roam
 ;; Set org-roam-directory based on system-name.
-;; Was: lothlorien.jacksonspub.com, but .local seems to work better.
-(if (string= (system-name) "lothlorien.local")
+;; orig test: if (string= (system-name) "lothlorien.local")
+;; https://stackoverflow.com/questions/8691398/how-to-test-if-system-name-matches-a-string-in-emacs-with-emacs-lisp
+(if (string-match "\\`lothlorien" (system-name))
     (setq org-roam-directory "~/org-roam-home")
   (setq org-roam-directory "~/org-roam/")
 )
