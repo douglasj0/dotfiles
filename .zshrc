@@ -175,17 +175,15 @@ fi
 ################
 #  pyenv init  #
 ################
-if [[ -f ${HOME}/NO_PYENV ]]
-then
+if [[ -f ${HOME}/NO_PYENV ]]; then
     echo ". skipping pyenv"
 else
-    if [[ -d "${HOME}/.pyenv" ]]
-    then
+    if [[ -d "${HOME}/.pyenv" ]]; then
          export PYENV_ROOT="$HOME/.pyenv"
          #command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
          export PATH="$PYENV_ROOT/bin:$PATH"
-         eval "$(pyenv init -)"
-         eval "$(pyenv virtualenv-init -)"
+         eval "$(pyenv init - zsh)"
+         #eval "$(pyenv virtualenv-init - zsh)" # commenting out doesn't seem to break anything
          echo ". pyenv initialized"
     fi
 fi
