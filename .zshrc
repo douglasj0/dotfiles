@@ -145,7 +145,6 @@ MORE=p
 LESS="-XgmR"
 
 # Load general aliases
-#source $HOME/.dotfiles/shell_aliases
 if [ -f $HOME/.aliases ]; then
     . $HOME/.aliases
 fi
@@ -159,6 +158,7 @@ fi
 if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
     alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
 fi
+
 # Emacs vterm name buffer - doesn't work?
 #autoload -U add-zsh-hook
 #add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
@@ -172,65 +172,62 @@ if [ -e ${HOME}/.workrc ]; then
 fi
 
 
+################
+#  pyenv init  #
+################
+if [[ -d "${HOME}/.pyenv" ]]
+then
+     export PYENV_ROOT="$HOME/.pyenv"
+     #command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+     export PATH="$PYENV_ROOT/bin:$PATH"
+     eval "$(pyenv init -)"
+     eval "$(pyenv virtualenv-init -)"
+     echo ". pyenv initialized"
+fi
+
+
 ###################
 #   OS Specific   #
 ###################
 case "$(uname)" in
 Darwin)  # Darwin Environment
-    if [[ ! -z $PS1 ]]; then echo ". darwin zshrc loaded"; fi  # Interactive
+    if [[ ! -z $PS1 ]]; then echo ".. darwin zshrc loaded"; fi  # Interactive
 
     # Load Darwin aliases
-    if [ -f $HOME/.aliases.darwin ]; then
+    if [[ -f $HOME/.aliases.darwin ]]; then
         . $HOME/.aliases.darwin
     fi
 
     # Load Darwin functions
-    if [ -f $HOME/.functions.darwin ]; then
+    if [[ -f $HOME/.functions.darwin ]]; then
         . $HOME/.functions.darwin
     fi
 
     if [[ $INSIDE_EMACS ]]; then
-      echo ".. Inside Emacs"
-      export TERM=vt100
-      #alias ls='ls --color=none'
-      #alias grep='grep'
+        echo ".. Inside Emacs"
+        export TERM=vt100
     else
-      export TERM=xterm-256color
+        export TERM=xterm-256color
     fi
-
-    # visual studio alias
-    alias vs="/Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron"
 
     export EDITOR="${HOME}/bin/edit"
     export ALTERNATE_EDITOR="mg"
-    #export GROOVY_HOME=/usr/local/opt/groovy/libexec
 
     # Tell homebrew to not autoupdate every single time I run it (just once a week).
     export HOMEBREW_AUTO_UPDATE_SECS=604800
 
-
-    ## pyenv config
-    if [[ -d "${HOME}/.pyenv" ]]
-    then
-         export PYENV_ROOT="$HOME/.pyenv"
-         export PATH="$PYENV_ROOT/bin:$PATH"
-         eval "$(pyenv init -path)"
-         eval "$(pyenv virtualenv-init -)"
-    fi
-
-    echo ".. pyenv ready"
     ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
-    if [[ ! -z $PS1 ]]; then echo ".linux zshrc loaded"; fi # interactive
+    if [[ ! -z $PS1 ]]; then echo ".. linux zshrc loaded"; fi # interactive
 
     # Load Linux aliases
-    if [ -f $HOME/.aliases.linux ]; then
+    if [[ -f $HOME/.aliases.linux ]]; then
         . $HOME/.aliases.linux
     fi
 
     # Load Linux functions
-    if [ -f $HOME/.functions.linux ]; then
+    if [[ -f $HOME/.functions.linux ]]; then
         . $HOME/.functions.linux
     fi
 
