@@ -175,14 +175,19 @@ fi
 ################
 #  pyenv init  #
 ################
-if [[ -d "${HOME}/.pyenv" ]]
+if [[ -f ${HOME}/NO_PYENV ]]
 then
-     export PYENV_ROOT="$HOME/.pyenv"
-     #command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-     export PATH="$PYENV_ROOT/bin:$PATH"
-     eval "$(pyenv init -)"
-     eval "$(pyenv virtualenv-init -)"
-     echo ". pyenv initialized"
+    echo ". skipping pyenv"
+else
+    if [[ -d "${HOME}/.pyenv" ]]
+    then
+         export PYENV_ROOT="$HOME/.pyenv"
+         #command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+         export PATH="$PYENV_ROOT/bin:$PATH"
+         eval "$(pyenv init -)"
+         eval "$(pyenv virtualenv-init -)"
+         echo ". pyenv initialized"
+    fi
 fi
 
 
