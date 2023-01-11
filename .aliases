@@ -1,3 +1,4 @@
+# -*- mode: sh -*-
 # General aliases
 
 alias -- la='ls -a'
