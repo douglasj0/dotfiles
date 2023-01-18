@@ -1,55 +1,36 @@
 # -*- mode: sh -*-
 # Darwin specific functions
 
-###
+# decode base64 from stdin, copy results to clipboard and stdout
+# NOTE: it's using process substitution and is not posix compliant
+decode64() {
+  echo "$1" | base64 -d | tee >(pbcopy)
+}
+dbldecode64() {
+  echo "$1" | base64 -d | base64 -d | tee >(pbcopy)
+}
+encode64() {
+  echo "$1" | base64 ; echo
+}
+
 # Configure Emacs and Emacsclient
 # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
-###
 alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
 EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"
 alias ecw="emacsEclient -s $EMACS_SOCKET -n -c -a emacs" # start a windowed frame
 alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
 alias ec="emacsclient -s $EMACS_SOCKET -n -a emacs" # do not start a new frame
 
-function ediff {
-    emacs --eval "(ediff \"$1\" \"$2\")"
-}
+ediff() { emacs --eval "(ediff \"$1\" \"$2\")" }
 
 #function q { w3m -dump "http://google.com/search?q=$*" | more; }
-function traffic { netstat -w1 -I"$@"; }
-function qlook { qlmanage -p "$@" >& /dev/null & }
-
-# Function to manage venvs for pyenv
-#function pyenv-venv {
-#    if [[ $# -ne 2 ]]
-#    then
-#        echo "Error: Incorrect number of arguments (2 required)"
-#        echo "Usage: $0 PYVER VENV"
-#        echo "   ex: $0 3.9.7 mytestvenv"
-#        return 0
-#    fi
-#
-#    PYVER=$1
-#    VENV=$2
-#
-#    # Check for python version
-#    pyenv versions --bare | grep ${PYVER} > /dev/null
-#    if [ "$?" != 0 ]; then
-#        echo "Python version ${PYVER} is not installed, aborting!"
-#        return 1
-#    else
-#        mkdir -p $HOME/.venvs
-#        python_bin="${HOME}/.pyenv/versions/${PYVER}/bin/python"
-#        echo "Creating new venv ~/.venvs/${VENV}"
-#        ${python_bin} -m venv ${HOME}/.venvs/${VENV}
-#        source ${HOME}/.venvs/${VENV}/bin/activate
-#    fi
-#}
+traffic() { netstat -w1 -I"$@"; }
+qlook() { qlmanage -p "$@" >& /dev/null & }
 
 # venv notification is being removed from pyenv-virtualenv, use this to add back
 #export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 #export BASE_PROMPT=$PS1
-#function updatePrompt {
+#updatePrompt() {
 #    if [[ $PYENV_VIRTUAL_ENV ]]; then
 #        export PS1="($PYENV_VERSION) "$BASE_PROMPT
 #    else

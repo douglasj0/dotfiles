@@ -1,20 +1,8 @@
 # -*- mode: sh -*-
-# Functions
-# setenv for csh junkies (including tset)
-seten() { export $1=$2 }
+# General shell functions
 
-# decode base64 from stdin
-# decode base64 from stdin copy to clipboard and stdout
-# note its using process substitution, not posix compliant
-decode64 () {
-  echo "$1" | base64 -d | tee >(pbcopy)
-}
-dbldecode64 () {
-  echo "$1" | base64 -d | base64 -d | tee >(pbcopy)
-}
-encode64 () {
-  echo "$1" | base64 ; echo
-}
+# setenv for csh junkies (including tset)
+setenv() { export $1=$2 }
 
 # change line of space separated text into text and underscores
 # useful for converting JIRA ticket names for directories
@@ -31,7 +19,7 @@ fucking() {
 }
 
 # remove ssh key for failed login attempt and try again
-damnit () {
+damnit() {
   LAST_CMD=`fc -nl -1`
   LAST_FIELD=$(echo $LAST_CMD | awk '{print $NF}')
   ssh-keygen -R $LAST_FIELD
@@ -39,8 +27,10 @@ damnit () {
   ssh $LAST_FIELD
 }
 
+#
 psg () { ps -aef | grep $* | grep -v grep }
 
+# animated table flip
 flip() {
   echo;
   echo -en "( º_º）  ┬─┬   \r"; sleep .5;
@@ -52,7 +42,6 @@ flip() {
 }
 
 calc() { awk "BEGIN{ print $* }"; }
-delhost() { ssh-keygen -R $@; }  # remove entry from ~/.ssh/known_hosts
 
 rot13() {  # For some reason, rot13 pops up everywhere
     if [ $# -eq 0 ]; then
@@ -62,7 +51,7 @@ rot13() {  # For some reason, rot13 pops up everywhere
     fi
 }
 
-# Top 10 most used commands in history (TODO update for MacOS)
+# Top 10 most used commands in shell history (TODO update for MacOS)
 top10 () { history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -nr | head -10; }
 
 ## Extract common archive formats
@@ -88,14 +77,15 @@ extract () {
 }
 
 # ssh key functions
+ssh-del-host() { ssh-keygen -R $@; }  # remove entry from ~/.ssh/known_hosts
 ssh-add-all() { LIST=$(ls $HOME/.ssh/id_* | grep -v '.pub'); ssh-add $LIST; } # add all ssh keys
 ssh-del-all() { ssh-add -D; }                              # delete all ssh keys
-ssh-add-work () { ssh-add ${HOME}/.ssh/id_rsa_work; }      # add work key
-ssh-del-work () { ssh-add -d ${HOME}/.ssh/id_rsa_work; }   # delete work key
-ssh-add-home () { ssh-add ${HOME}/.ssh/id_rsa_home; }      # add home github key
-ssh-del-home () { ssh-add -d ${HOME}/.ssh/id_rsa_home; }   # delete home github key
+ssh-add-work() { ssh-add ${HOME}/.ssh/id_rsa_work; }      # add work key
+ssh-del-work() { ssh-add -d ${HOME}/.ssh/id_rsa_work; }   # delete work key
+ssh-add-home() { ssh-add ${HOME}/.ssh/id_rsa_home; }      # add home github key
+ssh-del-home() { ssh-add -d ${HOME}/.ssh/id_rsa_home; }   # delete home github key
 
-# aws ssh function
+# aws ssh functions
 sssh() { AWSIP=$(echo $1 | sed -e 's/ip-//' -e 's/-/./g'); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
 assh() { AWSIP=$(echo $1 | awk -F"-" '{print $2"."$3"."$4"."$5}'); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
 

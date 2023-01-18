@@ -20,24 +20,22 @@ alias agdu='apt-get update ; apt-get dist-upgrade'
 alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
 
-## pass options to free ##
+# pass options to free ##
 alias meminfo='free -m -l -t'
 
-## get top process eating memory
+# get top process eating memory
 alias psmem='ps auxf | sort -nr -k 4'
 alias psmem10='ps auxf | sort -nr -k 4 | head -10'
 
-## get top process eating cpu ##
+# get top process eating cpu ##
 alias pscpu='ps auxf | sort -nr -k 3'
 alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
 
-## Get server cpu info ##
+# Get server cpu info ##
 alias cpuinfo='lscpu'
 
-###
 # Configure Emacs and Emacsclient
 # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
-###
 alias ecw="emacsclient -n -c -a emacs" # start a windowed frame
 alias ect="emacsclient -t -a emacs -nw" # start a terminal frame
 alias ec="emacsclient -n -a emacs" # do not start a new frame

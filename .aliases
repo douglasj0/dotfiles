@@ -1,5 +1,5 @@
 # -*- mode: sh -*-
-# General aliases
+# General shell aliases
 
 alias -- la='ls -a'
 alias -- lf='ls -F'
@@ -29,7 +29,7 @@ alias git-unfuck="git reset --hard HEAD"
 alias gitGraph='git log --graph --oneline --all --decorate --color'
 
 # helpful git rebase for PR function from Jody
-git_repo_remaster () {
+git_repo_remaster() {
   BRANCH=$(git status | awk '{print $3}' | head -n 1)
   git checkout master
   git pull --prune
@@ -39,5 +39,3 @@ git_repo_remaster () {
 
 # Recreate yolo sudo last command
 alias yolo='sudo $(fc -nl -1)'
-
-

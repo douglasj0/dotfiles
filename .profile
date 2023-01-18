@@ -26,7 +26,7 @@ PATH="${HOME}/bin:${HOME}/scripts:\
 MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man"
 TMPDIR="/tmp"
 
-# Set architecture-specific paths.
+# Set architecture-specific paths, mainly for Homebrew
 # NOTE might need to add to compile against brew openssl:
 #   export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
 #   export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
@@ -60,13 +60,6 @@ MANPATH="/usr/local/share/man:/usr/share/man:/usr/X11R6/man"
 TMPDIR="/tmp"
 export PATH MANPATH TMPDIR
 
-# pyenv path setup (commented out until I can test in Linux)
-#if command -v ~/.pyenv/bin/pyenv 1>/dev/null 2>&1; then
-#  #echo ".profile pyenv path setup"
-#  export PYENV_ROOT="$HOME/.pyenv"
-#  export PATH="$PYENV_ROOT/bin:$PATH"
-#  eval "$(pyenv init --path)"
-#fi
 ;; # end Linux
 
 *)

@@ -185,62 +185,49 @@ else
          eval "$(pyenv init - zsh)"
          #eval "$(pyenv virtualenv-init - zsh)" # commenting out doesn't seem to break anything
          echo ". pyenv initialized"
+
+         # Functions to manage pyenv venvs
+         pyenv_venv() {
+             if [[ $# -ne 2 ]]
+             then
+                 echo "Error: Incorrect number of arguments (2 required)"
+                 echo "Usage: $0 python-version venv-name"
+                 echo "   ex: $0 3.9.7 mytestvenv"
+                 return 0
+             fi
+
+             PYVER=$1
+             VENV=$2
+
+             # Check for python version
+             pyenv versions --bare | grep ${PYVER} > /dev/null
+             if [[ "$?" != 0 ]]; then
+                 echo "Python version ${PYVER} is not installed, aborting!"
+                 return 1
+             else
+                 mkdir -p ${HOME}/.venvs
+                 python_bin="${HOME}/.pyenv/versions/${PYVER}/bin/python"
+                 echo "Creating new venv ~/.venvs/${VENV}"
+                 ${python_bin} -m venv ${HOME}/.venvs/${VENV}
+                 source ${HOME}/.venvs/${VENV}/bin/activate
+             fi
+         }
+
+         pyenv_activate() {
+             # example from pyenv-virtualenv
+             # ex: pyenv activate <venv_name>
+
+             if [[ $# -ne 1 || ${1} == "list" || ${1} == "versions" ]]
+             then
+                 cd ${HOME}/.venvs && ls -1
+                 return
+             else
+                 source ${HOME}/.venvs/${1}/bin/activate
+                 return
+             fi
+         }
     fi
 fi
-
-# Functions to manage pyenv venvs
-pyenv_venv() {
-    if [[ $# -ne 2 ]]
-    then
-        echo "Error: Incorrect number of arguments (2 required)"
-        echo "Usage: $0 python-version venv-name"
-        echo "   ex: $0 3.9.7 mytestvenv"
-        return 0
-    fi
-
-    PYVER=$1
-    VENV=$2
-
-    # Check for python version
-    pyenv versions --bare | grep ${PYVER} > /dev/null
-    if [[ "$?" != 0 ]]; then
-        echo "Python version ${PYVER} is not installed, aborting!"
-        return 1
-    else
-        mkdir -p ${HOME}/.venvs
-        python_bin="${HOME}/.pyenv/versions/${PYVER}/bin/python"
-        echo "Creating new venv ~/.venvs/${VENV}"
-        ${python_bin} -m venv ${HOME}/.venvs/${VENV}
-        source ${HOME}/.venvs/${VENV}/bin/activate
-    fi
-}
-
-pyenv_activate() {
-    # example from pyenv-virtualenv
-    # ex: pyenv activate <venv_name>
-
-    if [[ $# -ne 1 || ${1} == "list" || ${1} == "versions" ]]
-    then
-        cd ${HOME}/.venvs && ls -1
-        return
-    else
-        source ${HOME}/.venvs/${1}/bin/activate
-        return
-    fi
-}
-
-# venv notification is being removed from pyenv-virtualenv, use this to add bac
-#export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-#export BASE_PROMPT=$PS1
-#function updatePrompt {
-#    if [[ $PYENV_VIRTUAL_ENV ]]; then
-#        export PS1="($PYENV_VERSION) "$BASE_PROMPT
-#    else
-#        export PS1=$BASE_PROMPT
-#    fi
-#}
-#export PROMPT_COMMAND='updatePrompt'
-#precmd() { eval '$PROMPT_COMMAND' } # this line is necessary for zsh
 
 
 ###################
@@ -261,7 +248,7 @@ Darwin)  # Darwin Environment
     fi
 
     if [[ $INSIDE_EMACS ]]; then
-        echo ".. Inside Emacs"
+        echo ".. Inside emacs"
         export TERM=vt100
     else
         export TERM=xterm-256color
