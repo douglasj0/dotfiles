@@ -188,8 +188,8 @@ else
     fi
 fi
 
-# Function to manage venvs for pyenv
-function pyenv_venv {
+# Functions to manage pyenv venvs
+pyenv_venv() {
     if [[ $# -ne 2 ]]
     then
         echo "Error: Incorrect number of arguments (2 required)"
@@ -203,15 +203,29 @@ function pyenv_venv {
 
     # Check for python version
     pyenv versions --bare | grep ${PYVER} > /dev/null
-    if [ "$?" != 0 ]; then
+    if [[ "$?" != 0 ]]; then
         echo "Python version ${PYVER} is not installed, aborting!"
         return 1
     else
-        mkdir -p $HOME/.venvs
+        mkdir -p ${HOME}/.venvs
         python_bin="${HOME}/.pyenv/versions/${PYVER}/bin/python"
         echo "Creating new venv ~/.venvs/${VENV}"
         ${python_bin} -m venv ${HOME}/.venvs/${VENV}
         source ${HOME}/.venvs/${VENV}/bin/activate
+    fi
+}
+
+pyenv_activate() {
+    # example from pyenv-virtualenv
+    # ex: pyenv activate <venv_name>
+
+    if [[ $# -ne 1 || ${1} == "list" || ${1} == "versions" ]]
+    then
+        cd ${HOME}/.venvs && ls -1
+        return
+    else
+        source ${HOME}/.venvs/${1}/bin/activate
+        return
     fi
 }
 
