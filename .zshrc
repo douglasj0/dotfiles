@@ -209,6 +209,7 @@ else
                  python_bin="${HOME}/.pyenv/versions/${PYVER}/bin/python"
                  echo "Creating new venv ~/.venvs/${VENV}"
                  ${python_bin} -m venv ${HOME}/.venvs/${VENV}
+                 ln -s ${HOME}/.venvs/${VENV} ${HOME}/.pyenv/versions # for emacs
                  source ${HOME}/.venvs/${VENV}/bin/activate
              fi
          }
