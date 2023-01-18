@@ -344,6 +344,9 @@ last sentence."
 
 ;; switch to treemacs window
 (global-set-key (kbd "C-x p") 'treemacs-select-window)
+;; and enable treemacs-follow-mode
+(after! treemacs
+  (treemacs-follow-mode 1))
 
 ;; eglot
 ;; https://github.com/joaotavora/eglot
@@ -391,3 +394,21 @@ last sentence."
 ;; Once you start using lsp, check the information in that link about telling flymake about lsp.
 ;(after! lsp-mode
 ;  (setq lsp-diagnostics-provider :flymake))
+
+
+;; set other-window and ace-window
+(global-set-key (kbd "C-x O") 'other-window)
+(global-set-key (kbd "C-x o") 'ace-window)
+
+
+;; It’s useful to have a scratch buffer around, and more useful to have a key chord to switch to it.
+(defun switch-to-scratch-buffer ()
+  "Switch to the current session's scratch buffer."
+  (interactive)
+  (switch-to-buffer "*scratch*"))
+(bind-key "C-c f s" #'switch-to-scratch-buffer)
+
+
+;; disable global font lock and/or tree-sitter
+;(global-font-lock-mode -1)
+;(tree-sitter-hl-mode -1)
