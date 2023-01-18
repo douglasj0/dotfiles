@@ -188,6 +188,46 @@ else
     fi
 fi
 
+# Function to manage venvs for pyenv
+function pyenv_venv {
+    if [[ $# -ne 2 ]]
+    then
+        echo "Error: Incorrect number of arguments (2 required)"
+        echo "Usage: $0 python-version venv-name"
+        echo "   ex: $0 3.9.7 mytestvenv"
+        return 0
+    fi
+
+    PYVER=$1
+    VENV=$2
+
+    # Check for python version
+    pyenv versions --bare | grep ${PYVER} > /dev/null
+    if [ "$?" != 0 ]; then
+        echo "Python version ${PYVER} is not installed, aborting!"
+        return 1
+    else
+        mkdir -p $HOME/.venvs
+        python_bin="${HOME}/.pyenv/versions/${PYVER}/bin/python"
+        echo "Creating new venv ~/.venvs/${VENV}"
+        ${python_bin} -m venv ${HOME}/.venvs/${VENV}
+        source ${HOME}/.venvs/${VENV}/bin/activate
+    fi
+}
+
+# venv notification is being removed from pyenv-virtualenv, use this to add bac
+#export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+#export BASE_PROMPT=$PS1
+#function updatePrompt {
+#    if [[ $PYENV_VIRTUAL_ENV ]]; then
+#        export PS1="($PYENV_VERSION) "$BASE_PROMPT
+#    else
+#        export PS1=$BASE_PROMPT
+#    fi
+#}
+#export PROMPT_COMMAND='updatePrompt'
+#precmd() { eval '$PROMPT_COMMAND' } # this line is necessary for zsh
+
 
 ###################
 #   OS Specific   #
