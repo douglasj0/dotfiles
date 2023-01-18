@@ -213,6 +213,7 @@ else
                  source ${HOME}/.venvs/${VENV}/bin/activate
              fi
          }
+         alias pyenvVenv=pyenv_venv
 
          pyenv_activate() {
              # example from pyenv-virtualenv
@@ -220,13 +221,30 @@ else
 
              if [[ $# -ne 1 || ${1} == "list" || ${1} == "versions" ]]
              then
-                 cd ${HOME}/.venvs && ls -1
+                 cd ${HOME}/.venvs && ls -d */ | cut -f1 -d'/'
                  return
              else
                  source ${HOME}/.venvs/${1}/bin/activate
                  return
              fi
          }
+         alias pyenvActivate=pyenv_activate
+
+         pyenv_uninstall() {
+             # example from pyenv-virtualenv
+             # ex: pyenv uninstall <venv_name>
+
+             if [[ $# -ne 1 || ${1} == "list" || ${1} == "versions" ]]
+             then
+                 cd ${HOME}/.venvs && ls -d */ | cut -f1 -d'/'
+                 return
+             else
+                 rm -rf ${HOME}/.venvs/${1}
+                 [ ${HOME}/.pyenv/versions/${1} ] && rm ${HOME}/.pyenv/versions/${1}
+                 return
+             fi
+         }
+         alias pyenvUninstall=pyenv_uninstall
     fi
 fi
 
