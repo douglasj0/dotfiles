@@ -1,7 +1,7 @@
 # -*- mode: sh -*-
 # Darwin specific aliases
 
-alias ls="ls -G"
+alias ls="ls -GH" # colorize output, follow symlinks
 alias ldd="otool -L"
 alias vmstat="vm_stat"
 alias truss="dtruss"
