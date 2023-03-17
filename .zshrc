@@ -144,6 +144,9 @@ NNTPSERVER=news.eternal-september.org
 MORE=p
 LESS="-XgmR"
 
+# Set ripgrep config file
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
+
 # Load general aliases
 if [ -f $HOME/.aliases ]; then
     . $HOME/.aliases
@@ -164,19 +167,28 @@ fi
 #add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
 
 
-###################
-#  Source workrc  #
-###################
-if [ -e ${HOME}/.workrc ]; then
-  source ~/.workrc
+############################
+#  Source infra functions  #
+############################
+if [ -d ${HOME}/.infra ]; then
+  for f in `ls ${HOME}/.infra/`; do source ${HOME}/.infra/$f; done
 fi
 
 
 ################
 #  pyenv init  #
 ################
-if [[ -f ${HOME}/NO_PYENV ]]; then
-    echo ". skipping pyenv"
+if [[ -f ${HOME}/NO_PYENV_VENV ]]; then
+    echo ". skipping venv pyenv"
+
+    if [[ -d "${HOME}/.pyenv" ]]
+    then
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+        echo ". pyenv virtualenv initialized"
+    fi
 else
     if [[ -d "${HOME}/.pyenv" ]]; then
          export PYENV_ROOT="$HOME/.pyenv"
@@ -184,7 +196,7 @@ else
          export PATH="$PYENV_ROOT/bin:$PATH"
          eval "$(pyenv init - zsh)"
          #eval "$(pyenv virtualenv-init - zsh)" # commenting out doesn't seem to break anything
-         echo ". pyenv initialized"
+         echo ". pyenv venv initialized"
 
          # Functions to manage pyenv venvs
          pyenv_venv() {
