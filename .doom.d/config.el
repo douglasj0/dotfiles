@@ -412,3 +412,14 @@ last sentence."
 ;; disable global font lock and/or tree-sitter
 ;(global-font-lock-mode -1)
 ;(tree-sitter-hl-mode -1)
+
+;;; -- Testing ---
+;;; https://www.reddit.com/r/emacs/search?q=Weekly%20tips&restrict_sr=on&sort=new&t=all
+
+;;; https://www.reddit.com/r/emacs/comments/11lqkbo/weekly_tips_tricks_c_thread/
+(advice-add 'vertico--setup :before (lambda () (setq vertico-count 15)))
+(define-key minibuffer-local-map (kbd "s-'") (lambda ()
+  (interactive)
+  (let ((vertico-resize t))
+    (setq vertico-count (if (= vertico-count 15) (- (frame-height) 5) 15))
+    (vertico--exhibit))))
