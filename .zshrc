@@ -167,14 +167,6 @@ fi
 #add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
 
 
-############################
-#  Source infra functions  #
-############################
-if [ -d ${HOME}/.infra ]; then
-  for f in `ls ${HOME}/.infra/`; do source ${HOME}/.infra/$f; done
-fi
-
-
 ################
 #  pyenv init  #
 ################
@@ -261,6 +253,15 @@ else
 fi
 
 
+############################
+#  Source infra functions  #
+############################
+if [ -d ${HOME}/.infra ]; then
+  for f in `ls ${HOME}/.infra/`; do source ${HOME}/.infra/$f; done
+  echo ". loaded infra functions"
+fi
+
+
 ###################
 #   OS Specific   #
 ###################
@@ -284,6 +285,9 @@ Darwin)  # Darwin Environment
     else
         export TERM=xterm-256color
     fi
+
+    # Fix date/gdate issues, if we have gdate use it
+    #if [[ -e /opt/homebrew/bin/gdate ]]; then alias date=gdate; fi
 
     export EDITOR="${HOME}/bin/edit"
     export ALTERNATE_EDITOR="mg"

@@ -16,3 +16,6 @@ alias reindex="sudo mdutil -E /"  # erase spotlight indexes and rebuild
 
 # visual studio alias
 alias vs="/Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron"
+
+# multipass aliases
+alias mp="multipass"
