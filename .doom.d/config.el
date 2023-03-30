@@ -423,3 +423,6 @@ last sentence."
   (let ((vertico-resize t))
     (setq vertico-count (if (= vertico-count 15) (- (frame-height) 5) 15))
     (vertico--exhibit))))
+
+;;;doom emacs Help info hidden behind at bottom minibuffer?
+(setq which-key-allow-imprecise-window-fit nil)
