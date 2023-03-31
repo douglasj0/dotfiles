@@ -1,9 +1,7 @@
 # -*- mode: org; fill-column: 78 -*-
 #+STARTUP: overview
 
-Check this: https://sachachua.com/dotemacs/index.html
-
-* Startup
+* Housekeeping
 ** initialization
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t -*-
@@ -38,14 +36,11 @@ Check this: https://sachachua.com/dotemacs/index.html
 (unless (server-running-p) (server-start))
 #+end_src
 
-** enable disabled functions
+** enable di sabled functions
 #+begin_src emacs-lisp
 ;; Upcase and downcase regions
 (put 'upcase-region 'disabled nil)  ; C-x C-u
 (put 'downcase-region 'disabled nil)  ; C-x C-l
-
-;; Sets the current horizontal position for C-n and C-p
-(put 'set-goal-column 'disabled nil)
 
 ;; Restrict buffer editing to a region
 ;; Text Narrowing commands:
@@ -76,7 +71,7 @@ Check this: https://sachachua.com/dotemacs/index.html
 ; Re-enable swap frames with M-`
 ;(global-set-key "\M-`" 'other-frame)
 
-;; Open an Emacs eshell, shell, term, or ansi-term - conflicting with toggle
+;; Open an Emacs eshell, shell, term, or ansi-term - conflicts with toggle
 ;(global-set-key (kbd "C-c te") 'eshell)
 ;(global-set-key (kbd "C-c ts") 'shell)
 ;(global-set-key (kbd "C-c tt") 'term)
@@ -96,7 +91,7 @@ Check this: https://sachachua.com/dotemacs/index.html
 ** global settings
 #+begin_src emacs-lisp
 ;; add org-roam-directory to safe variables
-;(add-to-list 'safe-local-variable-values '(org-roam-directory . "."))
+(add-to-list 'safe-local-variable-values '(org-roam-directory . "."))
 
 ;; set default shell to zsh
 (setq explicit-shell-file-name "/bin/zsh")
@@ -144,6 +139,11 @@ Check this: https://sachachua.com/dotemacs/index.html
 
 ;; Use CUA mode for rectangles (C-RET to select, normal emacs keys to copy)
 ;;; http://emacs-fu.blogspot.com/2010/01/rectangles-and-cua.html
+;(setq cua-rectangle-mark-key (kbd "C-^"))
+(global-unset-key "\C-z")
+;(setq cua-rectangle-mark-key (kbd "C-z '"))
+(setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; instead of Ctrl-Enter
+(cua-selection-mode t)
 (setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
 (cua-mode t)
 
@@ -226,16 +226,6 @@ Check this: https://sachachua.com/dotemacs/index.html
 ** functions
 #+begin_src emacs-lisp
 ;;; ---------------------------------------------------------------------------
-;;; https://stackoverflow.com/questions/8881649/how-to-force-org-mode-to-open-a-link-in-another-frame
-;;; Open link at point in new frame
-(defun zin/org-open-other-frame ()
-  "Jump to bookmark in another frame. See `bookmark-jump' for more."
-  (interactive)
-  (let ((org-link-frame-setup (acons 'file 'find-file-other-frame org-link-frame-setup)))
-    (org-open-at-point)))
-(global-set-key (kbd "C-c 5 C-o") 'zin/org-open-other-frame)
-
-;;; ---------------------------------------------------------------------------
 ;;; https://gist.github.com/mwfogleman/95cc60c87a9323876c6c
 ;;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
 (defun narrow-or-widen-dwim ()
@@ -315,334 +305,6 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
     (delete-frame (selected-frame))))
 (global-set-key "\C-x\C-c" 'intelligent-close) ;forward reference
 #+end_src
-* Keybindings
-** code - empty
-** file
-
-TODO: convert doom'isms
-
-#+begin_src emacs-lisp
-  (progn
-    (define-prefix-command 'file-keymap)
-    (define-key file-keymap (kbd "c") '("Open project editorconfig"   . editorconfig-find-current-editorconfig))
-    (define-key file-keymap (kbd "C") '("Copy this file"              . doom/copy-this-file))
-    (define-key file-keymap (kbd "d") '("Find directory"              . dired))
-    (define-key file-keymap (kbd "D") '("Delete this file"            . doom/delete-this-file))
-    (define-key file-keymap (kbd "e") '("Find file in emacs.d"        . doom/find-file-in-emacsd))
-    (define-key file-keymap (kbd "E") '("Browse emacs.d"              . doom/browse-in-emacsd))
-    (define-key file-keymap (kbd "f") '("Find file"                   . find-file))
-    (define-key file-keymap (kbd "F") '("Find file from here"         . +default/find-file-under-here))
-    (define-key file-keymap (kbd "l") '("Locate file"                 . locate))
-    (define-key file-keymap (kbd "m") '("Rename/move this file"       . doom/move-this-file))
-    (define-key file-keymap (kbd "p") '("Find file in private config" . doom/find-file-in-private-config))
-    (define-key file-keymap (kbd "P") '("Browse private config"       . doom/open-private-config))
-    (define-key file-keymap (kbd "r") '("Recent files"                . recentf-open-files))
-    (define-key file-keymap (kbd "R") '("Recent project files"        . projectile-recentf))
-    (define-key file-keymap (kbd "u") '("Sudo this file"              . doom/sudo-this-file))
-    (define-key file-keymap (kbd "U") '("Sudo find file"              . doom/sudo-find-file))
-    (define-key file-keymap (kbd "y") '("Yank file path"              . +default/yank-buffer-path))
-    (define-key file-keymap (kbd "Y") '("Yank file path from project" . +default/yank-buffer-path-relative-to-project))
-    (define-key file-keymap (kbd "x") '("Open scratch buffer"         . doom/open-scratch-buffer))
-    (define-key file-keymap (kbd "X") '("Switch to scratch buffer"    . doom/switch-to-scratch-buffer))
-  )
-
-  (global-set-key (kbd "C-c f") '("file" . file-keymap))
-#+end_src
-
-** insert - empty
-** multiple-cursors
-module multiple-cursors
-
-#+begin_src emacs-lisp
-  (progn
-    (define-prefix-command 'multiple-cursors-keymap)
-    (define-key multiple-cursors-keymap (kbd "l") '("Edit lines"        . mc/edit-lines))
-    (define-key multiple-cursors-keymap (kbd "n") '("Mark next"         . mc/mark-next-like-this))
-    (define-key multiple-cursors-keymap (kbd "N") '("Unmark next"       . mc/unmark-next-like-this))
-    (define-key multiple-cursors-keymap (kbd "p") '("Mark previous"     . mc/mark-previous-like-this))
-    (define-key multiple-cursors-keymap (kbd "P") '("Unmark previous"   . mc/unmark-previous-like-this))
-    (define-key multiple-cursors-keymap (kbd "t") '("Mark all"          . mc/mark-all-like-this))
-    (define-key multiple-cursors-keymap (kbd "m") '("Mark all DWIM"     . mc/mark-all-like-this-dwim))
-    (define-key multiple-cursors-keymap (kbd "e") '("Edit line endings" . mc/edit-ends-of-lines))
-    (define-key multiple-cursors-keymap (kbd "a") '("Edit line starts"  . mc/edit-beginnings-of-lines))
-    (define-key multiple-cursors-keymap (kbd "s") '("Mark tag"          . mc/mark-sgml-tag-pair))
-    (define-key multiple-cursors-keymap (kbd "d") '("Mark in defun"     . mc/mark-all-like-this-in-defun))
-  )
-
-  ;; consult is already using C-c m?
-  (global-set-key (kbd "C-c x") '("multiple-cursors" . multiple-cursors-keymap))
-#+end_src
-
-** notes - empty
-
-TODO
-
-    (when (fboundp 'treemacs)
-
-#+begin_src emacs-lisp
-  (progn
-    (define-prefix-command 'notes-keymap)
-    (define-key notes-keymap (kbd ".") '("Search notes for symbol"        . +default/search-notes-for-symbol-at-point))
-    (define-key notes-keymap (kbd "a") '("Org agenda"                     . org-agenda))
-    (define-key notes-keymap (kbd "b") '("Bibliographic notes"            . citar-open-notes))
-    (define-key notes-keymap (kbd "c") '("Toggle last org-clock"          . +org/toggle-last-clock))
-    (define-key notes-keymap (kbd "C") '("Cancel current org-clock"       . org-clock-cancel))
-    (define-key notes-keymap (kbd "f") '("Find file in notes"             . +default/find-in-notes))
-    (define-key notes-keymap (kbd "F") '("Browse notes"                   . +default/browse-notes))
-    (define-key notes-keymap (kbd "l") '("Org store link"                 . org-store-link))
-    (define-key notes-keymap (kbd "m") '("Tags search"                    . org-tags-view))
-    (define-key notes-keymap (kbd "n") '("Org capture"                    . org-capture))
-    (define-key notes-keymap (kbd "N") '("Goto capture"                   . org-capture-goto-target))
-    (define-key notes-keymap (kbd "o") '("Active org-clock"               . org-clock-goto))
-    (define-key notes-keymap (kbd "t") '("Todo list"                      . org-todo-list))
-    (define-key notes-keymap (kbd "s") '("Search notes"                   . +default/org-notes-search))
-    (define-key notes-keymap (kbd "S") '("Search org agenda headlines"    . +default/org-notes-headlines))
-    (define-key notes-keymap (kbd "v") '("View search"                    . org-search-view))
-    (define-key notes-keymap (kbd "y") '("Org export to clipboard"        . +org/export-to-clipboard))
-    (define-key notes-keymap (kbd "Y") '("Org export to clipboard as RTF" . +org/export-to-clipboard-as-rich-text))
-    (define-key notes-keymap (kbd "j") '("New Entry"                      . org-journal-new-entry))
-    (define-key notes-keymap (kbd "J") '("New Scheduled Entry"            . org-journal-new-scheduled-entry))
-    (define-key notes-keymap (kbd "s") '("Search Forever"                 . org-journal-search-forever))
-
-    (define-prefix-command 'roam2-notes-keymap)
-    (define-key notes-keymap (kbd "a") '("Open random node"   . org-roam-node-random))
-    (define-key notes-keymap (kbd "f") '("Find node"          . org-roam-node-find))
-    (define-key notes-keymap (kbd "F") '("Find ref"           . org-roam-ref-find))
-    (define-key notes-keymap (kbd "g") '("Show graph"         . org-roam-graph))
-    (define-key notes-keymap (kbd "i") '("Insert node"        . org-roam-node-insert))
-    (define-key notes-keymap (kbd "n") '("Capture to node"    . org-roam-capture))
-    (define-key notes-keymap (kbd "r") '("Toggle roam buffer" . org-roam-buffer-toggle))
-    (define-key notes-keymap (kbd "R") '("Launch roam buffer" . org-roam-buffer-display-dedicated))
-    (define-key notes-keymap (kbd "s") '("Sync database"      . org-roam-db-sync))
-
-    (define-prefix-command 'date-roam2-notes-keymap)
-    (define-key notes-keymap (kbd "b") '("Goto previous note" . org-roam-dailies-goto-previous-note))
-    (define-key notes-keymap (kbd "d") '("Goto date"          . org-roam-dailies-goto-date))
-    (define-key notes-keymap (kbd "D") '("Capture date"       . org-roam-dailies-capture-date))
-    (define-key notes-keymap (kbd "f") '("Goto next note"     . org-roam-dailies-goto-next-note))
-    (define-key notes-keymap (kbd "m") '("Goto tomorrow"      . org-roam-dailies-goto-tomorrow))
-    (define-key notes-keymap (kbd "M") '("Capture tomorrow"   . org-roam-dailies-capture-tomorrow))
-    (define-key notes-keymap (kbd "n") '("Capture today"      . org-roam-dailies-capture-today))
-    (define-key notes-keymap (kbd "t") '("Goto today"         . org-roam-dailies-goto-today))
-    (define-key notes-keymap (kbd "T") '("Capture today"      . org-roam-dailies-capture-today))
-    (define-key notes-keymap (kbd "y") '("Goto yesterday"     . org-roam-dailies-goto-yesterday))
-    (define-key notes-keymap (kbd "Y") '("Capture yesterday"  . org-roam-dailies-capture-yesterday))
-    (define-key notes-keymap (kbd "-") '("Find directory"     . org-roam-dailies-find-directory))
-  )
-
-  (global-set-key (kbd "C-c x") '("notes" . notes-keymap))
-  (global-set-key (kbd "C-c x r") '("notes" . roam2-notes-keymap))
-  (global-set-key (kbd "C-c x r d") '("date" . date-roam2-notes-keymap))
-#+end_src
-
-** open
-
-TODO Needs macos special functions
-
-#+begin_src emacs-lisp
-  (progn
-    (define-prefix-command 'open-keymap)
-    (define-key open-keymap (kbd "b") '("Browser"            . browse-url-of-file))
-    (define-key open-keymap (kbd "d") '("Debugger"           . +debugger/start))
-    (define-key open-keymap (kbd "f") '("New frame"          . make-frame))
-    (define-key open-keymap (kbd "r") '("REPL"               . +eval/open-repl-other-window))
-    (define-key open-keymap (kbd "R") '("REPL (same window)" . +eval/open-repl-same-window))
-    (define-key open-keymap (kbd "-") '("Dired"              . dired-jump))
-    (when (fboundp 'treemacs)
-      (define-key open-keymap (kbd "p") '("Project sidebar"               . +treemacs/toggle))
-      (define-key open-keymap (kbd "P") '("Find file in project rsidebar" . treemacs-find-file)))
-    (when (fboundp 'vterm)
-      (define-key open-keymap (kbd "t") '("Toggle vterm popup" . +vterm/toggle))
-      (define-key open-keymap (kbd "T") '("Open vterm here"    . +vterm/here)))
-    (define-key open-keymap (kbd "o") '("Reveal in Finder"          . +macos/reveal-in-finder))
-    (define-key open-keymap (kbd "O") '("Reveal project in Finder"  . +macos/reveal-project-in-finder))
-    (define-key open-keymap (kbd "u") '("Send to Transmit"          . +macos/send-to-transmit))
-    (define-key open-keymap (kbd "U") '("Send project to Transmit"  . +macos/send-project-to-transmit))
-    (define-key open-keymap (kbd "l") '("Send to Launchbar"         . +macos/send-to-launchbar))
-    (define-key open-keymap (kbd "L") '("Send project to Launchbar" . +macos/send-project-to-launchbar))
-    (define-key open-keymap (kbd "i") '("Open in iTerm"             . +macos/open-in-iterm))
-    (define-key open-keymap (kbd "I") '("Open in new iTerm window"  . +macos/open-in-iterm-new-window))
-    (when (fboundp 'docker)
-      (define-key open-keymap (kbd "D") '("Docker" . docker)))
-  )
-
-  (global-set-key (kbd "C-c o") '("open" . open-keymap))
-#+end_src
-
-** project - empty
-** search
-
-TODO some entries are not working
-#+begin_src emacs-lisp
-  (progn
-    (define-prefix-command 'search-keymap)
-    (define-key search-keymap (kbd ".") '("Search project for symbol"  . +default/search-project-for-symbol-at-point))
-    (define-key search-keymap (kbd "b") '("Search buffer"              . consult-line))
-    ;(define-key search-keymap (kbd "B") '("Search all open buffers"    . consult-line-multi 'all-buffer))
-    (define-key search-keymap (kbd "d") '("Search current directory"   . +default/search-cwd))
-    (define-key search-keymap (kbd "D") '("Search other directory"     . +default/search-other-cwd))
-    (define-key search-keymap (kbd "e") '("Search .emacs.d"            . +default/search-emacsd))
-    (define-key search-keymap (kbd "f") '("Locate file"                . +lookup/file))
-    (define-key search-keymap (kbd "i") '("Jump to symbol"             . imenu))
-    (define-key search-keymap (kbd "l") '("Jump to visible link"       . link-hint-open-link))
-    (define-key search-keymap (kbd "L") '("Jump to link"               . ffap-menu))
-    (define-key search-keymap (kbd "m") '("Jump to bookmark"           . bookmark-jump))
-    (define-key search-keymap (kbd "o") '("Look up online"             . +lookup/online))
-    (define-key search-keymap (kbd "O") '("Look up online (w/ prompt)" . +lookup/online-select))
-    (define-key search-keymap (kbd "k") '("Look up in local docsets"   . +lookup/in-docsets))
-    (define-key search-keymap (kbd "K") '("Look up in all docsets"     . +lookup/in-all-docsets))
-    (define-key search-keymap (kbd "p") '("Search project"             . +default/search-project))
-    (define-key search-keymap (kbd "P") '("Search other project"       . +default/search-other-project))
-    (define-key search-keymap (kbd "s") '("Search buffer"              . +default/search-buffer))
-    (define-key search-keymap (kbd "S") '("Search buffer for thing at point" . +vertico/search-symbol-at-point))
-    (define-key search-keymap (kbd "t") '("Dictionary"                 . +lookup/dictionary-definition))
-    (define-key search-keymap (kbd "T") '("Thesaurus"                  . +lookup/synonyms))
-  )
-
-  (global-set-key (kbd "C-c s") '("search" . search-keymap))
-#+end_src
-
-** toggle
-
-TODO some entries are not working
-#+begin_src emacs-lisp
-  (progn
-    (define-prefix-command 'toggle-keymap)
-    (define-key toggle-keymap (kbd "b") '("Big mode"              . doom-big-font-mode))
-    (define-key toggle-keymap (kbd "c") '("Fill Column Indicator" . global-display-fill-column-indicator-mode))
-    (define-key toggle-keymap (kbd "f") '("Flymake"               . flymake-mode))
-    (define-key toggle-keymap (kbd "F") '("Frame fullscreen"      . toggle-frame-fullscreen))
-    (define-key toggle-keymap (kbd "I") '("Indent style"          . doom/toggle-indent-style))
-    (define-key toggle-keymap (kbd "l") '("Line numbers"          . doom/toggle-line-numbers))
-    (define-key toggle-keymap (kbd "v") '("Visible mode"          . visible-mode))
-    (define-key toggle-keymap (kbd "w") '("Soft line wrapping"    . visual-line-mode))
-    (when (fboundp 'word-wrap)
-      (define-key toggle-keymap (kbd "w") '("Soft line wrapping"    . +word-wrap-mode)))
-    (when (fboundp 'checkers)
-      (define-key toggle-keymap (kbd "f") '("Flycheck"              . flycheck-mode)))
-    (define-key toggle-keymap (kbd "i") '("Indent guides"         . highlight-indent-guides-mode))
-    (define-key toggle-keymap (kbd "m") '("Minimap mode"          . minimap-mode))
-    (define-key toggle-keymap (kbd "p") '("org-tree-slide mode"   . org-tree-slide-mode))
-    (define-key toggle-keymap (kbd "r") '("Read-only mode"        . read-only-mode))
-    (define-key toggle-keymap (kbd "s") '("Spell checker"         . flyspell-mode))
-  )
-
-  (global-set-key (kbd "C-c t") '("search" . toggle-keymap))
-#+end_src
-
-** versioning
-module magit, vc-gutter
-(installed diff-hl instead, covert to that or pull vc-gutter from doom)
-
-#+begin_src emacs-lisp
-  ;(setq versioning-keymap (make-sparse-keymap)) ; create empty keymap, needed?
-
-; check for magit for keybind: (when (fboundp 'magit)
-
-  (progn
-    (define-prefix-command 'versioning-keymap)
-    (define-key versioning-keymap (kbd "R") '("Git revert file"       . vc-revert))
-    (define-key versioning-keymap (kbd "y") '("Kill link to remote"   . +vc/browse-at-remote-kill))
-    (define-key versioning-keymap (kbd "Y") '("Kill link to homepage" . +vc/browse-at-remote-kill-homepage))
-    (define-key versioning-keymap (kbd "r") '("Git revert hunk"       . +vc-gutter/revert-hunk))
-    (define-key versioning-keymap (kbd "s") '("Git stage hunk"        . +vc-gutter/stage-hunk))
-    (define-key versioning-keymap (kbd "r") '("Git time machine"      . git-timemachine-toggle))
-    (define-key versioning-keymap (kbd "n") '("Jump to next hunk"     . +vc-gutter/next-hunk))
-    (define-key versioning-keymap (kbd "p") '("Jump to previous hunk" . +vc-gutter/previous-hunk))
-    (define-key versioning-keymap (kbd "/") '("Magit dispatch"        . magit-dispatch))
-    (define-key versioning-keymap (kbd ".") '("Magit file dispatch"   . magit-file-dispatch))
-    (define-key versioning-keymap (kbd "'") '("Forge dispatch"        . forge-dispatch))
-    (define-key versioning-keymap (kbd "g") '("Magit status"          . magit-status))
-    (define-key versioning-keymap (kbd "G") '("Magit status here"     . magit-status-here))
-    (define-key versioning-keymap (kbd "x") '("Magit file delete"     . magit-file-delete))
-    (define-key versioning-keymap (kbd "B") '("Magit blame"           . magit-blame-addition))
-    (define-key versioning-keymap (kbd "C") '("Magit clone"           . magit-clone))
-    (define-key versioning-keymap (kbd "F") '("Magit fetch"           . magit-fetch))
-    (define-key versioning-keymap (kbd "L") '("Magit buffer log"      . magit-log-buffer-file))
-    (define-key versioning-keymap (kbd "S") '("Git stage file"        . magit-stage-file))
-    (define-key versioning-keymap (kbd "U") '("Git unstage file"      . magit-unstage-file))
-
-    ;; sub-menues (c+create, f+find, l+list, o+open in browser
-    (define-prefix-command 'vc-find-keymap)
-    (define-key vc-find-keymap (kbd "f") '("Find file"           . magit-find-file))
-    (define-key vc-find-keymap (kbd "g") '("Find gitconfig file" . magit-find-git-config-file))
-    (define-key vc-find-keymap (kbd "c") '("Find commit"         . magit-show-commit))
-    (define-key vc-find-keymap (kbd "i") '("Find issue"          . forge-visit-issue))
-    (define-key vc-find-keymap (kbd "p") '("Find pull request"   . forge-visit-pullreq))
-
-    (define-prefix-command 'vc-open-keymap)
-    (define-key vc-open-keymap (kbd ".") '("Browse file or region" . +vc/browse-at-remote))
-    (define-key vc-open-keymap (kbd "h") '("Browse homepage"       . +vc/browse-at-remote-homepage))
-    (define-key vc-open-keymap (kbd "r") '("Browse remote"         . forge-browse-remote))
-    (define-key vc-open-keymap (kbd "c") '("Browse commit"         . forge-browse-commit))
-    (define-key vc-open-keymap (kbd "i") '("Browse an issue"       . forge-browse-issue))
-    (define-key vc-open-keymap (kbd "p") '("Browse a pull request" . forge-browse-pullreq))
-    (define-key vc-open-keymap (kbd "I") '("Browse issues"         . forge-browse-issues))
-    (define-key vc-open-keymap (kbd "P") '("Browse pull requests"  . forge-browse-pullreqs))
-
-    (define-prefix-command 'vc-list-keymap)
-    (define-key vc-list-keymap (kbd "g") '("List gists"          . gist-list))
-    (define-key vc-list-keymap (kbd "r") '("List repositories"   . magit-list-repositories))
-    (define-key vc-list-keymap (kbd "s") '("List submodules"     . magit-list-submodules))
-    (define-key vc-list-keymap (kbd "i") '("List issues"         . forge-list-issues))
-    (define-key vc-list-keymap (kbd "p") '("List pull requests"  . forge-list-pullreqs))
-    (define-key vc-list-keymap (kbd "n") '("List notifications"  . forge-list-notifications))
-
-    (define-prefix-command 'vc-create-keymap)
-    (define-key vc-create-keymap (kbd "r") '("Initialize repo" . magit-init))
-    (define-key vc-create-keymap (kbd "R") '("Clone repo"      . magit-clone))
-    (define-key vc-create-keymap (kbd "c") '("Commit"          . magit-commit-create))
-    (define-key vc-create-keymap (kbd "f") '("Fixup"           . magit-commit-fixup))
-    (define-key vc-create-keymap (kbd "i") '("Issue"           . forge-create-issue))
-    (define-key vc-create-keymap (kbd "p") '("Pull request"    . forge-create-pullreq))
-  )
-
-  (global-set-key (kbd "C-c v")   '("versioning" . versioning-keymap))
-  (global-set-key (kbd "C-c v c") '("create"     . vc-create-keymap))
-  (global-set-key (kbd "C-c v f") '("find"       . vc-find-keymap))
-  (global-set-key (kbd "C-c v l") '("list"       . vc-list-keymap))
-  (global-set-key (kbd "C-c v o") '("open in browser" . vc-open-keymap))
-#+end_src
-
-** workspaces/windows - doesn't work, need workspaces from doom
-
-module workspaces ==  persp-mode
-
-...#+begin_src emacs-lisp
-  ;(setq workspaces-keymap (make-sparse-keymap)) ; create empty keymap, needed?
-
-  (progn
-    (define-prefix-command 'workspaces-keymap)
-    (define-key workspaces-keymap (kbd "d") '("Display workspaces"          . +workspace/display))
-    (define-key workspaces-keymap (kbd "r") '("Rename workspace"            . +workspace/rename))
-    (define-key workspaces-keymap (kbd "c") '("Create workspace"            . +workspace/new))
-    (define-key workspaces-keymap (kbd "C") '("Create named workspace"      . +workspace/new-named))
-    (define-key workspaces-keymap (kbd "k") '("Delete workspace"            . +workspace/delete))
-    (define-key workspaces-keymap (kbd "S") '("Save workspace"              . +workspace/save))
-    (define-key workspaces-keymap (kbd "o") '("Switch to other workspace"   . +workspace/other))
-    (define-key workspaces-keymap (kbd "p") '("Switch to left workspace"    . +workspace/switch-left))
-    (define-key workspaces-keymap (kbd "n") '("Switch to right workspace"   . +workspace/switch-right))
-    (define-key workspaces-keymap (kbd "w") '("Switch to"                   . +workspace/switch-to))
-    (define-key workspaces-keymap (kbd "1") '("Switch to workspace 1"       . +workspace/switch-to-0))
-    (define-key workspaces-keymap (kbd "2") '("Switch to workspace 2"       . +workspace/switch-to-1))
-    (define-key workspaces-keymap (kbd "3") '("Switch to workspace 3"       . +workspace/switch-to-2))
-    (define-key workspaces-keymap (kbd "4") '("Switch to workspace 4"       . +workspace/switch-to-3))
-    (define-key workspaces-keymap (kbd "5") '("Switch to workspace 5"       . +workspace/switch-to-4))
-    (define-key workspaces-keymap (kbd "6") '("Switch to workspace 6"       . +workspace/switch-to-5))
-    (define-key workspaces-keymap (kbd "7") '("Switch to workspace 7"       . +workspace/switch-to-6))
-    (define-key workspaces-keymap (kbd "8") '("Switch to workspace 8"       . +workspace/switch-to-7))
-    (define-key workspaces-keymap (kbd "9") '("Switch to workspace 9"       . +workspace/switch-to-8))
-    (define-key workspaces-keymap (kbd "0") '("Switch to last workspace"    . +workspace/switch-to-final))
-    (define-key workspaces-keymap (kbd "a") '("Autosave session"            . doom/quicksave-session))
-    (define-key workspaces-keymap (kbd "s") '("Save session"                . doom/save-session))
-    (define-key workspaces-keymap (kbd "l") '("Load session"                . doom/load-session))
-    (define-key workspaces-keymap (kbd "L") '("Load last autosaved session" . doom/quickload-session))
-    (define-key workspaces-keymap (kbd "u") '("Undo window config"          . winner-undo))
-    (define-key workspaces-keymap (kbd "U") '("Redo window config"          . winner-redo))
-  )
-
-  (global-set-key (kbd "C-c w")   '("workspaces/windows" . workspaces-keymap))
-...#+end_src
 
 * Utilities
 ** helpful
@@ -675,17 +337,6 @@ https://github.com/Wilfred/helpful
 ))
 #+end_src
 
-** su/sudo
-read-only files will be writable but if you attempt to save your modifications, emacs will ask root user’s password if needed. Can save pw to ~/.authinfo.
-https://github.com/PythonNut/su.el
-
-NOTE: Installed in elisp, no package
-
-#+begin_src emacs-lisp
-;(use-package su
-;  :config (su-mode +1))
-#+end_src
-
 ** recentf
 a minor mode that builds a list of recently opened files
 https://www.emacswiki.org/emacs/RecentFiles
@@ -695,7 +346,7 @@ Relacing open read-only key binding
 #+begin_src emacs-lisp
 (use-package recentf
   ;:bind ("\C-x\ \C-r" . recentf-open-files)
-  :bind ("\C-x\ \C-r" . consult-recent-file)
+  :bind ("C-x C-r" . consult-recent-file)
   :config
   (setq recentf-save-file "~/.emacs.d/var/recentf"
         ;recentf-save-file (expand-file-name "recentf" "~/.emacs.d/var")
@@ -706,39 +357,10 @@ Relacing open read-only key binding
         recentf-auto-cleanup 'never)
   (add-to-list 'recentf-exclude '(".*-autoloads\\.el\\'"
                                   "[/\\]\\.elpa/"))
-  (recentf-mode +1))
-#+end_src
-
-** flyspell (spelling)
-Correcting misspelled words with flyspell using favourite interface.
-https://emacs.stackexchange.com/questions/31300/can-you-turn-on-flyspell-for-comments-but-not-strings
-
-Mac: brew install aspell
-
-#+begin_src emacs-lisp
-(use-package flyspell
   :init
-  ;(progn
-  ;  (flyspell-mode 1))
-  :hook ((prog-mode . flyspell-prog-mode)
-         (org-mode  . turn-off-flyspell)
-         (text-mode . flyspell-mode))
-  ;:bind ("s-$" . ispell-word)
-  :config
-  (global-unset-key (kbd "M-$")) ; on mac screenshot region
-  (global-set-key (kbd "s-$") 'ispell-word)
-  (progn
-    (setq ispell-program-name "aspell")
-    (setq ispell-list-command "--list")
-    (setq ispell-extra-args '("--sug-mode=fast" "--lang=en_US"))
-  ) ;; run flyspell with aspell, not ispell
-)
-
-;; Correcting misspelled words with flyspell using favourite interface.
-;; https://github.com/d12frosted/flyspell-correct
-;(use-package flyspell-correct
-;  :after flyspell)
+  (recentf-mode 1))
 #+end_src
+
 * OS Settings
 ** MacOS
 #+begin_src emacs-lisp
@@ -758,6 +380,14 @@ Mac: brew install aspell
 (setq mac-control-modifier 'control) ; make Control key do Control
 ;(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
 
+;; force mac modifier keys
+;(setq mac-command-modifier      'super
+;      ns-command-modifier       'super
+;      mac-option-modifier       'meta
+;      ns-option-modifier        'meta
+;      mac-right-option-modifier 'meta
+;      ns-right-option-modifier  'meta)
+
 ;; Use macOS default shortscuts for Cut/Copy/Paste/Select All
 ;; https://www.emacswiki.org/emacs/EmacsForMacOS#h5o-37
 (global-set-key (kbd "M-c") 'kill-ring-save) ; ⌘-c = Copy
@@ -766,6 +396,10 @@ Mac: brew install aspell
 (global-set-key (kbd "M-a") 'mark-whole-buffer) ; ⌘-a = Select all
 (global-set-key (kbd "M-z") 'undo) ; ⌘-z = Undo
 (global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
+
+;; mac 'ls' doesn't support --dired
+(when (string= system-type "darwin")
+  (setq dired-use-ls-dired nil))
 
 ;; Use meta +/- to change text size
 (bind-key "M-+" 'text-scale-increase)
@@ -1294,16 +928,6 @@ Disabled on remote directories for now due to tramp slowdown issues
 )
 #+end_src
 
-** ag.el
-An Emacs frontend to The Silver Searcher
-https://github.com/Wilfred/ag.el
-
-#+begin_src emacs-lisp
-(use-package ag
-  :ensure t
-  :commands (ag ag-regexp ag-project))
-#+end_src
-
 * Completions
 ** vertico/corfu/consult
 vertico.el - VERTical Interactive COmpletion
@@ -1651,56 +1275,12 @@ A) It's C-c C-t to toggle vterm-copy-mode.
 )
 #+end_src
 ** tramp
-It seems very slow (on MacOS?)
-https://github.com/mpereira/.emacs.d/blob/master/configuration.org
-
-More debugging
-https://emacs.stackexchange.com/questions/33845/magit-with-tramp-is-slow
 
 #+begin_src emacs-lisp
 (use-package tramp
   :init
   ;; Set default connection method for TRAMP
   (setq tramp-default-method "sshx"))
-
-;; Disable version control on tramp buffers to avoid freezes.
-;(setq vc-ignore-dir-regexp
-;      (format "\\(%s\\)\\|\\(%s\\)"
-;              vc-ignore-dir-regexp
-;              tramp-file-name-regexp))
-;
-;; Don’t clean up recentf tramp buffers.
-;(setq recentf-auto-cleanup 'never)
-;
-;; make emacs not crazy slow under tramp
-;(defadvice projectile-project-root (around ignore-remote first activate)
-;  (unless (file-remote-p default-directory 'no-identification) ad-do-it))
-;
-;; This is supposedly faster than the default, scp.
-;(setq tramp-default-method "ssh")
-;
-;; SSH controlmaster settings are set in ~/.ssh/config.
-;(setq tramp-use-ssh-controlmaster-options nil)
-;
-;; This will put in effect PATH changes in the remote ~/.profile.
-;(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-;
-;; Store TRAMP auto-save files locally.
-;(setq tramp-auto-save-directory
-;      (expand-file-name "tramp-auto-save" user-emacs-directory))
-;
-;; A more representative name for this file.
-;(setq tramp-persistency-file-name
-;      (expand-file-name "tramp-connection-history" user-emacs-directory))
-;
-;; Cache SSH passwords during the whole Emacs session.
-;(setq password-cache-expiry nil)
-;
-;; Reuse SSH connections. Taken from the TRAMP FAQ.
-;(customize-set-variable 'tramp-ssh-controlmaster-options
-;                        (concat
-;                         "-o ControlPath=/tmp/ssh-tramp-%%r@%%h:%%p "
-;                         "-o ControlMaster=auto -o ControlPersist=yes"))
 #+end_src
 
 * org-mode
@@ -1977,38 +1557,6 @@ SCHEDULED: %^t
 )))
 #+end_src
 
-** deft
-deft - an Emacs mode for quickly browsing, filtering, and editing
-directories of plain text notes.  http://jblevins.org/projects/deft/
-http://jblevins.org/git/deft.git
-
-Modified for org-roam 20200601
-
-Currently needs work with Org-Roam v2 update, only showing ID
-#+begin_src emacs-lisp
-;; Set org-roam directory in one place to prevent madness
-;(setq org-roam-directory-location "~/org-roam/")
-;
-;(use-package deft
-;  :requires (org)
-;  :bind
-;  ("C-c n d" . deft)
-;  :custom
-;  ;(deft-directory "~/org-roam/")
-;  (deft-directory org-roam-directory-location)
-;  (deft-recursive t)
-;  (deft-use-filename-as-title nil)
-;  (deft-use-filter-string-for-filename t)
-;  ;(deft-org-mode-title-prefix t)
-;  (deft-file-naming-rules '((noslash . "-")
-;                            (nospace . "-")
-;                            (case-fn . downcase)))
-;  (deft-extensions '("org" "txt" "text" "md" "markdown" "org.gpg"))
-;  (deft-default-extension "org")
-;  (deft-text-mode 'org-mode)
-;)
-#+end_src
-
 ** org-roam
 Org-roam is a plain-text knowledge management system. (now v2)
 https://github.com/org-roam/org-roam
@@ -2022,9 +1570,9 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 
 #+begin_src emacs-lisp
 ;; Set org-roam-directory based on system-name
-(if (string= (system-name) "lothlorien.local")
-    (setq org-roam-directory-location "~/org-roam-home/")
-  (setq org-roam-directory-location "~/org-roam/")
+(if (string-match "\\`lothlorien" (system-name))
+    (setq org-roam-directory "~/org-roam-home")
+  (setq org-roam-directory "~/org-roam/")
 )
 
 (use-package org-roam
@@ -2196,7 +1744,17 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
                                        time-stamp-format "\[%Y-%m-%d %a %H:%M\]")
                            (add-hook 'before-save-hook 'time-stamp nil 'local)))
 )
+
+;; Using consult-ripgrep with org-roam for searching notes
+;; https://org-roam.discourse.group/t/using-consult-ripgrep-with-org-roam-for-searching-notes/1226
+(defun bms/org-roam-rg-search ()
+  "Search org-roam directory using consult-ripgrep. With live-preview."
+  (interactive)
+  (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-buffered --color=always --max-columns=500 --no-heading --line-number . -e ARG OPTS"))
+    (consult-ripgrep org-roam-directory)))
+(global-set-key (kbd "C-c n g") 'bms/org-roam-rg-search) ;;was C-c rr
 #+end_src
+
 * Development
 ** magit
 It's Magit! A Git porcelain inside Emacs. https://magit.vc
@@ -2232,16 +1790,18 @@ I often find myself wanting to be able to switch between master and a feature br
 So that C-x g b - switches to the last branch I was on, similar to cd -.
 #+end_src
 
-** git gutter - disabled
-Emacs port of GitGutter which is Sublime Text Plugin
-Show change information from git
-https://github.com/syohex/emacs-git-gutter
+** diff-hl
+
+diff-hl: https://github.com/dgutov/diff-hl
 
 #+begin_src emacs-lisp
-(use-package git-gutter
-  :ensure f
+(use-package diff-hl
+  :ensure t
   :config
-    (global-git-gutter-mode t)
+  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  (diff-hl-mode t)
+  ;(global-diff-hl-mode)
 )
 #+end_src
 ** smartparens
@@ -2284,32 +1844,48 @@ https://www.emacswiki.org/emacs/ShMode
   (after-save . executable-make-buffer-file-executable-if-script-p))
 #+end_src
 
-* testing
-
-persp-mode - https://github.com/Bad-ptr/persp-mode.el
-#+begin_src emacs-lisp
-(use-package persp-mode
-  :ensure f
-  :init (add-hook 'after-init-hook #'persp-mode)
-)
-#+end_src
-
+** multiple-cursors
 
 multiple-cursors - https://github.com/magnars/multiple-cursors.el
+
 #+begin_src emacs-lisp
 (use-package multiple-cursors
   :ensure t
 )
 #+end_src
 
-diff-hl (instead of vc-gutter/doom) - https://github.com/dgutov/diff-hl
+* Testing
+
 #+begin_src emacs-lisp
-(use-package diff-hl
-  :ensure t
-  :config
-  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  (diff-hl-mode t)
-  ;(global-diff-hl-mode)
-)
+;;; https://www.reddit.com/r/emacs/search?q=Weekly%20tips&restrict_sr=on&sort=new&t=all
+
+;;; https://www.reddit.com/r/emacs/comments/11lqkbo/weekly_tips_tricks_c_thread/
+(advice-add 'vertico--setup :before (lambda () (setq vertico-count 15)))
+(define-key minibuffer-local-map (kbd "s-'") (lambda ()
+  (interactive)
+  (let ((vertico-resize t))
+    (setq vertico-count (if (= vertico-count 15) (- (frame-height) 5) 15))
+    (vertico--exhibit))))
+
+;;;doom emacs Help info hidden behind at bottom minibuffer?
+(setq which-key-allow-imprecise-window-fit nil)
+
+;--
+;; set other-window and ace-window
+;(global-set-key (kbd "C-x O") 'other-window)
+;(global-set-key (kbd "C-x o") 'ace-window)
+
+
+;; It’s useful to have a scratch buffer around, and more useful to have a key chord to switch to it.
+(defun switch-to-scratch-buffer ()
+  "Switch to the current session's scratch buffer."
+  (interactive)
+  (switch-to-buffer "*scratch*"))
+(bind-key "C-c f s" #'switch-to-scratch-buffer)
+
+;--
+;; paste into vterm when it is active
+(defun dj-vterm-keys ()
+  (local-set-key (kbd "C-y") 'vterm-yank))
+(add-hook 'vterm-mode-hook #'dj-vterm-keys)
 #+end_src

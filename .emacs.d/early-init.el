@@ -88,7 +88,7 @@
 (add-to-list 'load-path "~/.emacs.d/src/org-mode/lisp")
 (require 'org-loaddefs)
 
-;; NOTE: org-python removed in 9.7, fix: https://gitlab.com/jackkamm/ob-python-mode-mode
+;; org-python removed in org-mode 9.7, fix: https://gitlab.com/jackkamm/ob-python-mode-mode
 ;; missing python-mode, commented out until we add that
 ;(add-to-list 'load-path "~/.emacs.d/src/ob-python-mode-mode")
 ;(require 'ob-python-mode-mode)
