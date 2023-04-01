@@ -1456,7 +1456,98 @@ keyboard commands
 C-x g" . magit-status)
 C-x G" . magit-status-with-prefix)
 C-x M-g" . magit-dispatch)
-C-c M-g" . global-magit-file-mode))
+C-c M-g" . global-magit-file-mode)
+
+
+
+** keymaps versioning (C-c v)
+Based on projectile's
+
+vc-<functions> also under C-x v
+
+#+begin_src emacs-lisp
+(defvar versioning-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "R") '("Git revert file"       . vc-revert))
+    (define-key map (kbd "y") '("Kill link to remote"   . +vc/browse-at-remote-kill))
+    (define-key map (kbd "Y") '("Kill link to homepage" . +vc/browse-at-remote-kill-homepage))
+    (define-key map (kbd "r") '("Git revert hunk"       . +vc-gutter/revert-hunk))
+    (define-key map (kbd "s") '("Git stage hunk"        . +vc-gutter/stage-hunk))
+    (define-key map (kbd "r") '("Git time machine"      . git-timemachine-toggle))
+    (define-key map (kbd "n") '("Jump to next hunk"     . +vc-gutter/next-hunk))
+    (define-key map (kbd "p") '("Jump to previous hunk" . +vc-gutter/previous-hunk))
+    (define-key map (kbd "/") '("Magit dispatch"        . magit-dispatch))
+    (define-key map (kbd ".") '("Magit file dispatch"   . magit-file-dispatch))
+    (define-key map (kbd "'") '("Forge dispatch"        . forge-dispatch))
+    (define-key map (kbd "g") '("Magit status"          . magit-status))
+    (define-key map (kbd "G") '("Magit status here"     . magit-status-here))
+    (define-key map (kbd "x") '("Magit file delete"     . magit-file-delete))
+    (define-key map (kbd "B") '("Magit blame"           . magit-blame-addition))
+    (define-key map (kbd "C") '("Magit clone"           . magit-clone))
+    (define-key map (kbd "F") '("Magit fetch"           . magit-fetch))
+    (define-key map (kbd "L") '("Magit buffer log"      . magit-log-buffer-file))
+    (define-key map (kbd "S") '("Git stage file"        . magit-stage-file))
+    (define-key map (kbd "U") '("Git unstage file"      . magit-unstage-file))
+    map)
+  "Keymap for version commands after `versioning-keymap-prefix'.")
+(fset 'versioning-command-map versioning-command-map)
+(global-set-key (kbd "C-c v") '("versioning" . versioning-command-map))
+
+    ;; sub-menues (c+create, f+find, l+list, o+open in browser
+(defvar vc-find-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "f") '("Find file"           . magit-find-file))
+    (define-key map (kbd "g") '("Find gitconfig file" . magit-find-git-config-file))
+    (define-key map (kbd "c") '("Find commit"         . magit-show-commit))
+    (define-key map (kbd "i") '("Find issue"          . forge-visit-issue))
+    (define-key map (kbd "p") '("Find pull request"   . forge-visit-pullreq))
+    map)
+  "Keymap for vc find commands after `vc-find-keymap-prefix'.")
+(fset 'vc-find-command-map vc-find-command-map)
+(global-set-key (kbd "C-c v f") '("vc-find" . vc-find-command-map))
+
+(defvar vc-open-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd ".") '("Browse file or region" . +vc/browse-at-remote))
+    (define-key map (kbd "h") '("Browse homepage"       . +vc/browse-at-remote-homepage))
+    (define-key map (kbd "r") '("Browse remote"         . forge-browse-remote))
+    (define-key map (kbd "c") '("Browse commit"         . forge-browse-commit))
+    (define-key map (kbd "i") '("Browse an issue"       . forge-browse-issue))
+    (define-key map (kbd "p") '("Browse a pull request" . forge-browse-pullreq))
+    (define-key map (kbd "I") '("Browse issues"         . forge-browse-issues))
+    (define-key map (kbd "P") '("Browse pull requests"  . forge-browse-pullreqs))
+    map)
+  "Keymap for vc open commands after `vc-open-keymap-prefix'.")
+(fset 'vc-open-command-map vc-open-command-map)
+(global-set-key (kbd "C-c v o") '("vc-open" . vc-open-command-map))
+
+
+(defvar vc-list-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "g") '("List gists"          . gist-list))
+    (define-key map (kbd "r") '("List repositories"   . magit-list-repositories))
+    (define-key map (kbd "s") '("List submodules"     . magit-list-submodules))
+    (define-key map (kbd "i") '("List issues"         . forge-list-issues))
+    (define-key map (kbd "p") '("List pull requests"  . forge-list-pullreqs))
+    (define-key map (kbd "n") '("List notifications"  . forge-list-notifications))
+    map)
+  "Keymap for vc list commands after `vc-list-keymap-prefix'.")
+(fset 'vc-list-command-map vc-list-command-map)
+(global-set-key (kbd "C-c v l") '("vc-list" . vc-list-command-map))
+
+(defvar vc-create-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "r") '("Initialize repo" . magit-init))
+    (define-key map (kbd "R") '("Clone repo"      . magit-clone))
+    (define-key map (kbd "c") '("Commit"          . magit-commit-create))
+    (define-key map (kbd "f") '("Fixup"           . magit-commit-fixup))
+    (define-key map (kbd "i") '("Issue"           . forge-create-issue))
+    (define-key map (kbd "p") '("Pull request"    . forge-create-pullreq))
+    map)
+  "Keymap for vc create commands after `vc-creaet-keymap-prefix'.")
+(fset 'vc-create-command-map vc-create-command-map)
+(global-set-key (kbd "C-c v c") '("vc-create" . vc-create-command-map))
+#+end_src
 
 ** magit
 It's Magit! A Git porcelain inside Emacs. https://magit.vc
@@ -1519,8 +1610,8 @@ diff-hl: https://github.com/dgutov/diff-hl
   :config
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  (diff-hl-mode t)
-  ;(global-diff-hl-mode)
+  ;(diff-hl-mode t)
+  (global-diff-hl-mode)
 )
 #+end_src
 
@@ -1561,21 +1652,36 @@ yaml              ; JSON, but readable
 
 Look at this for info about keybinds
 https://www.reddit.com/r/emacs/comments/n1qyxt/how_to_set_prefix_names_to_appear_with_whichkey/
-Commands:
-C-c n l") #'org-store-link)
-C-c n a") #'org-agenda)
-C-c n c") #'org-capture)
-C-c n o") 'org-info)
---
-C-c n r l" . org-roam-buffer-toggle)
-C-c n r f" . org-roam-node-find)
-C-c n r i" . org-roam-node-insert)
-C-c n r i" . org-roam-node-insert)
-C-c n r g" . org-roam-graph)
-C-c n r c" . org-roam-capture)
-C-c n r j" . org-roam-dailies-capture-today))
---
-C-c n r r") 'bms/org-roam-rg-search)
+
+** keymaps org (C-c n)
+Based on projectile's
+
+#+begin_src emacs-lisp
+(defvar org-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") #'org-store-link)
+    (define-key map (kbd "a") #'org-agenda)
+    (define-key map (kbd "c") #'org-capture)
+    (define-key map (kbd "o") #'org-info)
+    map)
+  "Keymap for org-mode commands after `org-keymap-prefix'.")
+(fset 'org-command-map org-command-map)
+(global-set-key (kbd "C-c n") '("org notes" . org-command-map))
+
+(defvar org-roam-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") #'org-roam-buffer-toggle)
+    (define-key map (kbd "f") #'org-roam-node-find)
+    (define-key map (kbd "i") #'org-roam-node-insert)
+    (define-key map (kbd "g") #'org-roam-graph)
+    (define-key map (kbd "c") #'org-roam-capture)
+    (define-key map (kbd "j") #'org-roam-dailies-capture-today)
+    (define-key map (kbd "r") #'bms/org-roam-rg-search)
+    map)
+  "Keymap for org-roam commands after `org-roam-keymap-prefix'.")
+(fset 'org-roam-command-map org-roam-command-map)
+(global-set-key (kbd "C-c n r") '("org-roam" . org-roam-command-map))
+#+end_src
 
 ** sh-script
 shell-script-mode is a major mode for shell script editing.
@@ -1610,11 +1716,6 @@ org-contrib repo, now separate from org
 git clone https://git.sr.ht/~bzg/org-contrib
 
 #+begin_src emacs-lisp
-;; Activation - these should be globally available (C-c n # notes)
-(global-set-key (kbd "C-c n l") #'org-store-link)
-(global-set-key (kbd "C-c n a") #'org-agenda)
-(global-set-key (kbd "C-c n c") #'org-capture)
-
 ;; set calenar start of week to Sunday
 (use-package calendar
   :custom
@@ -1622,9 +1723,6 @@ git clone https://git.sr.ht/~bzg/org-contrib
 
 ;; Prevent inadvertently edits an the invisible part of the buffer (default: smart)
 (setq-default org-catch-invisible-edits 'smart)
-
-;; Bind C-h o to org-info, loads info file
-(define-key global-map (kbd "C-c n o") 'org-info)
 
 ;; Set to the location of your Org files on your local system
 (setq org-directory "~/org")
@@ -1736,14 +1834,6 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
   ;
   (org-roam-db-location "~/.emacs.d/var/org-roam.db")
   (org-roam-index-file "index.org")
-  :bind (("C-c n r l" . org-roam-buffer-toggle)
-         ("C-c n r f" . org-roam-node-find)
-         ("C-c n r i" . org-roam-node-insert)
-         ("C-c n r i" . org-roam-node-insert)
-         ("C-c n r g" . org-roam-graph)
-         ("C-c n r c" . org-roam-capture)
-         ;; Dailies
-         ("C-c n r j" . org-roam-dailies-capture-today))
   :config
  ;; If you're using a vertical completion framework, you might want a more informative completion interface
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
