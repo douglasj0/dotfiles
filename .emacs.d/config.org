@@ -572,13 +572,14 @@ Some taken from:
       ;mouse-yank-at-point t
       require-final-newline t
       visible-bell t
+      delete-old-versions t
       load-prefer-newer t
       ediff-window-setup-function 'ediff-setup-windows-plain
       backup-directory-alist `(("." . ,(concat user-emacs-directory
                                                "var/backups"))))
 
 (setq auto-save-list-file-prefix "~/.emacs.d/var/auto-save-list/") ; set prefix for auto-saves
-(setq transient-history-file "~/.emacs.d/var/transient/")
+(setq transient-history-file "~/.emacs.d/var/transient/history.el")
 #+end_src
 
 ** disable all themes
@@ -1848,6 +1849,8 @@ https://github.com/magit/magit
      ("C-x G" . magit-status-with-prefix)
      ("C-x M-g" . magit-dispatch)
      ("C-c M-g" . global-magit-file-mode))
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 )
 #+end_src
 
