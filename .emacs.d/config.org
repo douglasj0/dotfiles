@@ -109,7 +109,7 @@
 ;;; Enable whitespace-mode for diff buffers
 ;;; http://stackoverflow.com/questions/11805584/automatically-enable-whitespace-mode-in-diff-mode
 (add-hook 'diff-mode-hook
-          '(lambda ()
+          (lambda ()
             (whitespace-mode 1)))
 
 ;;; Enable holidays in Calendar
@@ -126,14 +126,14 @@
 ;;; Make tooltips appear in the echo area (checks if function exists)
 (tooltip-mode nil)
 
-;;;Emacs 24.4 and later now include something similar: Rectangle Mark mode. After a region is active, type ‘C-x SPC’ to toggle it on and off.
+;;; Emacs 24.4 and later now include something similar: Rectangle Mark mode. After a region is active, type ‘C-x SPC’ to toggle it on and off.
 ;;; Use CUA mode for rectangles (C-RET to select, normal emacs keys to copy)
 ;;; http://emacs-fu.blogspot.com/2010/01/rectangles-and-cua.html
 ;(setq cua-rectangle-mark-key (kbd "C-^"))
 (global-unset-key "\C-z")
 ;(setq cua-rectangle-mark-key (kbd "C-z '"))
-;(setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; instead of Ctrl-Enter
-;(cua-selection-mode t)
+(setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; instead of Ctrl-Enter
+(cua-selection-mode t)
 ;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
 ;(cua-mode t)
 
@@ -190,7 +190,7 @@
 
 ;; Create new scratch buffer if needed
 (run-with-idle-timer 1 t
-    '(lambda () (get-buffer-create "*scratch*")))
+    (lambda () (get-buffer-create "*scratch*")))
 
 ;; allow scroll-down/up-command to move point to buffer end/beginning
 ;(setq scroll-error-top-bottom 'true)
@@ -368,6 +368,7 @@ https://github.com/Wilfred/helpful
 #+begin_src emacs-lisp
 (use-package helpful
   :ensure t
+  :defer
   :bind
   (("C-h f" . helpful-callable)
    ("C-h v" . helpful-variable)
@@ -397,22 +398,23 @@ https://www.emacswiki.org/emacs/RecentFiles
 
 NOTE: wasn't able to move the savefile to any other directory
 #+begin_src emacs-lisp
-  (use-package recentf
-    ;:after consult
-    ;:bind ("C-x C-r" . recentf-open-files) ;moved binding to consult
-    :config
-    (setq recentf-save-file "~/.emacs.d/recentf"
-          ;recentf-save-file (expand-file-name "recentf" "~/.emacs.d/")
-          recentf-max-saved-items 500
-          recentf-max-menu-items 15
-          ;; disable recentf-cleanup on Emacs start, because it can cause
-          ;; problems with remote files
-          recentf-auto-cleanup 'never)
-    ;(add-to-list 'recentf-exclude '(".*-autoloads\\.el\\'"
-    ;				  "[/\\]\\.elpa/"))
-    :init
-    (recentf-mode 1)
-  )
+(use-package recentf
+  :defer
+  ;:after consult
+  ;:bind ("C-x C-r" . recentf-open-files) ;moved binding to consult
+  :config
+  (setq recentf-save-file "~/.emacs.d/recentf"
+	;recentf-save-file (expand-file-name "recentf" "~/.emacs.d/")
+	recentf-max-saved-items 500
+	recentf-max-menu-items 15
+	;; disable recentf-cleanup on Emacs start, because it can cause
+	;; problems with remote files
+	recentf-auto-cleanup 'never)
+  ;(add-to-list 'recentf-exclude '(".*-autoloads\\.el\\'"
+  ;				  "[/\\]\\.elpa/"))
+  :init
+  (recentf-mode 1)
+)
 #+end_src
 
 ** projectile
@@ -425,11 +427,16 @@ Docs: https://docs.projectile.mx/projectile/index.html
 #+begin_src emacs-lisp
 (use-package projectile
   :ensure t
+  :defer
   :init
   (projectile-mode +1)
   :bind (:map projectile-mode-map
               ("s-p" . projectile-command-map)
-              ("C-c p" . projectile-command-map)))
+              ("C-c p" . projectile-command-map))
+  :config
+  (setq projectile-known-projects-file
+       (expand-file-name "projectile-bookmarks.eld" ".emacs.d/var/"))
+)
 #+end_src
 
 * OS
@@ -1105,7 +1112,7 @@ multiple-cursors - https://github.com/magnars/multiple-cursors.el
 #+begin_src emacs-lisp
 (use-package multiple-cursors
   :ensure t
-)
+  :defer)
 #+end_src
 
 * Emacs
@@ -1217,10 +1224,13 @@ Paging: C-h
   :ensure t
   :init (which-key-mode)
   :config
-  (setq which-key-idle-delay 1)
-  (setq which-key-setup-side-window-bottom t) ; Default
-  (setq which-key-popup-type 'side-window) ;Default
-  (setq which-key-allow-imprecise-window-fit nil)
+  ;(setq which-key-allow-imprecise-window-fit nil)
+  ;(setq which-key-setup-side-window-bottom t) ; Default
+  (setq which-key-idle-delay 1.0
+        which-key-popup-type 'side-window
+        which-key-side-window-location 'bottom
+        which-key-side-window-max-height 0.50
+        which-key-show-remaining-keys t)
 )
 #+end_src
 
@@ -1326,7 +1336,7 @@ Search all marked buffers
     ;; ibuffer-auto-mode is a minor mode that automatically keeps the buffer
     ;; list up to date. I turn it on in my ibuffer-mode-hook:
     (add-hook 'ibuffer-mode-hook
-              '(lambda ()
+              (lambda ()
                  (ibuffer-auto-mode 1)
                  (ibuffer-switch-to-saved-filter-groups "default")))
 )
@@ -1442,6 +1452,12 @@ magit               ; a git porcelain for Emacs
 tree-sitter         ; syntax and parsing, sitting in a tree...
 #+end_src
 
+keyboard commands
+C-x g" . magit-status)
+C-x G" . magit-status-with-prefix)
+C-x M-g" . magit-dispatch)
+C-c M-g" . global-magit-file-mode))
+
 ** magit
 It's Magit! A Git porcelain inside Emacs. https://magit.vc
 https://github.com/magit/magit
@@ -1453,6 +1469,7 @@ https://github.com/magit/magit
 
 (use-package magit
   :ensure t
+  :defer
   :commands magit
   :bind
     (("C-x g" . magit-status)
@@ -1478,6 +1495,19 @@ I often find myself wanting to be able to switch between master and a feature br
 So that C-x g b - switches to the last branch I was on, similar to cd -.
 #+end_src
 
+** magit-forge - disabled for testing
+
+forge - Work with Git forges, such as Github and Gitlab, from the comfort of Magit
+https://github.com/magit/forge
+manual: https://magit.vc/manual/forge/
+
+#+begin_src emacs-lisp
+(use-package forge
+  :ensure f
+  :defer
+  :after magit)
+#+end_src
+
 ** diff-hl
 
 diff-hl: https://github.com/dgutov/diff-hl
@@ -1485,6 +1515,7 @@ diff-hl: https://github.com/dgutov/diff-hl
 #+begin_src emacs-lisp
 (use-package diff-hl
   :ensure t
+  :defer
   :config
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -1512,6 +1543,7 @@ https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
 
 (use-package smartparens
   :ensure t
+  :defer
   :hook (prog-mode . smartparens-mode))
 #+end_src
 
@@ -1526,6 +1558,24 @@ markdown          ; writing docs for people to ignore
 sh                ; she sells {ba,z,fi}sh shells on the C xor
 yaml              ; JSON, but readable
 #+end_src
+
+Look at this for info about keybinds
+https://www.reddit.com/r/emacs/comments/n1qyxt/how_to_set_prefix_names_to_appear_with_whichkey/
+Commands:
+C-c n l") #'org-store-link)
+C-c n a") #'org-agenda)
+C-c n c") #'org-capture)
+C-c n o") 'org-info)
+--
+C-c n r l" . org-roam-buffer-toggle)
+C-c n r f" . org-roam-node-find)
+C-c n r i" . org-roam-node-insert)
+C-c n r i" . org-roam-node-insert)
+C-c n r g" . org-roam-graph)
+C-c n r c" . org-roam-capture)
+C-c n r j" . org-roam-dailies-capture-today))
+--
+C-c n r r") 'bms/org-roam-rg-search)
 
 ** sh-script
 shell-script-mode is a major mode for shell script editing.
@@ -1546,53 +1596,35 @@ https://www.emacswiki.org/emacs/ShMode
 #+end_src
 
 ** org
-A GNU Emacs major mode for convenient plain text markup — and much more.
-https://orgmode.org/
-NOTE: use-package def moved to init.el to override built-in org version
+emacs git repos: https://savannah.gnu.org/git/?group=emacs
+Installation: https://orgmode.org/org.html#Installation
+Manual: https://orgmode.org/org.html
+
+Checked out org git repo and load in early-init.el
+$ cd ~/emacs.d/src/
+$ git clone https://git.savannah.gnu.org/git/emacs/org-mode.git
+$ cd org-mode/
+$ make autoloads  (and maybe 'make compile' and 'make doc')
+
+org-contrib repo, now separate from org
+git clone https://git.sr.ht/~bzg/org-contrib
 
 #+begin_src emacs-lisp
+;; Activation - these should be globally available (C-c n # notes)
+(global-set-key (kbd "C-c n l") #'org-store-link)
+(global-set-key (kbd "C-c n a") #'org-agenda)
+(global-set-key (kbd "C-c n c") #'org-capture)
+
+;; set calenar start of week to Sunday
 (use-package calendar
   :custom
   (calendar-week-start-day 0))
 
-;;; org-superstar (replacement for org-bullets)
-;;; https://github.com/integral-dw/org-superstar-mode
-(use-package org-superstar
-  :ensure t
-  :requires org
-  ;:custom
-  ;(org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
-  ;(org-superstar-bullet-list '("•"))
-  ;(org-superstar-bullet-list '("■" "◆" "▲" "▶"))
-  :hook (org-mode . org-superstar-mode)
-  :config
-  ;; Don't do anything special for item bullets or TODOs by default
-  ;; these slow down larger org buffers.
-  (setq org-superstar-prettify-item-bullets nil
-        org-superstar-special-todo-items nil)
-)
-
-;; Prevent inadvertently edits an the invisible part of the buffer
+;; Prevent inadvertently edits an the invisible part of the buffer (default: smart)
 (setq-default org-catch-invisible-edits 'smart)
 
-;; Load additional exporters, or limit them with:  (setq org-export-backends '(ascii html latex odt))
-;(eval-after-load 'org
-;      (lambda()
-;        (require 'ox-texinfo) ; texi and info
-;        (require 'ox-md)      ; markdown
-;        (require 'ox-odt)     ; opendoc text
-;        (require 'ox-opml)
-;        (require 'ox-confluence)))
-
 ;; Bind C-h o to org-info, loads info file
-(define-key global-map (kbd "C-h o") 'org-info)
-
-;; The following lines are always needed.  Choose your own keys.
-;(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-;(global-set-key "\C-cb" 'org-iswitchb) ; no commnd, moved key to consult
-(global-set-key "\C-cc" 'org-capture)
+(define-key global-map (kbd "C-c n o") 'org-info)
 
 ;; Set to the location of your Org files on your local system
 (setq org-directory "~/org")
@@ -1600,177 +1632,16 @@ NOTE: use-package def moved to init.el to override built-in org version
 ;; Open all txt files in org-mode
 (add-to-list 'auto-mode-alist '("\\.txt$" . org-mode))
 
-
-;;; Agenda - Agenda window setup
+;;; Agenda - Agenda window setup (default: reorganize-frame)
 (setq org-agenda-window-setup 'current-window) ;; don't kill my window setup
 
-;; Include emacs diary, not needed if using org-anniversary
-;(setq org-agenda-include-diary t)
-
-;; Custom agenda commands
-;; http://members.optusnet.com.au/~charles57/GTD/mydotemacs.txt
-(setq org-agenda-custom-commands
-'(
-("P" "Projects"
-              ((tags "PROJECT")))
-
-("H" "Office and Home Lists"
-     ((agenda)
-          (tags-todo "OFFICE")
-          (tags-todo "HOME")
-          (tags-todo "COMPUTER")
-          (tags-todo "DVD")
-          (tags-todo "READING")))
-
-;("D" "Daily Action List"
-;     ((agenda "" ((org-agenda-ndays 1)
-;                     (org-agenda-sorting-strategy
-;                        (quote ((agenda time-up priority-down tag-up))))
-;                     (org-deadline-warning-days 0)
-;                     ))))
-
-("d" "Do today"
-   ;; Show all todos and everything due today.
-   ((agenda "" (
-                ;; Limits the agenda to a single day
-                (org-agenda-span 1)
-                ))
-    (todo "TODO")))
-
-("D" "Deadline due"
-     ((tags-todo "+TODO=\"TODO\"+DEADLINE<=\"<today>\""
-                 ((org-agenda-overriding-header "Deadline today")))
-      (tags-todo "+TODO=\"TODO\"+DEADLINE=\"\""
-                 ((org-agenda-overriding-header "No deadline")))))
-
-))
-
-
-;;; Capture
-;; NOTE:  Fibonacci format: 0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40, 100
-;; Setup default target for notes and a global hotkey for new ones
-;; NOTE:  Need org-mode version 6.3.6 or later for this to work
-;; http://stackoverflow.com/questions/3622603/org-mode-setup-problem-when-trying-to-use-capture
-(setq org-default-notes-file (expand-file-name "~/org/notes.org"))
-
-;; Capture templates - C-c c t
-;; Based on Sacha Chua's org-capture-tempaltes
-;; http://pages.sachachua.com/.emacs.d/Sacha.html
-(defvar dbj/org-basic-task-template "* TODO %^{Task}
-SCHEDULED: %^t
-
-:PROPERTIES:
-:Story: %^{story|2|0|0.5|1|2|3|5|8|13}
-:END:
-:LOGBOOK:
-- State \"TODO\"       from \"\"           %U
-:END:
-%?" "Basic task data")
-
-(defvar dbj/org-basic-jira-template "* TODO %^{Task}
-SCHEDULED: %^t
-
-:PROPERTIES:
-:Story: %^{story|2|0|0.5|1|2|3|5|8|13}
-:URL: %^{URL}
-:END:
-:LOGBOOK:
-- State \"TODO\"       from \"\"           %U
-:END:
-%?" "Basic task data")
-
-(defvar dbj/org-basic-someday-template "* %^{Task}
-:PROPERTIES:
-:Story: %^{story|2|0|0.5|1|2|3|5|8|13}
-:END:
-:LOGBOOK:
-- State \"TODO\"       from \"\"           %U
-:END:
-%?" "Basic task data")
-
-(setq org-capture-templates
-      `(("t" "Tasks" entry
-          (file "~/org/inbox.org"), dbj/org-basic-task-template)
-          ;(file+headline "~/org/inbox.org" "Tasks"), dbj/org-basic-task-template)
-
-        ("j" "Jira" entry
-          (file "~/org/inbox.org"), dbj/org-basic-jira-template)
-
-        ("s" "Someday task" entry
-          (file "~/org/someday.org"), dbj/org-basic-someday-template)
-
-        ("r" "Reference information" entry
-          (file+headline "~/org/reference.org" "Inbox"))
-
-        ("n" "Notes" entry
-          (file+headline "~/org/notes.org"))
-
-        ("o" "Journal" entry
-          (file+olp+datetree "~/org/journal.org")
-          "* %?\nEntered on %U\n  %i\n  %a")
-))
-
-
-;;; Other
-;; When adding new heading below the current heading, the new heading is
-;; Placed after the body instead of before it.  C-<RET>
-(setq org-insert-heading-respect-content t)
-
-;; Set Todo keywords, same as:
-;; Shortcut key:  C-c C-t
-;; #+TODO: TODO(t) INPROGRESS(p) WAITING(w) | DONE(d) CANCELED(c)
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "INPROGRESS(p)" "WAITING(w@/!)")
-        (sequence "|" "DONE(d!)" "CANCELED(c@)")))
-
-;; Set Tags, same as:
-;; #+TAGS: home(h) work(w) @computer(c) @phone(p) errants(e)
-(setq org-tag-alist '(("@office" . ?o) ("@home" . ?h) ("computer" . ?c)
-                      ("phone" . ?p) ("reading" . ?r)))
-
-;; Prevent C-k from killing whole subtrees and losing work
+;; Prevent C-k from killing whole subtrees and losing work (default: nil)
 (setq org-special-ctrl-k t)
 
-;; Fontify code buffers in org, instead of grey text
+;; Fontify code buffers in org, instead of grey text (default: t)
 ;; This is especially nice when you open an editing buffer with [Ctrl+c ']
 ;; to insert code into the #+begin_src ... #+end_src area.
 (setq org-src-fontify-natively t)
-
-;; org-refile (C-c C-w) settings from:
-;; http://www.mail-archive.com/emacs-orgmode@gnu.org/msg34415.html
-;; http://doc.norang.ca/org-mode.html#RefileSetup
-; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-(setq org-refile-targets '((org-agenda-files :maxlevel . 2)
-                           (nil :maxlevel . 3)))
-
-; Use full outline paths for refile targets - we file directly with IDO
-(setq org-refile-use-outline-path t)
-;(setq org-refile-use-outline-path 'file)
-
-; Targets complete directly with IDO
-(setq org-outline-path-complete-in-steps nil)
-
-; Allow refile to create parent tasks with confirmation
-(setq org-refile-allow-creating-parent-nodes (quote confirm))
-
-;;; Strike-through finished todos
-;; sachachua.com/blog/2012/12/emacs-strike-through-headlines-for-done-tasks-in-org/
-(setq org-fontify-done-headline t)
-(custom-set-faces
- '(org-done ((t (:foreground "PaleGreen"
-                 :weight normal
-                 :strike-through t))))
- '(org-headline-done
-            ((((class color) (min-colors 16) (background dark))
-               (:foreground "LightSalmon" :strike-through t)))))
-
-;;; Make sure to hightlight mysql sql keywords: - errors on compile
-;;; ex. #+BEGIN_SRC sql
-;;;        SELECT foo FROM bar
-;;;     #+END_SRC
-;(add-hook 'sql-mode-hook
-;          (lambda ()
-;            (sql-highlight-mysql-keywords)))
 
 ;;; Enable other org-babel languages
 (org-babel-do-load-languages
@@ -1816,15 +1687,32 @@ SCHEDULED: %^t
           (sql . t)       ; SQL
           ;(sqlite .t)     ;SQLite
 )))
+
+
+
+
+;;; Agenda and capture tempalates
+
+; TBD
+
+
 #+end_src
 
 ** org-roam
-Org-roam is a plain-text knowledge management system. (now v2)
+Org-roam - A plain-text personal knowledge management system.
+https://www.orgroam.com/
 https://github.com/org-roam/org-roam
-https://org-roam.readthedocs.io/en/master/
 
-Upgrade to org-roam v2 broke it, commented out for now
-https://www.reddit.com/r/emacs/comments/om3fjm/releasing_orgroam_v2_jethros_blog/
+Manual: https://www.orgroam.com/manual.html
+
+Dependencies
+- dash
+- f
+- s
+- org
+- emacsql
+- emacsql-sqlite
+- magit-section
 
 NOTE: can use  sub-directories by adding to capture templates, has to exist first
 ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
@@ -1833,149 +1721,36 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 ;; Set org-roam-directory based on system-name
 (if (string-match "\\`lothlorien" (system-name))
     (setq org-roam-directory "~/org-roam-home")
-  (setq org-roam-directory "~/org-roam/")
-)
+  (setq org-roam-directory "~/org-roam/"))
 
 (use-package org-roam
   :ensure t
-  :requires (org)
+  :after org
+  :defer
   :init
   (setq org-roam-v2-ack t)
   :custom
   ;; setup org-roam-daily directory
-  (org-roam-dailies-directory "~/org-roam/daily/")
-  ;(org-roam-directory (file-truename "/path/to/org-files/"))
-  (org-roam-directory org-roam-directory-location)
+  ;By default, Org Roam will create daily files under the daily/ subfolder of your org-roam-directory
   (org-roam-completion-everywhere t)
   ;
   (org-roam-db-location "~/.emacs.d/var/org-roam.db")
   (org-roam-index-file "index.org")
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n c" . org-roam-capture)
-         ("C-c n I" . completion-at-point)
-         ;; Testing hacks from System Crafters
-         ("C-c n p" . my/org-roam-find-project)
-         ("C-c n t" . my/org-roam-capture-task)
-         ("C-c n b" . my/org-roam-capture-inbox)
+  :bind (("C-c n r l" . org-roam-buffer-toggle)
+         ("C-c n r f" . org-roam-node-find)
+         ("C-c n r i" . org-roam-node-insert)
+         ("C-c n r i" . org-roam-node-insert)
+         ("C-c n r g" . org-roam-graph)
+         ("C-c n r c" . org-roam-capture)
          ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today)
-         ("C-c n d j" . org-roam-dailies-capture-today)
-         ("C-c n d Y" . org-roam-dailies-capture-yesterday)
-         ("C-c n d T" . org-roam-dailies-capture-tomorrow)
-         ("C-c n d v" . org-roam-dailies-capture-date)
-         ("C-c n d y" . org-roam-dailies-goto-yesterday)
-         ("C-c n d t" . org-roam-dailies-goto-tomorrow)
-         ("C-c n d o" . org-roam-dailies-goto-today)
-         ("C-c n d d" . org-roam-dailies-goto-date)
-         ("C-c n d f" . org-roam-dailies-goto-next-note)
-         ("C-c n d b" . org-roam-dailies-goto-previous-note))
+         ("C-c n r j" . org-roam-dailies-capture-today))
   :config
+ ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-setup)
   (org-roam-db-autosync-mode)
   ;; If using org-roam-protocol
   ;(require 'org-roam-protocol)
-
-  ;;
-  ;; from org-roam hacks
-  ;; https://systemcrafters.net/build-a-second-brain-in-emacs/5-org-roam-hacks/
-  ;;
-  (defun org-roam-node-insert-immediate (arg &rest args)
-    (interactive "P")
-    (let ((args (push arg args))
-          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                    '(:immediate-finish t)))))
-      (apply #'org-roam-node-insert args)))
-
-  (defun my/org-roam-filter-by-tag (tag-name)
-    (lambda (node)
-      (member tag-name (org-roam-node-tags node))))
-
-  (defun my/org-roam-list-notes-by-tag (tag-name)
-    (mapcar #'org-roam-node-file
-            (seq-filter
-             (my/org-roam-filter-by-tag tag-name)
-             (org-roam-node-list))))
-
-  (defun my/org-roam-refresh-agenda-list ()
-    (interactive)
-    (setq org-agenda-files (my/org-roam-list-notes-by-tag "Project")))
-
-  ;; Build the agenda list the first time for the session
-  (my/org-roam-refresh-agenda-list)
-
-  (defun my/org-roam-project-finalize-hook ()
-    "Adds the captured project file to `org-agenda-files' if the
-  capture was not aborted."
-    ;; Remove the hook since it was added temporarily
-    (remove-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
-
-    ;; Add project file to the agenda list if the capture was confirmed
-    (unless org-note-abort
-      (with-current-buffer (org-capture-get :buffer)
-        (add-to-list 'org-agenda-files (buffer-file-name)))))
-
-  (defun my/org-roam-find-project ()
-    (interactive)
-    ;; Add the project file to the agenda after capture is finished
-    (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
-
-    ;; Select a project file to open, creating it if necessary
-    (org-roam-node-find
-     nil
-     nil
-     (my/org-roam-filter-by-tag "Project")
-     :templates
-     '(("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
-        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
-        :unnarrowed t))))
-
-  (defun my/org-roam-capture-inbox ()
-    (interactive)
-    (org-roam-capture- :node (org-roam-node-create)
-                       :templates '(("i" "inbox" plain "* %?"
-                                    :if-new (file+head "Inbox.org" "#+title: Inbox\n")))))
-
-  (defun my/org-roam-capture-task ()
-    (interactive)
-    ;; Add the project file to the agenda after capture is finished
-    (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
-
-    ;; Capture the new task, creating the project file if necessary
-    (org-roam-capture- :node (org-roam-node-read
-                              nil
-                              (my/org-roam-filter-by-tag "Project"))
-                       :templates '(("p" "project" plain "** TODO %?"
-                                     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-                                                            "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
-                                                            ("Tasks"))))))
-
-  (defun my/org-roam-copy-todo-to-today ()
-    (interactive)
-    (let ((org-refile-keep t) ;; Set this to nil to delete the original!
-          (org-roam-dailies-capture-templates
-            '(("t" "tasks" entry "%?"
-               :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
-          (org-after-refile-insert-hook #'save-buffer)
-          today-file
-          pos)
-      (save-window-excursion
-        (org-roam-dailies--capture (current-time) t)
-        (setq today-file (buffer-file-name))
-        (setq pos (point)))
-
-      ;; Only refile if the target file is different than the current file
-      (unless (equal (file-truename today-file)
-                     (file-truename (buffer-file-name)))
-        (org-refile nil nil (list "Tasks" today-file nil pos)))))
-
-  (add-to-list 'org-after-todo-state-change-hook
-               (lambda ()
-                 (when (equal org-state "DONE")
-                   (my/org-roam-copy-todo-to-today))))
-
 
   ;;
   ;; Configure default capture template
@@ -2013,9 +1788,9 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
   (interactive)
   (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-buffered --color=always --max-columns=500 --no-heading --line-number . -e ARG OPTS"))
     (consult-ripgrep org-roam-directory)))
-(global-set-key (kbd "C-c n g") 'bms/org-roam-rg-search) ;;was C-c rr
-#+end_src
+(global-set-key (kbd "C-c n r r") 'bms/org-roam-rg-search) ;;was C-c rr
 
+#+end_src
 * Testing
 
 #+begin_src emacs-lisp

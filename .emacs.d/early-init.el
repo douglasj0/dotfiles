@@ -87,6 +87,8 @@
 ;; NOTE: run 'make autoloads && make compile' in org-mode dir after updating
 (add-to-list 'load-path "~/.emacs.d/src/org-mode/lisp")
 (require 'org-loaddefs)
+;; and org-contrib
+(add-to-list 'load-path "~/.emacs.d/src/org-contrib/lisp")
 
 ;; org-python removed in org-mode 9.7, fix: https://gitlab.com/jackkamm/ob-python-mode-mode
 ;; missing python-mode, commented out until we add that
