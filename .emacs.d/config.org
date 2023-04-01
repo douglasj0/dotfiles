@@ -291,6 +291,14 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
     ;;close a child frame
     (delete-frame (selected-frame))))
 (global-set-key "\C-x\C-c" 'intelligent-close) ;forward reference
+
+;;; ---------------------------------------------------------------------------
+;; It’s useful to have a scratch buffer around, and more useful to have a key chord to switch to it.
+(defun switch-to-scratch-buffer ()
+  "Switch to the current session's scratch buffer."
+  (interactive)
+  (switch-to-buffer "*scratch*"))
+(bind-key "C-c f s" #'switch-to-scratch-buffer)
 #+end_src
 
 * Utilities
@@ -568,6 +576,9 @@ Some taken from:
       ediff-window-setup-function 'ediff-setup-windows-plain
       backup-directory-alist `(("." . ,(concat user-emacs-directory
                                                "var/backups"))))
+
+(setq auto-save-list-file-prefix "~/.emacs.d/var/auto-save-list/") ; set prefix for auto-saves
+(setq transient-history-file "~/.emacs.d/var/transient/")
 #+end_src
 
 ** disable all themes
@@ -718,6 +729,7 @@ Paging: C-h
   (setq which-key-idle-delay 1)
   (setq which-key-setup-side-window-bottom t) ; Default
   (setq which-key-popup-type 'side-window) ;Default
+  (setq which-key-allow-imprecise-window-fit nil)
 )
 #+end_src
 
@@ -1160,6 +1172,7 @@ consult.el - Consulting completing-read
          ("M-s G" . consult-git-grep)
          ("M-s r" . consult-ripgrep)
          ("M-s l" . consult-line)
+         ("C-s" . consult-line)  ;; replace I-search
          ("M-s L" . consult-line-multi)
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
@@ -1329,7 +1342,13 @@ A) It's C-c C-t to toggle vterm-copy-mode.
   :config
   (setq vterm-max-scrollback 5000) ; default 1000, max is 100000
 )
+
+;; paste into vterm when it is active
+(defun dj-vterm-keys ()
+  (local-set-key (kbd "C-y") 'vterm-yank))
+(add-hook 'vterm-mode-hook #'dj-vterm-keys)
 #+end_src
+
 ** tramp
 
 #+begin_src emacs-lisp
@@ -1913,35 +1932,6 @@ multiple-cursors - https://github.com/magnars/multiple-cursors.el
 * Testing
 
 #+begin_src emacs-lisp
-;;; https://www.reddit.com/r/emacs/search?q=Weekly%20tips&restrict_sr=on&sort=new&t=all
-
-;;; https://www.reddit.com/r/emacs/comments/11lqkbo/weekly_tips_tricks_c_thread/
-(advice-add 'vertico--setup :before (lambda () (setq vertico-count 15)))
-(define-key minibuffer-local-map (kbd "s-'") (lambda ()
-  (interactive)
-  (let ((vertico-resize t))
-    (setq vertico-count (if (= vertico-count 15) (- (frame-height) 5) 15))
-    (vertico--exhibit))))
-
-;;;doom emacs Help info hidden behind at bottom minibuffer?
-(setq which-key-allow-imprecise-window-fit nil)
-
-;--
-;; set other-window and ace-window
-;(global-set-key (kbd "C-x O") 'other-window)
-;(global-set-key (kbd "C-x o") 'ace-window)
 
 
-;; It’s useful to have a scratch buffer around, and more useful to have a key chord to switch to it.
-(defun switch-to-scratch-buffer ()
-  "Switch to the current session's scratch buffer."
-  (interactive)
-  (switch-to-buffer "*scratch*"))
-(bind-key "C-c f s" #'switch-to-scratch-buffer)
-
-;--
-;; paste into vterm when it is active
-(defun dj-vterm-keys ()
-  (local-set-key (kbd "C-y") 'vterm-yank))
-(add-hook 'vterm-mode-hook #'dj-vterm-keys)
 #+end_src
