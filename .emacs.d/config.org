@@ -1,6 +1,15 @@
 # -*- mode: org; fill-column: 78 -*-
 #+STARTUP: overview
 
+TODO:
+- tree-sitter
+- spelling / grammer / syntax
+  - flyspell / flymake
+- lang: json markdown go rust ansible
+- doom macos fixes
+- vc-gutter vs
+- fix/revisit venv setup
+
 * Housekeeping
 ** initialization
 #+begin_src emacs-lisp
@@ -432,8 +441,8 @@ Docs: https://docs.projectile.mx/projectile/index.html
   :bind (:map projectile-mode-map
               ("s-p" . projectile-command-map)
               ("C-c p" . projectile-command-map))
-  :config
-  (setq projectile-known-projects-file
+  :custom
+  (projectile-known-projects-file
        (expand-file-name "projectile-bookmarks.eld" ".emacs.d/var/"))
 )
 #+end_src
@@ -763,9 +772,9 @@ Completions in Regions
 (use-package corfu
   :ensure t
   ;; Optional customizations
-  ;; :custom
+  :custom
   ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  ;; (corfu-auto t)                 ;; Enable auto completion
+  (corfu-auto t)                 ;; Enable auto completion
   ;; (corfu-separator ?\s)          ;; Orderless field separator
   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
@@ -1540,16 +1549,13 @@ A) It's C-c C-t to toggle vterm-copy-mode.
 #+begin_src emacs-lisp
 (use-package vterm
   :ensure t
-  :load-path  "~/.emacs.d/var/emacs-libvterm"
-  :bind ("C-c tv" . vterm)
+   :load-path  "~/.emacs.d/var/emacs-libvterm"
+  :bind
+  ("C-c t v" . vterm)
+  (:map vterm-mode-map ("C-y" . vterm-yank)) ; copy into vterm
   :config
   (setq vterm-max-scrollback 5000) ; default 1000, max is 100000
 )
-
-;; paste into vterm when it is active
-(defun dj-vterm-keys ()
-  (local-set-key (kbd "C-y") 'vterm-yank))
-(add-hook 'vterm-mode-hook #'dj-vterm-keys)
 #+end_src
 
 ** tramp
@@ -1784,7 +1790,7 @@ Use the following keys to navigate historic version of the file
 * Lang
 #+begin_src text
 emacs-lisp        ; drown in parentheses
-json             ; At least it ain't XML
+json              ; At least it ain't XML
 latex             ; writing papers in Emacs has never been so fun
 markdown          ; writing docs for people to ignore
 (org +roam2) ; organize your plain life in plain text
@@ -2021,8 +2027,131 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
   (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-buffered --color=always --max-columns=500 --no-heading --line-number . -e ARG OPTS"))
     (consult-ripgrep org-roam-directory)))
 (global-set-key (kbd "C-c n r r") 'bms/org-roam-rg-search) ;;was C-c rr
+#+end_src
+
+* Lang-lsp-wip
+
+https://www.adventuresinwhy.com/post/eglot/
+ $ pip install "python-lsp-server[all]"
+
+-- Doom notes
+;; eglot
+;; https://github.com/joaotavora/eglot
+;;
+;; install black, tox, flake8, pyflakes, isort   #pyright
+;; $ pip3 install --upgrade black tox isort flake8
+;;
+;;   black - reports code errors and also fixes them
+;;   tox - automate standard testing in python
+;;   flake8 - linter, python version specific
+;;     "wrapper which verifies pep8, pyflakes and circular complexity"
+;;   pyflakes - linter, faster then pylint (needed by flake8?)
+;;   isort - sort imports alphabetically and by type
+;;   pyright - another language server (like pylsp)
+;;
+;; Install langauge server pylsp
+;; https://github.com/python-lsp/python-lsp-server
+;; $ pip3 install "python-lsp-server[all]"pip3 install "python-lsp-server[all]"
+;; Verify: pylsp --help
+;; eglot doesn't seen able to find it, set as default
+(set-eglot-client! 'python-mode '("pylsp"))
+
+
+-- need pyvenv too or auto-virtualenv
+https://github.com/marcwebbie/auto-virtualenv
+https://github.com/jorgenschaefer/pyvenv
+
+** pyvenv
+
+https://stackoverflow.com/questions/38535499/how-to-setup-emacs-to-use-a-given-python-virtualenv
+
+So next time, create the virtual environment in the directory you want (I always call them env and I installed it in the project directory)
+  python -m venv env
+Then open emacs M-x pyvenv-activate RET dir_to_the_environment/env
+
+#+begin_src emacs-lisp
+(use-package pyvenv
+  :ensure t
+  :config
+  (pyvenv-mode t)
+
+  ;; Set venvs
+  (setenv "WORKON_HOME" "~/.pyenv/versions")
+  (setq pyvenv-workon "emacs-venv") ; Default venv
+  (pyvenv-tracking-mode 1)  ; Automatically use pyvenv-workon via dir-locals
+
+  ;; Set correct Python interpreter
+  (setq pyvenv-post-activate-hooks
+        (list (lambda ()
+                (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python3")))))
+  (setq pyvenv-post-deactivate-hooks
+        (list (lambda ()
+                (setq python-shell-interpreter "python3")))))
+#+end_src
+
+** yasnippet
+
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :hook (prog-mode . yas-minor-mode)
+  :config
+  (yas-reload-all))
+
+(use-package yasnippet-snippets
+  :ensure t
+  :defer t
+  :after yasnippet)
+#+end_src
+
+** eglot
+eglot - Emacs Polyglot is the Emacs LSP client that stays out of your way:
+https://github.com/joaotavora/eglot
+
+eglot / corfu issue?
+https://github.com/minad/corfu/issues/136
+
+eglot blog
+https://whatacold.io/blog/2022-01-22-emacs-eglot-lsp/
+https://www.reddit.com/r/emacs/comments/ushfzn/python_ide_using_eglot/
+https://taingram.org/blog/emacs-lsp-ide.html
+
+#+begin_src emacs-lisp
+(use-package eglot
+  :ensure t
+  ;:defer 5
+  :init (setq completion-category-overrides '((eglot (styles orderless))))
+  :commands eglot
+  ;:config
+  ;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
+  ;(add-hook 'python-mode-hook 'eglot-ensure)
+  ;(add-hook 'python-mode-hook '(lambda() (add-hook 'before-save-hook 'eglot-format-buffer nil t)))
+  ;(setq python-shell-interpreter "python3")
+)
+
+;; https://emacs.stackexchange.com/questions/74713/python-language-server-with-eglot-cant-get-it-working?rq=1
+(use-package python
+  :interpreter ("python3" . python-mode)
+  :config
+  (add-hook 'python-hook (lambda ()
+             (setq python-indent-guess-indent-offset-verbose nil)))
+  ;(add-hook 'python-mode-hook 'company-mode)
+  (add-hook 'python-mode-hook 'corfu-mode)
+  (add-hook 'python-mode-hook #'yas-minor-mode)
+  (add-hook 'python-mode-hook 'eglot-ensure)
+  (add-hook 'python-mode-hook (lambda () (setq eglot-connect-timeout 120)))
+  (add-hook 'python-mode-hook (lambda () (setq eglot-autoshutdown t)))
+
+)
+
+
+
+
+
+
 
 #+end_src
+
 * Testing
 
 #+begin_src emacs-lisp
