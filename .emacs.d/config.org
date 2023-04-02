@@ -2,12 +2,12 @@
 #+STARTUP: overview
 
 TODO:
-- tree-sitter
+- tree-sitter?  or wait for emacs 29?
 - spelling / grammer / syntax
   - flyspell / flymake
 - lang: json markdown go rust ansible
-- doom macos fixes
-- vc-gutter vs
+- doom MacOS fixes
+- git-gutter vs diff-hl/vc-gutter
 - fix/revisit venv setup
 
 * Housekeeping
@@ -2034,10 +2034,6 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 https://www.adventuresinwhy.com/post/eglot/
  $ pip install "python-lsp-server[all]"
 
--- Doom notes
-;; eglot
-;; https://github.com/joaotavora/eglot
-;;
 ;; install black, tox, flake8, pyflakes, isort   #pyright
 ;; $ pip3 install --upgrade black tox isort flake8
 ;;
@@ -2049,12 +2045,30 @@ https://www.adventuresinwhy.com/post/eglot/
 ;;   isort - sort imports alphabetically and by type
 ;;   pyright - another language server (like pylsp)
 ;;
-;; Install langauge server pylsp
-;; https://github.com/python-lsp/python-lsp-server
-;; $ pip3 install "python-lsp-server[all]"pip3 install "python-lsp-server[all]"
-;; Verify: pylsp --help
-;; eglot doesn't seen able to find it, set as default
+;; Install langauge server pylsp pylint
 (set-eglot-client! 'python-mode '("pylsp"))
+
+
+Installing python lsp in a venv:
+#+begin_src shell
+$ pyenv versions
+$ pyenv install --list | grep 3.11
+$ pyenv install 3.11.2
+$ pyenv global 3.11.2
+$ pyenv_venv 3.11.2 emacs-venv
+$ pyenv_activate emacs-venv
+$ python --version
+Python 3.11.2
+$ pip install --upgrade pip
+# install black, tox, flake8, pyflakes, isort   #pyright
+$ pip3 install --upgrade black tox isort flake8 # error checkers
+# Install langauge server pylsp pylint
+#$ pip install 'python-language-server[all]'  # pyls (unmaintained)
+$ pip install 'python-lsp-server[all]' pylint # pylsp (maintained fork)
+$ pylsp --version
+pylsp v1.7.1
+$ pip3 list
+#+end_src
 
 
 -- need pyvenv too or auto-virtualenv
@@ -2077,8 +2091,9 @@ Then open emacs M-x pyvenv-activate RET dir_to_the_environment/env
 
   ;; Set venvs
   (setenv "WORKON_HOME" "~/.pyenv/versions")
-  (setq pyvenv-workon "emacs-venv") ; Default venv
-  (pyvenv-tracking-mode 1)  ; Automatically use pyvenv-workon via dir-locals
+  (setq pyvenv-workon "emacs-venv") ; Set default venv from versions
+  ;(pyvenv-tracking-mode 1)  ; Automatically use pyvenv-workon via dir-locals
+  ;(setq pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] "))) ;; Show python venv name in modeline
 
   ;; Set correct Python interpreter
   (setq pyvenv-post-activate-hooks
@@ -2143,13 +2158,6 @@ https://taingram.org/blog/emacs-lsp-ide.html
   (add-hook 'python-mode-hook (lambda () (setq eglot-autoshutdown t)))
 
 )
-
-
-
-
-
-
-
 #+end_src
 
 * Testing
