@@ -1,0 +1,38 @@
+# general
+.DS_Store
+._*
+*~
+*.o
+*.a
+
+# Vim swap files
+*.swp
+
+# bin files to ignore
+sshpass
+
+# ignore other scm programs
+.svn
+.hg
+
+# ignore patterns for exult
+Exult.app
+*.lo
+*.la
+Makefile.in
+.deps
+.libs
+
+# emacs
+.emacs.d/src/*
+.emacs.d/var/auto-save-list/*
+.emacs.d/var/backups/*
+.emacs.d/var/tmp/*
+.emacs.d/var/transient/*
+.emacs.d/var/*
+.emacs.d/mytmp/*
+.emacs.d/elpa/*
+.emacs.d/.cache/*
+.emacs.d/.org-id-locations
+.emacs.d/recentf
+.emacs.d/config.el
