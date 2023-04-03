@@ -2190,5 +2190,5 @@ https://taingram.org/blog/emacs-lsp-ide.html
 ;  :bind (("C-c 5" . #'vr/replace)))
 
 ;; delete other windows in verticle column
-(global-set key (kbd "C-x 7") 'delete-other-windows-vertically)
+(global-set-key (kbd "C-x 7") 'delete-other-windows-vertically)
 #+end_src
