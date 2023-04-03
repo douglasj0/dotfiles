@@ -5,6 +5,7 @@ TODO:
 - tree-sitter?  or wait for emacs 29?
 - spelling / grammer / syntax
   - flyspell / flymake
+  - tried jinx spellcheck, but it hung emacs
 - lang: json markdown go rust ansible
 - doom MacOS fixes
 - git-gutter vs diff-hl/vc-gutter
@@ -2163,5 +2164,31 @@ https://taingram.org/blog/emacs-lsp-ide.html
 * Testing
 
 #+begin_src emacs-lisp
+;; Deadgrep
+;; https://github.com/Wilfred/deadgrep
+; https://www.karsdorp.io/posts/dotemacs/
+; https://blog.burntsushi.net/ripgrep/
+(use-package deadgrep
+  :ensure t
+  :bind
+  (("C-c f r" . deadgrep)
+   ("C-c f f" . grep-org-files))
+  :config
+  (defun grep-org-files (words)
+    (interactive "sSearch org files: ")
+    (let ((default-directory org-directory)
+          (deadgrep--file-type '(glob . "*.org"))
 
+          (deadgrep--context '(1 . 1))
+          (deadgrep--search-type 'regexp))
+      (deadgrep words))))
+
+;; regex expressions
+;; https://github.com/benma/visual-regexp.el
+;; https://github.com/benma/visual-regexp-steroids.el/
+;(use-package visual-regexp
+;  :bind (("C-c 5" . #'vr/replace)))
+
+;; delete other windows in verticle column
+(global-set key (kbd "C-x 7") 'delete-other-windows-vertically)
 #+end_src
