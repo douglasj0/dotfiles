@@ -96,6 +96,7 @@ zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 # Other
 setopt prompt_subst
+#setopt shwordsplit # behave like Bash for word splitting
 
 # test command line editing module
 autoload -z edit-command-line
