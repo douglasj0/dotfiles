@@ -1865,6 +1865,9 @@ $ make autoloads  (and maybe 'make compile' and 'make doc')
 org-contrib repo, now separate from org
 git clone https://git.sr.ht/~bzg/org-contrib
 
+ob-python-mode-mode repo, for separate python functionality
+git clone https://gitlab.com/jackkamm/ob-python-mode-mode.git
+
 #+begin_src emacs-lisp
 ;; set calenar start of week to Sunday
 (use-package calendar
@@ -2191,4 +2194,32 @@ https://taingram.org/blog/emacs-lsp-ide.html
 
 ;; delete other windows in verticle column
 (global-set-key (kbd "C-x 7") 'delete-other-windows-vertically)
+
+
+;; I use a single agenda file for my day to day time tracking and generally note-taking. This is a function I use to narrow to just today:
+;; https://www.reddit.com/r/emacs/comments/11ybs72/weekly_tips_tricks_c_thread/
+;(defun org-mode/narrow-to-date (date)
+;  "Narrow agenda to given DATE agenda subtree."
+;  (interactive (list (if current-prefix-arg
+;                       (org-read-date nil nil nil "Pick a day:")
+;                       (format-time-string "%Y-%m-%d"))))
+;  (widen)
+;  (end-of-buffer)
+;  (re-search-backward (concat "^\*\*\* " date))
+;  (end-of-line)
+;  (org-narrow-to-subtree)
+;  (message "Narrowing to %s agenda" date))
+
+
+;; esup profiler
+;; https://github.com/jschaf/esup
+;; Usage
+;; To start Esup, run M-x esup, and watch the magic happen.
+;;
+;; Profile a custom file with esup
+;; By default, Esup will profile user-init-file. To profile a custom file, call esup with a prefix argument. That is, C-u M-x esup.
+;;;(;use-package esup
+;  :ensure t
+;  ;; To use MELPA Stable use ":pin melpa-stable",
+;  :pin melpa)
 #+end_src

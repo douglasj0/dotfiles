@@ -1,0 +1,13 @@
+src for emacs
+
+Checked out org git repo and load in early-init.el
+$ cd ~/emacs.d/src/
+$ git clone https://git.savannah.gnu.org/git/emacs/org-mode.git
+$ cd org-mode/
+$ make autoloads  (and maybe 'make compile' and 'make doc')
+
+org-contrib repo, now separate from org
+git clone https://git.sr.ht/~bzg/org-contrib
+
+ob-python-mode-mode repo, for separate python functionality
+git clone https://gitlab.com/jackkamm/ob-python-mode-mode.git
