@@ -85,10 +85,10 @@
 ;; Load org-mode from src before using it
 ;; https://askubuntu.com/questions/348999/how-to-use-the-latest-stable-version-of-org-mode
 ;; NOTE: run 'make autoloads && make compile' in org-mode dir after updating
-(add-to-list 'load-path "~/.emacs.d/src/org-mode/lisp")
-(require 'org-loaddefs)
+;(add-to-list 'load-path "~/.emacs.d/src/org-mode/lisp")
+;require 'org-loaddefs)
 ;; and org-contrib
-(add-to-list 'load-path "~/.emacs.d/src/org-contrib/lisp")
+;add-to-list 'load-path "~/.emacs.d/src/org-contrib/lisp")
 
 ;; org-python removed in org-mode 9.7, fix: https://gitlab.com/jackkamm/ob-python-mode-mode
 ;; missing python-mode, commented out until we add that
