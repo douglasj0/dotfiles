@@ -1759,7 +1759,10 @@ https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
 (use-package smartparens
   :ensure t
   :defer 5
-  :hook (prog-mode . smartparens-mode))
+  :hook
+  (prog-mode . smartparens-mode)
+  (org-mode . smartparens-mode)
+)
 #+end_src
 
 ** git-timemachine
