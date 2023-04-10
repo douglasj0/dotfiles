@@ -175,6 +175,9 @@ TODO:
 ;;; "y or n" instead of "yes or no"
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;;; Ask before quitting the last Emacs frame
+(setq confirm-kill-emacs 'y-or-n-p)
+
 ;;; Highlight regions and add special behaviors to regions.
 ;;; "C-h d transient" for more info.  transient-mark-mode is a toggle.
 ;;; also in Emacs 22 and greater, C-SPC twice to temp enable transient mark
