@@ -86,6 +86,9 @@ TODO:
 #+end_src
 ** global settings
 #+begin_src emacs-lisp
+;; Enable line-numbers-mode for all programming languages
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
 ;; enable delete selection mode, so pasting overwrites selection
 (delete-selection-mode +1)
 
