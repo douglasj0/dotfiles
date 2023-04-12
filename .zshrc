@@ -35,8 +35,7 @@ setopt prompt_subst
 zstyle ':vcs_info:git:*' formats '(%b)'
 
 # Set prompt, was PROMPT='%T %m[%h]%# ', reset color %{$reset_color%}%
-if [[ $(echo $HOST | grep "b.local") ]]; then MYHOST="b.local"; fi
-if [[ ${MYHOST} == "b.local" ]]; then
+if [[ $(echo $HOST | grep "b.local") ]]; then
 PROMPT='%F{yellow}%T %n@thorn[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
 %F{white}%# %f'
 elif [[ ${HOST} == "flowers" ]]; then
