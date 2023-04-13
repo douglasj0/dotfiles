@@ -18,7 +18,7 @@
   gc-cons-percentage 0.6)
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
-(push '(menu-bar-lines . 0) default-frame-alist)
+;(push '(menu-bar-lines . 0) default-frame-alist) ; causes forground problems with firefox
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
 
