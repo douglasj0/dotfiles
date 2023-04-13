@@ -18,9 +18,9 @@
   gc-cons-percentage 0.6)
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
-;(push '(menu-bar-lines . 0) default-frame-alist) ; causes forground problems with firefox
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
+(tool-bar-mode -1)
+(menu-bar-mode -1) 
+(toggle-scroll-bar -1) 
 
 ;;; Temporarily disable the file name handler.
 (setq default-file-name-handler-alist file-name-handler-alist)
