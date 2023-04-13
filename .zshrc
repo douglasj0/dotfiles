@@ -43,19 +43,26 @@ precmd() {
 }
 
 # Set prompt, was PROMPT='%T %m[%h]%# ', reset color %{$reset_color%}%
-if [[ $(echo $HOST | grep "b.local") ]]; then
-PROMPT='%F{yellow}%T %n@thorn[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
+#if [[ $(echo $HOST | grep "b.local") ]]; then HOSTNAME="thorn"; else; HOSTNAME="$HOST"; fi
+
+case ${HOST%%.*} in
+  thorn)
+    PROMPT='%F{yellow}%T %n@thorn[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
 %F{white}%# %f'
-elif [[ ${HOST} == "flowers" ]]; then
-PROMPT='%F{green}%T %n@flowers[%h]%f %F{cyan}[%~]%f %F{yellow}${vcs_info_msg_0_}%f
+    ;;
+  lothlorien)
+    PROMPT='%F{yellow}%T %n@lothlorien[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
 %F{white}%# %f'
-elif [[ ${HOST} == "lothlorien.local" ]]; then
-PROMPT='%F{yellow}%T %n@lothlorien[%h]%f %F{cyan}[%~]%f %F{greeb}${vcs_info_msg_0_}%f
+    ;;
+  flowers)
+    PROMPT='%F{green}%T %n@flowers[%h]%f %F{cyan}[%~]%f %F{yellow}${vcs_info_msg_0_}%f
 %F{white}%# %f'
-else
-PROMPT='%T %m[%h] [%~] ${vcs_info_msg_0_}
+    ;;
+  *)
+    PROMPT='%T %m[%h] [%~] ${vcs_info_msg_0_}
 %# '
-fi
+    ;;
+esac
 
 # Prevent text pasted into the terminal from being highlighted
 # Introduced in zsh 5.1

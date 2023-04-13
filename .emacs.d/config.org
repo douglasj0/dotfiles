@@ -1520,7 +1520,7 @@ vterm             ; the best terminal emulation in Emacs
 )
 #+end_src
 
-** DONE vterm
+** vterm
 Emacs-libvterm (vterm) is fully-fledged terminal emulator inside GNU Emacs based on libvterm
 https://github.com/akermu/emacs-libvterm
 
@@ -1558,9 +1558,9 @@ A) It's C-c C-t to toggle vterm-copy-mode.
 (use-package vterm
   :ensure t
   :commands vterm
+  :bind
+  ("C-c t v" . vterm)
   :config
-  ;; Set a keybinding to toggle vterm
-  (global-set-key (kbd "C-c t") 'vterm)
   ;; Enable mouse support in vterm
   (add-hook 'vterm-mode-hook #'(lambda () (setq-local mouse-autoselect-window nil)))
   ;; Set the buffer name to show the shell name
