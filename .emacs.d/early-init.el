@@ -18,8 +18,8 @@
   gc-cons-percentage 0.6)
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
+;(menu-bar-mode -1)
 (tool-bar-mode -1)
-(menu-bar-mode -1) 
 (toggle-scroll-bar -1) 
 
 ;;; Temporarily disable the file name handler.

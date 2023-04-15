@@ -46,7 +46,7 @@ precmd() {
 #if [[ $(echo $HOST | grep "b.local") ]]; then HOSTNAME="thorn"; else; HOSTNAME="$HOST"; fi
 
 case ${HOST%%.*} in
-  thorn)
+  QYCMJGH2QG)
     PROMPT='%F{yellow}%T %n@thorn[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
 %F{white}%# %f'
     ;;
