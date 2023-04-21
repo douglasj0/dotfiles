@@ -24,12 +24,12 @@ $ pyenv virtualenv 3.11.3 emacs-py
 $ pyenv activate emacs-py
 $ python --version
 Python 3.11.3
-$ pip install --upgrade pip
+$ python3 -m pip install --upgrade pip
 # install black, tox, flake8, pyflakes, isort   #pyright
-$ pip3 install --upgrade black tox isort flake8 # error checkers
+$ python3 -m pip install --upgrade black tox isort flake8 # error checkers
 # Install langauge server pylsp pylint
 #$ pip install 'python-language-server[all]'  # pyls (unmaintained)
-$ pip install 'python-lsp-server[all]' pylint # pylsp (maintained fork)
+$ python3 -m pip install 'python-lsp-server[all]' pylint # pylsp (maintained fork)
 $ pylsp --version
 pylsp v1.7.2
 $ pip3 list
