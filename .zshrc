@@ -185,20 +185,23 @@ fi
 ################
 #  pyenv init  #
 ################
-if [[ -d $HOME/.pyenv ]]; then
-  if [[ -z ${PYENV_SHELL} ]]; then
-    echo ". initializing pyenv"
-    export PYENV_ROOT="${HOME}/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-  else
-    echo ".. pyenv already initialized, skipping"
-  fi
+if [[ -f $HOME/.dotfiles/NO_PYENV ]]; then
+  echo ". skipping .zshrc pyenv"
 else
-  echo ".. pyenv directory not found, exiting"
+  if [[ -d $HOME/.pyenv ]]; then
+    if [[ -z ${PYENV_SHELL} ]]; then
+      echo ". initializing pyenv"
+      export PYENV_ROOT="${HOME}/.pyenv"
+      export PATH="$PYENV_ROOT/bin:$PATH"
+      eval "$(pyenv init -)"
+      eval "$(pyenv virtualenv-init -)"
+    else
+      echo ".. pyenv already initialized, skipping"
+    fi
+  else
+    echo ".. pyenv directory not found, exiting"
+  fi
 fi
-
 
 ############################
 #  Source infra functions  #
@@ -214,7 +217,7 @@ fi
 ###################
 case "$(uname)" in
 Darwin)  # Darwin Environment
-    if [[ ! -z $PS1 ]]; then echo ".. darwin zshrc loaded"; fi  # Interactive
+    if [[ ! -z $PS1 ]]; then echo ".. darwin zshrc settings loaded"; fi  # Interactive
 
     # Load Darwin aliases
     if [[ -f $HOME/.aliases.darwin ]]; then
@@ -245,7 +248,7 @@ Darwin)  # Darwin Environment
     ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
-    if [[ ! -z $PS1 ]]; then echo ".. linux zshrc loaded"; fi # interactive
+    if [[ ! -z $PS1 ]]; then echo ".. linux zshrc settings loaded"; fi # interactive
 
     # Load Linux aliases
     if [[ -f $HOME/.aliases.linux ]]; then

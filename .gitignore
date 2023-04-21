@@ -36,3 +36,6 @@ Makefile.in
 .emacs.d/.org-id-locations
 .emacs.d/recentf
 .emacs.d/config.el
+
+# pyenv
+NO_PYENV
