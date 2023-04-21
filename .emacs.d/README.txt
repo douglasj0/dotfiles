@@ -15,21 +15,22 @@ Setup emacs python virtualenv
 (set-eglot-client! 'python-mode '("pylsp"))
 
 Installing python lsp in pyenv-virtualenv:
+# if issues, use python3: python3 -m pip install 
 #+begin_src shell
 $ pyenv versions
-$ pyenv install --list | grep 3.11
-$ pyenv install 3.11.3
-$ pyenv global 3.11.3
-$ pyenv virtualenv 3.11.3 emacs-py
+$ pyenv install --list | grep 3.10
+$ pyenv install 3.10.9
+$ pyenv global 3.10.9
+$ pyenv virtualenv 3.10.9 emacs-py
 $ pyenv activate emacs-py
 $ python --version
-Python 3.11.3
-$ python3 -m pip install --upgrade pip
+Python 3.10.9
+$ pip3 install --upgrade pip
 # install black, tox, flake8, pyflakes, isort   #pyright
-$ python3 -m pip install --upgrade black tox isort flake8 # error checkers
+$ pip3 install --upgrade black tox isort flake8 # error checkers
 # Install langauge server pylsp pylint
-#$ pip install 'python-language-server[all]'  # pyls (unmaintained)
-$ python3 -m pip install 'python-lsp-server[all]' pylint # pylsp (maintained fork)
+#$ pip3 install 'python-language-server[all]'  # pyls (unmaintained)
+$ pip3 install 'python-lsp-server[all]' pylint # pylsp (maintained fork)
 $ pylsp --version
 pylsp v1.7.2
 $ pip3 list

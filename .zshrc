@@ -185,19 +185,23 @@ fi
 ################
 #  pyenv init  #
 ################
-if [[ -d $HOME/.pyenv ]]; then
-  if [[ -z ${PYENV_SHELL} ]]; then
-    echo ". initializing pyenv"
-    export PYENV_ROOT="${HOME}/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-  else
-    echo ".. pyenv already initialized, skipping"
-  fi
-else
-  echo ".. pyenv directory not found, exiting"
-fi
+#if [[ -d $HOME/.pyenv ]]; then
+#  if [[ -z ${PYENV_SHELL} ]]; then
+#    echo ". initializing pyenv"
+#    export PYENV_ROOT="${HOME}/.pyenv"
+#    export PATH="$PYENV_ROOT/bin:$PATH"
+#    eval "$(pyenv init --path)" # Adjust session-wide env
+#    eval "$(pyenv init -)"      # enable autocompletion and subcommands
+#    eval "$(pyenv virtualenv-init -)"
+#  else
+#    echo ".. pyenv already initialized, skipping"
+#  fi
+#else
+#  echo ".. pyenv directory not found, exiting"
+#fi
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 
 
 ############################
