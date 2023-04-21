@@ -493,7 +493,7 @@ Docs: https://docs.projectile.mx/projectile/index.html
 ;; https://www.emacswiki.org/emacs/EmacsForMacOS#h5o-37
 (global-set-key (kbd "M-c") 'kill-ring-save) ; ⌘-c = Copy
 (global-set-key (kbd "M-x") 'kill-region) ; ⌘-x = Cut
-(global-set-key (kbd "M-v") 'yank) ; ⌘-v = Paste
+;(global-set-key (kbd "M-v") 'yank) ; ⌘-v = Paste (interfers with cua-scroll-down)
 (global-set-key (kbd "M-a") 'mark-whole-buffer) ; ⌘-a = Select all
 (global-set-key (kbd "M-z") 'undo) ; ⌘-z = Undo
 (global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
