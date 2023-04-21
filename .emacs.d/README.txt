@@ -15,16 +15,16 @@ Setup emacs python virtualenv
 (set-eglot-client! 'python-mode '("pylsp"))
 
 Installing python lsp in pyenv-virtualenv:
-# if issues, use: python3 -m pip install 
+# if issues, use: python3 -m pip install
 #+begin_src shell
 $ pyenv versions
 $ pyenv install --list | grep 3.10
-$ pyenv install 3.10.9
-$ pyenv global 3.10.9
-$ pyenv virtualenv 3.10.9 emacs-py
+$ pyenv install 3.10.11
+$ pyenv global 3.10.11
+$ pyenv virtualenv 3.10.11 emacs-py
 $ pyenv activate emacs-py
 $ python --version
-Python 3.10.9
+Python 3.10.11
 $ pip3 install --upgrade pip
 # install black, tox, flake8, pyflakes, isort   #pyright
 $ pip3 install --upgrade black tox isort flake8 # error checkers
