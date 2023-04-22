@@ -1482,13 +1482,46 @@ Search all marked buffers
                  (ibuffer-switch-to-saved-filter-groups "default")))
 )
 #+end_src
-* Term
+* Terminal
 #+begin_src text
 eshell            ; the elisp shell that works everywhere
 vterm             ; the best terminal emulation in Emacs
 #+end_src
 
+** keymaps terminal (C-c t)
+Based on projectile's
+
+#+begin_src emacs-lisp
+(defvar term-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "v") #'vterm)
+    (define-key map (kbd "e") #'eshell)
+    (define-key map (kbd "t") #'term)
+    (define-key map (kbd "a") #'ansi-term)
+    (define-key map (kbd "s") #'shell)
+    map)
+  "Keymap for org-mode commands after `org-keymap-prefix'.")
+(fset 'term-command-map term-command-map)
+(global-set-key (kbd "C-c t") '("terminals" . term-command-map))
+
+;; test out directory tracking
+;(add-hook 'comint-output-filter-functions #'comint-osc-process-output)
+
+#+end_src
+** shell
+#+begin_src emacs-lisp
+(setq explicit-shell-file-name "zsh")
+(setq shell-file-name "zsh")
+(setq explicit-zsh-args '("--login" "--interactive"))
+(defun zsh-shell-mode-setup ()
+  (setq-local comint-process-echoes t))
+(add-hook 'shell-mode-hook #'zsh-shell-mode-setup)
+#+end_src
+
 ** eshell
+
+Guide to mastering eshell
+https://www.masteringemacs.org/article/complete-guide-mastering-eshell
 
 #+begin_src emacs-lisp
 ;; Little quality of life improvement if you work with multiple eshell buffers:
@@ -1527,6 +1560,7 @@ vterm             ; the best terminal emulation in Emacs
 ** vterm
 Emacs-libvterm (vterm) is fully-fledged terminal emulator inside GNU Emacs based on libvterm
 https://github.com/akermu/emacs-libvterm
+https://github.com/akermu/emacs-libvterm/blob/master/README.md
 
 Manual installation guide
 #+begin_src text
@@ -1562,8 +1596,8 @@ A) It's C-c C-t to toggle vterm-copy-mode.
 (use-package vterm
   :ensure t
   :commands vterm
-  :bind
-  ("C-c t v" . vterm)
+  ;:bind
+  ;("C-c t v" . vterm)
   :config
   ;; Enable mouse support in vterm
   (add-hook 'vterm-mode-hook #'(lambda () (setq-local mouse-autoselect-window nil)))
