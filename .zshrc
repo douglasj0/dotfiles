@@ -54,6 +54,10 @@ case ${HOST%%.*} in
     PROMPT='%F{yellow}%T %n@lothlorien[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
 %F{white}%# %f'
     ;;
+  lothlorien-wifi)
+    PROMPT='%F{green}%T %n@lothlorien-wifi[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
+%F{white}%# %f'
+    ;;
   flowers)
     PROMPT='%F{green}%T %n@flowers[%h]%f %F{cyan}[%~]%f %F{yellow}${vcs_info_msg_0_}%f
 %F{white}%# %f'
