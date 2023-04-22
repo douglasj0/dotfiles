@@ -68,6 +68,16 @@ case ${HOST%%.*} in
     ;;
 esac
 
+# _testing() {
+# PS1='%F{yellow}%T %n@lothlorien[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
+# #%F{white}%# %f'
+# }
+
+## precmd() { _testing } #or
+#precmd() { eval "$PROMPT_COMMAND" }
+#PROMPT_COMMAND=_testing
+
+
 # Prevent text pasted into the terminal from being highlighted
 # Introduced in zsh 5.1
 zle_highlight+=(paste:none)
