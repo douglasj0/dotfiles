@@ -45,37 +45,37 @@ precmd() {
 # Set prompt, was PROMPT='%T %m[%h]%# ', reset color %{$reset_color%}%
 #if [[ $(echo $HOST | grep "b.local") ]]; then HOSTNAME="thorn"; else; HOSTNAME="$HOST"; fi
 
+# Prompt settings based on hostname
 case ${HOST%%.*} in
   QYCMJGH2QG)
-    PROMPT='%F{yellow}%T %n@thorn[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
-%F{white}%# %f'
+    PROMPT_COLOR="yellow"
+    PROMPT_HOST="thorn"
     ;;
   lothlorien)
-    PROMPT='%F{yellow}%T %n@lothlorien[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
-%F{white}%# %f'
+    PROMPT_COLOR="yellow"
+    PROMPT_HOST="%m"
     ;;
   lothlorien-wifi)
-    PROMPT='%F{green}%T %n@lothlorien-wifi[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
-%F{white}%# %f'
+    PROMPT_COLOR="green"
+    PROMPT_HOST="%m"
     ;;
   flowers)
-    PROMPT='%F{green}%T %n@flowers[%h]%f %F{cyan}[%~]%f %F{yellow}${vcs_info_msg_0_}%f
-%F{white}%# %f'
+    PROMPT_COLOR="green"
+    PROMPT_HOST="%m"
     ;;
   *)
-    PROMPT='%T %m[%h] [%~] ${vcs_info_msg_0_}
-%# '
+    PROMPT_COLOR="white"
+    PROMPT_HOST="%m"
     ;;
 esac
 
-# _testing() {
-# PS1='%F{yellow}%T %n@lothlorien[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
-# #%F{white}%# %f'
-# }
+function _zsh_prompt {
+PS1='%F{$PROMPT_COLOR}%T %n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
+%F{white}%# %f'
+}
 
-## precmd() { _testing } #or
-#precmd() { eval "$PROMPT_COMMAND" }
-#PROMPT_COMMAND=_testing
+precmd() { eval "$PROMPT_COMMAND" }
+PROMPT_COMMAND=_zsh_prompt
 
 
 # Prevent text pasted into the terminal from being highlighted

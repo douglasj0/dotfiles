@@ -35,3 +35,19 @@ $ pylsp --version
 pylsp v1.7.2
 $ pip3 list
 #+end_src
+
+
+-=-=-=-
+
+RMail is loaded, customize to remove org modules
+https://www.reddit.com/r/emacs/comments/tkp4v5/weekly_tips_tricks_c_thread/
+
+Phil-Hudson
+1 yr. ago
+You can use the Customize interface via M-x customize-option RET org-modules RET to pick and choose which modules you want enabled.
+
+oantolin 1 yr. ago C-x * q 100! RET
+
+In version 9.5.2 ol-rmail does not have (require 'rmail), so ol-rmail was not the culprit in my case. It turned out that ol-gnus does (require 'gnus-util), and gnus-util in turn does (require 'rmail). Since I definitely need ol-gnus I gave up on not loading rmail. :)
+
+By the way, of the methods of tracking down how a library got loaded in your link, I think the easiest is looking at load-history it tells you everything! It's probably best to give it its own buffer by doing M-x pp-eval-expression RET load-history.

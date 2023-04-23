@@ -40,17 +40,24 @@ TODO:
    "~/Sync/my_homedir_files/emacs.d/info")
 (add-to-list 'load-path "~/.emacs.d/elisp/") ;; elisp packages not in pkg mgr
 
-;;;; Only start server if it is not currently running
-(load "server")
-(setq server-socket-dir "~/.emacs.d/var/tmp")
-(unless (server-running-p) (server-start))
+;;;; Start server if not currently running and in gui
+(when window-system
+     (load "server")
+     (setq server-socket-dir "~/.emacs.d/var/tmp")
+     (unless (server-running-p) (server-start)))
 #+end_src
 
 ** enable disabled functions
 #+begin_src emacs-lisp
-;; Upcase and downcase regions
-(put 'upcase-region 'disabled nil)  ; C-x C-u
-(put 'downcase-region 'disabled nil)  ; C-x C-l
+;; Upcase and downcase regions, default also works on inactive region, use dwim
+;(put 'upcase-region 'disabled nil)  ; C-x C-u
+;(put 'downcase-region 'disabled nil)  ; C-x C-l
+(global-unset-key (kbd "C-x C-u")) ; default is `upcase-region'-region'
+(global-unset-key (kbd "C-x C-l")) ; default is `downcase-region'
+;(global-unset-key (kbd "M-c"))     ; default is `kill-ring-save', didn't work
+;(global-set-key (kbd "M-c") #'capitalize-region) ; was M-c
+(global-set-key (kbd "C-x C-u") #'upcase-dwim)   ; was M-u
+(global-set-key (kbd "C-x C-l") #'downcase-dwim) ; was M-l
 
 ;; Restrict buffer editing to a region
 ;; Text Narrowing commands:
@@ -179,8 +186,10 @@ TODO:
 ;;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Just-Spaces.html
 (setq-default indent-tabs-mode nil)
 
-;;; "y or n" instead of "yes or no"
-(fset 'yes-or-no-p 'y-or-n-p)
+;;; "y or n" instead of "yes or no", use-short-answers added in Emacs 28.1
+;; if odd pop-up vs minibuffer prompt issues, examine us-dialog-box?
+;(fset 'yes-or-no-p 'y-or-n-p) ;emacs < 28
+(setq use-short-answers t)
 
 ;;; Ask before quitting the last Emacs frame
 (setq confirm-kill-emacs 'y-or-n-p)
@@ -232,6 +241,14 @@ TODO:
 
 ** functions
 #+begin_src emacs-lisp
+;;; ---------------------------------------------------------------------------
+;;; https://www.reddit.com/r/emacs/comments/un4wf8/weekly_tips_tricks_c_thread/
+;;; toggle between two most recent buffers in a window
+(defun back-and-forth-buffer ()
+	(interactive)
+	(switch-to-buffer (other-buffer (current-buffer))))
+(global-set-key (kbd "<f7>") 'back-and-forth-buffer)
+
 ;;; ---------------------------------------------------------------------------
 ;;; https://gist.github.com/mwfogleman/95cc60c87a9323876c6c
 ;;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
@@ -536,7 +553,8 @@ Docs: https://docs.projectile.mx/projectile/index.html
   ;Needed to find aspell and probably others
   (use-package exec-path-from-shell
     :ensure t
-    :if (memq window-system '(mac ns x))
+    ;:if (memq window-system '(mac ns x))
+    :if (memq (window-system) '(mac ns))
     :config
     ;(setq exec-path-from-shell-arguments nil) ; was '("-l"), breaks aspell?
     ;(setq exec-path-from-shell-debug 1)  ; enable debugging
@@ -1273,6 +1291,10 @@ Hide file detail toggle `(`
 
 OSX/BSD ls doesn't sort directories first, ls-lisp can
 #+begin_src emacs-lisp
+;; Make clicking on files in Dired buffers open in the current window:
+;; (This works thanks to mouse-1-click-follows-link.)
+(define-key dired-mode-map [mouse-2] #'dired-mouse-find-file)
+
 (use-package ls-lisp
   :custom
   ;(ls-lisp-emulation 'MacOS)
@@ -1968,6 +1990,9 @@ git clone https://gitlab.com/jackkamm/ob-python-mode-mode.git
 ;; to insert code into the #+begin_src ... #+end_src area.
 (setq org-src-fontify-natively t)
 
+;; Interface for easy switching between (only) open Org mode buffers
+(global-set-key (kbd "C-c n b") #'org-switchb)
+
 ;;; Enable other org-babel languages
 (org-babel-do-load-languages
   (quote org-babel-load-languages)
@@ -2121,10 +2146,14 @@ https://www.adventuresinwhy.com/post/eglot/
 https://github.com/marcwebbie/auto-virtualenv
 https://github.com/jorgenschaefer/pyvenv
 
+Python Executable Tracker: https://github.com/wyuenho/emacs-pet
+
 ** pyvenv
 
-https://stackoverflow.com/questions/38535499/how-to-setup-emacs-to-use-a-given-python-virtualenv
+Python virtual environment support for Emacs
+https://github.com/jorgenschaefer/pyvenv
 
+https://stackoverflow.com/questions/38535499/how-to-setup-emacs-to-use-a-given-python-virtualenv
 So next time, create the virtual environment in the directory you want (I always call them env and I installed it in the project directory)
   python -m venv env
 Then open emacs M-x pyvenv-activate RET dir_to_the_environment/env
@@ -2263,4 +2292,47 @@ https://taingram.org/blog/emacs-lsp-ide.html
 ;  :ensure t
 ;  ;; To use MELPA Stable use ":pin melpa-stable",
 ;  :pin melpa)
+#+end_src
+
+Create graphviz of loading modules
+This will insert a graphviz file into my scratch buffer, and then I paste that into https://dreampuf.github.io/GraphvizOnline/ to get a visualization. I've already discovered some unexpected dependencies…
+
+#+begin_src emacs-lisp
+(defun -my/load-history-one-to-graphviz (module)
+  "(internal) Convert one entry of load-history into a graphviz string"
+  (cl-loop for entry in (cdr module)
+           if (and (consp entry) (eq (car entry) 'provide))
+           collect (cdr entry) into provide
+           if (and (consp entry) (eq (car entry) 'require))
+           collect (cdr entry) into require
+           finally
+           return
+           (and provide
+                (cl-loop for dependency in require
+                         concat (format "  \"%s\" -> \"%s\";\n" (car provide) dependency)))
+           ))
+
+(defun my/load-history-to-graphviz ()
+  "Convert load-history provides/requires into a graphviz graph"
+  (interactive)
+  (with-current-buffer "*scratch*"
+    (insert "digraph G {\n  rankdir=\"LR\";\n")
+    (insert (cl-loop for module in load-history
+            for graphviz = (-my/load-history-one-to-graphviz module)
+            concat (or graphviz "")))
+    (insert "}\n")))
+#+end_src
+
+My frequently used function to sum all day expenses in diary:
+https://www.reddit.com/r/emacs/comments/szc7za/weekly_tips_tricks_c_thread/
+#+begin_src emacs-lisp
+(defun sum-numbers-in-region (start end)
+ "Sum all numbers in region and place result into kill ring."
+  (interactive "r")
+  (let* ((sum (cl-reduce #'+
+                      (split-string (buffer-substring start
+                                                      end))
+                      :key #'string-to-number)))
+    (message "Sum for all numbers in region is %s. Result stored in clipboard." sum)
+    (kill-new (format "%s" sum))))
 #+end_src
