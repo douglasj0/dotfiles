@@ -69,13 +69,13 @@ case ${HOST%%.*} in
     ;;
 esac
 
-function _zsh_prompt {
+#function _zsh_prompt {
 PS1='%F{$PROMPT_COLOR}%T %n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
 %F{white}%# %f'
-}
+#}
 
-precmd() { eval "$PROMPT_COMMAND" }
-PROMPT_COMMAND=_zsh_prompt
+#precmd() { eval "$PROMPT_COMMAND" }
+#PROMPT_COMMAND=_zsh_prompt
 
 
 # Prevent text pasted into the terminal from being highlighted
