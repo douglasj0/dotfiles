@@ -705,6 +705,7 @@ vertico.el - VERTical Interactive COmpletion
 
 #+begin_src emacs-lisp
 ;; add similar behavior to ivy, (doesn't work in cli mode?)
+; But... kills entire word when trying to fix one, disabling for backspace in vertico
 (defun dw/minibuffer-backward-kill (arg)
   "When minibuffer is completing a file name delete up to parent
 folder, otherwise delete a word"
@@ -720,7 +721,7 @@ folder, otherwise delete a word"
 (use-package vertico
   :ensure t
   :bind (:map minibuffer-local-map
-         ("<backspace>" . dw/minibuffer-backward-kill) ; works in gui (maybe cli?)
+         ;("<backspace>" . dw/minibuffer-backward-kill) ; works in gui (maybe cli?)
          ("C-h" . dw/minibuffer-backward-kill) ; this works in cli and gui
          ;:map vertico-map
          ("C-n" . vertico-next)
