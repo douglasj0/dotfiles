@@ -704,6 +704,7 @@ NOTE: emacs in a terminal settings to use backspace in minibuffer:
 vertico.el - VERTical Interactive COmpletion
 
 #+begin_src emacs-lisp
+;; https://config.daviwil.com/emacs
 ;; add similar behavior to ivy, (doesn't work in cli mode?)
 ; But... kills entire word when trying to fix one, disabling for backspace in vertico
 (defun dw/minibuffer-backward-kill (arg)
@@ -723,7 +724,8 @@ folder, otherwise delete a word"
   :bind (:map minibuffer-local-map
          ;("<backspace>" . dw/minibuffer-backward-kill) ; works in gui (maybe cli?)
          ("C-h" . dw/minibuffer-backward-kill) ; this works in cli and gui
-         ;:map vertico-map
+         ;("M-h" . dw/minibuffer-backward-kill)
+         :map vertico-map
          ("C-n" . vertico-next)
          ("C-p" . vertico-previous)
          ("C-v" . vertico-scroll-up)
