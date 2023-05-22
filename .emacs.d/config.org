@@ -2376,3 +2376,12 @@ https://www.reddit.com/r/emacs/comments/szc7za/weekly_tips_tricks_c_thread/
     (message "Sum for all numbers in region is %s. Result stored in clipboard." sum)
     (kill-new (format "%s" sum))))
 #+end_src
+
+Auto Package Update
+#+begin_src emacs-lisp
+(use-package auto-package-update
+  :ensure t
+  :config
+  ;; Yes, please delete the old version on updates.
+  (setq auto-package-update-delete-old-versions t))
+#+end_src

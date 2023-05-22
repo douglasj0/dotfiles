@@ -37,6 +37,7 @@ Makefile.in
 .emacs.d/recentf
 .emacs.d/config.el
 .emacs.d/eshell/*
+.emacs.d/.last-package-update-day
 
 # pyenv
 NO_PYENV
