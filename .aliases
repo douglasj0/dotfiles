@@ -1,6 +1,5 @@
 # -*- mode: sh -*-
 # General shell aliases
-
 alias -- la='ls -a'
 alias -- lf='ls -F'
 alias -- ll='ls -la'
@@ -39,3 +38,7 @@ git_repo_remaster() {
 
 # Recreate yolo sudo last command
 alias yolo='sudo $(fc -nl -1)'
+
+# Emacs aliases
+#alias emacspkgupdate="emacs -nw --eval '(progn (sit-for 2) (auto-package-update-now))"
+alias emacspkgupdate='emacs -nw -f auto-package-update-now'

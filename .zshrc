@@ -191,6 +191,16 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
     alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
 fi
 
+# work this in
+#if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
+#    #export EDITOR=emacsclient
+#    export VISUAL=emacsclient
+#    export PAGER=cat
+#
+#    alias magit="emacsclient -ne '(magit-status)'"
+#    function man() { emacsclient -ne "(man \"$1\")"; }
+#fi
+
 # Emacs vterm name buffer - doesn't work?
 #autoload -U add-zsh-hook
 #add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
