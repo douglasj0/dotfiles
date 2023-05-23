@@ -2025,6 +2025,12 @@ git clone https://gitlab.com/jackkamm/ob-python-mode-mode.git
 ;; Prevent C-k from killing whole subtrees and losing work (default: nil)
 (setq org-special-ctrl-k t)
 
+;; Include emacs diary, not needed if using org-anniversary
+;(setq org-agenda-include-diary t)
+
+;; Disable company-mode (word completions) in org using company conf var
+;(setq company-global-modes '(not org-mode))
+
 ;; Fontify code buffers in org, instead of grey text (default: t)
 ;; This is especially nice when you open an editing buffer with [Ctrl+c ']
 ;; to insert code into the #+begin_src ... #+end_src area.
@@ -2140,7 +2146,7 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
   ;(require 'org-roam-protocol)
 
   ;;
-  ;; Configure default capture template
+  ;; Configure default capture template (try without $G)
   ;;
   (setq org-roam-capture-templates
   '(("d" "default" plain "%?"
