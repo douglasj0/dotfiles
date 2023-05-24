@@ -540,10 +540,20 @@ Docs: https://docs.projectile.mx/projectile/index.html
   (bind-key "M-g 0" 'my/text-scale-reset)
 
   ;;; set font size to 15, overriding default 12
-  ; M-x describe-font:
-  ; Monaco:pixelsize=12:weight=normal:slant=normal:width=normal:spacing=100:scalable=true
-  ;(set-face-attribute 'default (selected-frame) :height 150)
-  (set-face-attribute 'default nil :height 150)
+  ;; M-x describe-font:
+  ;; Monaco:pixelsize=12:weight=normal:slant=normal:width=normal:spacing=100:scalable=true
+  ;; M-: (face-attribute 'default :font)
+  ;; #<font-object "-*-Monaco-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1">
+  ;;(set-face-attribute 'default (selected-frame) :height 150)
+  ;;(set-face-attribute 'default nil :height 150)
+  (set-frame-font "Monaco 15" nil t)
+  ;(set-frame-font "Menlo 15" nil t) ; fit more lines per frame
+
+  ;; Testing jetbrains mono font, not sure I like it
+  ;; https://www.jetbrains.com/lp/mono/
+  ;; "JetBrains Mono-13:spacing=100"
+  ;;(set-face-attribute 'default nil :font "JetBrains Mono-15" :height 150)
+  ;(set-frame-font "JetBrains Mono 15" nil t)
 
   ;; Osx-trash
   ;; Make Emacs' delete-by-moving-to-trash do what you expect it to do on OS X.
