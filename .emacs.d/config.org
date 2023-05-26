@@ -10,6 +10,8 @@ TODO:
 - doom MacOS fixes
 - git-gutter vs diff-hl/vc-gutter
 - fix/revisit venv setup
+- use-package defer is implied in:
+  :commands, :bind, :bind*, :bind-keymap, :bind-keymap*, :mode, or :interpreter
 
 * Housekeeping
 ** initialization
@@ -412,7 +414,7 @@ https://github.com/Wilfred/helpful
 #+begin_src emacs-lisp
 (use-package helpful
   :ensure t
-  :defer 5
+  :defer t
   :bind
   (("C-h f" . helpful-callable)
    ("C-h v" . helpful-variable)
@@ -470,7 +472,7 @@ Docs: https://docs.projectile.mx/projectile/index.html
 #+begin_src emacs-lisp
 (use-package projectile
   :ensure t
-  :defer 10
+  :defer t
   :init
   (projectile-mode +1)
   :bind (:map projectile-mode-map
@@ -758,6 +760,7 @@ folder, otherwise delete a word"
 ;; You may prefer to use `initials' instead of `partial-completion'.
 (use-package orderless
   :ensure t
+  ;:defer t
   :init
   (setq completion-styles '(orderless)
         completion-category-defaults nil
@@ -820,6 +823,7 @@ Completions in Regions
 #+begin_src emacs-lisp
 (use-package corfu
   :ensure t
+  ;:defer t
   ;; Optional customizations
   :custom
   ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -901,6 +905,7 @@ consult.el - Consulting completing-read
 ;; Example configuration for Consult
 (use-package consult
   :ensure t
+  :defer t
   ;:hook (completion-list-mode . consult-preview-at-point-mode)
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-c bindings (mode-specific-map)
@@ -1115,6 +1120,7 @@ https://www.reddit.com/r/emacs/comments/he55jl/whats_the_funky_character_on_the_
 #+begin_src emacs-lisp
 (use-package dracula-theme
   :ensure t
+  ;:defer t  ;doesn't load when needed
   ;:init
   ;(setq dracula-enlarge-headings nil)
   :config
@@ -1146,6 +1152,7 @@ To finish, run: M-x nerd-icons-install-fonts
 #+begin_src emacs-lisp
 (use-package nerd-icons
   :ensure t
+  ;:defer t
   :custom
   ;; The Nerd Font you want to use in GUI
   ;; "Symbols Nerd Font Mono" is the default and is recommended
@@ -1162,6 +1169,7 @@ NOTE: Run (all-the-icons-install-fonts) one time after installing
 #+begin_src emacs-lisp
 (use-package doom-modeline
   :ensure t
+  ;:defer t
   :hook (after-init . doom-modeline-mode)
   :config
   ;; Fix? for Height below 25 not working anymore #187
@@ -1268,7 +1276,8 @@ https://github.com/Alexander-Miller/treemacs
 
 (use-package treemacs-projectile
   :after (treemacs projectile)
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package treemacs-icons-dired
   :hook (dired-mode . treemacs-icons-dired-enable-once)
@@ -1276,7 +1285,8 @@ https://github.com/Alexander-Miller/treemacs
 
 (use-package treemacs-magit
   :after (treemacs magit)
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;(use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
 ;  :after (treemacs persp-mode) ;;or perspective vs. persp-mode
@@ -1311,7 +1321,7 @@ https://github.com/abo-abo/hydra/wiki/multiple-cursors
 #+begin_src emacs-lisp
 (use-package multiple-cursors
   :ensure t
-  :defer 5)
+  :defer t)
 
 ;; mc/num-cursors is not autoloaded
 ;;(require 'multiple-cursors)
@@ -1412,6 +1422,7 @@ https://github.com/thomp/dired-launch
 #+begin_src emacs-lisp
 (use-package dired-launch
   :ensure t
+  :defer t
   :hook
   (dired-mode . dired-launch-mode))
 #+end_src
@@ -1452,6 +1463,7 @@ Paging: C-h
 #+begin_src emacs-lisp
 (use-package which-key
   :ensure t
+  :defer t
   :init (which-key-mode)
   :config
   ;(setq which-key-allow-imprecise-window-fit nil)
@@ -1633,6 +1645,7 @@ https://www.masteringemacs.org/article/complete-guide-mastering-eshell
 
 (use-package eshell-git-prompt
   :ensure t
+  :defer t
   :config
   (eshell-git-prompt-use-theme 'git-radar)
 )
@@ -1684,6 +1697,7 @@ A) It's C-c C-t to toggle vterm-copy-mode.
 ;; from ChatGTP
 (use-package vterm
   :ensure t
+  :defer t
   :commands vterm
   ;:bind
   ;("C-c t v" . vterm)
@@ -1828,7 +1842,7 @@ https://github.com/magit/magit
 
 (use-package magit
   :ensure t
-  :defer 5
+  :defer t
   :commands magit
   ;:bind
   ;  (("C-x g" . magit-status)
@@ -1860,10 +1874,10 @@ https://github.com/magit/forge
 manual: https://magit.vc/manual/forge/
 
 #+begin_src emacs-lisp
-(use-package forge
-  :ensure f
-  :defer 5
-  :after magit)
+;(use-package forge
+;  :ensure f
+;  :defer t
+;  :after magit)
 #+end_src
 
 ** diff-hl
@@ -1872,7 +1886,7 @@ diff-hl: https://github.com/dgutov/diff-hl
 #+begin_src emacs-lisp
 (use-package diff-hl
   :ensure t
-  :defer 5
+  :defer t
   :config
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -1900,7 +1914,7 @@ https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
 
 (use-package smartparens
   :ensure t
-  :defer 5
+  :defer t
   :hook
   (prog-mode . smartparens-mode)
   (org-mode . smartparens-mode)
@@ -1930,7 +1944,7 @@ Use the following keys to navigate historic version of the file
 
 #+begin_src emacs-lisp
 (use-package git-timemachine
-  :defer 5)
+  :defer t)
 #+end_src
 
 * Lang
@@ -2004,10 +2018,12 @@ yaml-mode https://github.com/yoshiki/yaml-mode
 
 #+begin_src emacs-lisp
 (use-package json-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package yaml-mode
   :ensure t
+  :defer t
   :config
   (add-hook 'yaml-mode-hook
       '(lambda ()
@@ -2296,6 +2312,7 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 (use-package org-roam
   :ensure t
   :after org
+  :defer t
   :init
   (setq org-roam-v2-ack t)
   :custom
@@ -2375,6 +2392,7 @@ Then open emacs M-x pyvenv-activate RET dir_to_the_environment/env
 #+begin_src emacs-lisp
 (use-package pyvenv
   :ensure t
+  :defer t
   :config
   (pyvenv-mode t)
 
@@ -2398,6 +2416,7 @@ Then open emacs M-x pyvenv-activate RET dir_to_the_environment/env
 #+begin_src emacs-lisp
 (use-package yasnippet
   :ensure t
+  :defer t
   :hook (prog-mode . yas-minor-mode)
   :config
   (yas-reload-all))
@@ -2423,7 +2442,7 @@ https://taingram.org/blog/emacs-lsp-ide.html
 #+begin_src emacs-lisp
 (use-package eglot
   :ensure t
-  ;:defer 5
+  :defer t
   :init (setq completion-category-overrides '((eglot (styles orderless))))
   :commands eglot
   ;:config
@@ -2457,6 +2476,7 @@ https://taingram.org/blog/emacs-lsp-ide.html
 ; https://blog.burntsushi.net/ripgrep/
 (use-package deadgrep
   :ensure t
+  :defer t
   :bind
   (("C-c f r" . deadgrep)
    ("C-c f f" . grep-org-files))
@@ -2556,6 +2576,7 @@ https://github.com/rranelli/auto-package-update.el
 #+begin_src emacs-lisp
 (use-package auto-package-update
   :ensure t
+  :defer t
   :config
   ;; Yes, please delete the old version on updates.
   (setq auto-package-update-delete-old-versions t))
