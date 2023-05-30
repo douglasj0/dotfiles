@@ -27,6 +27,9 @@
   ;(package-install 'diminish)
 )
 
+;; enable use-package profiling (M-x use-package-report)
+(setq use-package-compute-statistics t)
+
 ;; From use-package README
 (eval-when-compile
   (require 'use-package))

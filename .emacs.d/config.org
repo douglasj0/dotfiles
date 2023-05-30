@@ -572,6 +572,7 @@ Docs: https://docs.projectile.mx/projectile/index.html
   ;Needed to find aspell and probably others
   (use-package exec-path-from-shell
     :ensure t
+    :defer t
     ;:if (memq window-system '(mac ns x))
     :if (memq (window-system) '(mac ns))
     :config
@@ -1717,16 +1718,20 @@ A) It's C-c C-t to toggle vterm-copy-mode.
 
 ** tramp
 
+Initializing tramp via use-package does't seem to add any value, but does increase startup time
+
 #+begin_src emacs-lisp
-(use-package tramp
-  :init
-  ;; Set default connection method for TRAMP
-  (setq tramp-default-method "sshx"))
+;(use-package tramp
+;  :init
+;  ;; Set default connection method for TRAMP
+;  (setq tramp-default-method "sshx"))
+
+(setq tramp-default-method "sshx")
 #+end_src
 
 * Tools
 #+begin_src text
-:tools
+:tools - from doom emacs
 ansible
 docker
 (eval +overlay)     ; run code, run (also, repls)
@@ -1946,6 +1951,16 @@ Use the following keys to navigate historic version of the file
 (use-package git-timemachine
   :defer t)
 #+end_src
+
+** tree-sitter
+
+For Emacs 29
+https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
+https://www.reddit.com/r/emacs/comments/zbpa42/how_to_use_emacs_29_treesitter/
+
+For Emacs 28
+https://github.com/ubolonton/tree-sitter
+https://github.com/emacs-tree-sitter/elisp-tree-sitter
 
 * Lang
 #+begin_src text
@@ -2416,14 +2431,14 @@ Then open emacs M-x pyvenv-activate RET dir_to_the_environment/env
 #+begin_src emacs-lisp
 (use-package yasnippet
   :ensure t
-  :defer t
+  :defer 10
   :hook (prog-mode . yas-minor-mode)
   :config
   (yas-reload-all))
 
 (use-package yasnippet-snippets
   :ensure t
-  :defer t
+  ;defer t
   :after yasnippet)
 #+end_src
 
