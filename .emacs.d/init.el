@@ -30,6 +30,10 @@
 ;; enable use-package profiling (M-x use-package-report)
 (setq use-package-compute-statistics t)
 
+;; Allow loading from the package cache
+;(defvar package-quickstart)
+(setq package-quickstart t)
+
 ;; From use-package README
 (eval-when-compile
   (require 'use-package))
