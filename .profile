@@ -32,15 +32,19 @@ TMPDIR="/tmp"
 #
 #  export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
 #  export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
-case $(uname -m) in
+case $(uname) in  # switch to x86 shell: arch -x86_64 zsh
   arm64)
-    PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/openssl@1.1/bin:${PATH}"
+    #PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/openssl@1.1/bin:${PATH}"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    PATH="/opt/homebrew/opt/openssl@1.1/bin:${PATH}"
     ;;
   x86_64)
-    PATH="/usr/local/sbin:/usr/local/bin:/usr/local/opt/openssl@1.1/bin:${PATH}"
+    #PATH="/usr/local/sbin:/usr/local/bin:/usr/local/opt/openssl@1.1/bin:${PATH}"
+    eval "$(/usr/local/bin/brew shellenv)"
+    PATH="/usr/local/opt/openssl@1.1/bin:${PATH}"
     ;;
   *)
-    PATH="/usr/local/sbin:/usr/local/bin"
+    #PATH="/usr/local/sbin:/usr/local/bin"
     ;;
 esac
 export PATH MANPATH TMPDIR
