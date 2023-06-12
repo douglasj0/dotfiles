@@ -1119,19 +1119,38 @@ https://github.com/dracula/dracula-theme
 https://www.reddit.com/r/emacs/comments/he55jl/whats_the_funky_character_on_the_mode_line/
 
 #+begin_src emacs-lisp
-(use-package dracula-theme
+;(use-package dracula-theme
+;  :ensure t
+;  ;:defer t  ;doesn't load when needed
+;  ;:init
+;  ;(setq dracula-enlarge-headings nil)
+;  :config
+;  ;; Don't change the font size for some headings and titles (default t)
+;  (setq dracula-enlarge-headings nil)
+;  (if (display-graphic-p)
+;      (load-theme 'dracula :no-confirm)	  ; Emacs in own window
+;    (load-theme 'wheatgrass :no-confirm)  ; Emacs in tty
+;  )
+;)
+#+end_src
+
+** vscode-dark-plus-emacs-theme
+Visual Studio Code Dark+ for Emacs
+https://github.com/ianyepan/vscode-dark-plus-emacs-theme
+
+#+begin_src emacs-lisp
+(use-package vscode-dark-plus-theme
   :ensure t
-  ;:defer t  ;doesn't load when needed
-  ;:init
-  ;(setq dracula-enlarge-headings nil)
   :config
-  ;; Don't change the font size for some headings and titles (default t)
-  (setq dracula-enlarge-headings nil)
-  (if (display-graphic-p)
-      (load-theme 'dracula :no-confirm)	  ; Emacs in own window
-    (load-theme 'wheatgrass :no-confirm)  ; Emacs in tty
-  )
-)
+  ;; Remove the border around the TODO word on org-mode files
+  ;(setq vscode-dark-plus-box-org-todo nil)
+  ;; Do not set different heights for some org faces
+  ;(setq vscode-dark-plus-scale-org-faces nil)
+  ;; Avoid inverting hl-todo face
+  ;(setq vscode-dark-plus-invert-hl-todo nil)
+  ;; Configure current line highlighting style (works best with Emacs 28 or newer)
+  ;(setq vscode-dark-plus-render-line-highlight 'line)
+  (load-theme 'vscode-dark-plus t))
 #+end_src
 
 ** all-the-icons
