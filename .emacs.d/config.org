@@ -234,7 +234,11 @@ TODO:
 ;(setq scroll-error-top-bottom 'true)
 
 ;; New json-mode
-(setq auto-mode-alist (cons '("\\.json\\'" . js-mode) auto-mode-alist))
+;(setq auto-mode-alist (cons '("\\.json\\'" . js-mode) auto-mode-alist))
+(setq auto-mode-alist
+      (append '(("\\.json\\'" . json-mode)  ; note these are encapsulated in a '() list
+		("\\.jsn\\'" . json-mode))
+	       auto-mode-alist))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bookmarks
@@ -2045,10 +2049,11 @@ https://www.emacswiki.org/emacs/ShMode
   (after-save . executable-make-buffer-file-executable-if-script-p))
 #+end_src
 
-** json and yaml modes
+** json, yaml, hcl modes
 
 json-mode https://github.com/joshwnj/json-mode
 yaml-mode https://github.com/yoshiki/yaml-mode
+hcl-mode https://github.com/syohex/emacs-hcl-mode
 
 #+begin_src emacs-lisp
 (use-package json-mode
@@ -2062,6 +2067,13 @@ yaml-mode https://github.com/yoshiki/yaml-mode
   (add-hook 'yaml-mode-hook
       '(lambda ()
         (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+)
+
+(use-package hcl-mode
+  :ensure t
+  :defer t
+  ;:config
+  ;(hcl-indent-level 2)
 )
 #+end_src
 
@@ -2510,7 +2522,7 @@ https://taingram.org/blog/emacs-lsp-ide.html
 ; https://blog.burntsushi.net/ripgrep/
 (use-package deadgrep
   :ensure t
-  :defer t
+  :defer 0.8
   :bind
   (("C-c f r" . deadgrep)
    ("C-c f f" . grep-org-files))
