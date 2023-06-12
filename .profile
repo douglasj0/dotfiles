@@ -32,7 +32,7 @@ TMPDIR="/tmp"
 #
 #  export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
 #  export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
-case $(uname) in  # switch to x86 shell: arch -x86_64 zsh
+case $(uname -m) in  # switch to x86 shell: arch -x86_64 zsh
   arm64)
     #PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/openssl@1.1/bin:${PATH}"
     eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -45,6 +45,7 @@ case $(uname) in  # switch to x86 shell: arch -x86_64 zsh
     ;;
   *)
     #PATH="/usr/local/sbin:/usr/local/bin"
+    echo "no known Architecture found, no Homebrew path set."
     ;;
 esac
 export PATH MANPATH TMPDIR
