@@ -1621,9 +1621,10 @@ Based on projectile's
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "v") #'vterm)
     (define-key map (kbd "e") #'eshell)
-    (define-key map (kbd "t") #'term)
+    (define-key map (kbd "m") #'term)
     (define-key map (kbd "a") #'ansi-term)
     (define-key map (kbd "s") #'shell)
+    (define-key map (kbd "t") #'eshell-toggle)
     map)
   "Keymap for org-mode commands after `org-keymap-prefix'.")
 (fset 'term-command-map term-command-map)
@@ -1750,6 +1751,32 @@ Initializing tramp via use-package does't seem to add any value, but does increa
 ;  (setq tramp-default-method "sshx"))
 
 (setq tramp-default-method "sshx")
+#+end_src
+
+** eshell-toggle
+eshell-toggle
+https://github.com/4DA/eshell-toggle
+#+begin_src emacs-lisp
+(use-package eshell-toggle
+  :custom
+  (eshell-toggle-size-fraction 3)
+  (eshell-toggle-use-projectile-root t)
+  (eshell-toggle-run-command nil)
+  ;(eshell-toggle-window-side 'bottom)
+  (eshell-toggle-init-function #'eshell-toggle-init-vterm)
+  ;:quelpa
+  ;(eshell-toggle :repo "4DA/eshell-toggle" :fetcher github :version original)
+  :config
+  (defun eshell-toggle-init-vterm (dir)
+    "Init `vterm buffer with DIR."
+    (let ((default-directory dir))
+      (vterm "new")
+      (when eshell-toggle-run-command
+        (insert eshell-toggle-run-command)
+        (eshell-send-input))))
+  ;:bind
+  ;("C-t z" . eshell-toggle)
+)
 #+end_src
 
 * Tools
@@ -2626,4 +2653,19 @@ https://github.com/rranelli/auto-package-update.el
   :config
   ;; Yes, please delete the old version on updates.
   (setq auto-package-update-delete-old-versions t))
+#+end_src
+
+https://gist.github.com/msoeken/4b2e3ee07b7252f8cb99
+#+begin_src emacs-lisp
+(defun toggle-term ()
+  "Toggles between terminal and current buffer (creates terminal, if none exists)"
+  (interactive)
+  (if (string= (buffer-name) "*ansi-term*")
+      (switch-to-buffer (other-buffer (current-buffer)))
+    (if (get-buffer "*ansi-term*")
+        (switch-to-buffer "*ansi-term*")
+      (progn
+        (ansi-term (getenv "SHELL"))
+        (setq show-trailing-whitespace nil)))))
+;(global-set-key (kbd "<f8>") 'toggle-term)
 #+end_src
