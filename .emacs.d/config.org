@@ -1737,6 +1737,15 @@ A) It's C-c C-t to toggle vterm-copy-mode.
   (setq vterm-shell "/bin/zsh")
   ;; Set scrollback, default 1000, max is 100000
   (setq vterm-max-scrollback 5000)
+  ;;
+  ;;
+  (setq vterm-always-compile-module t)
+  ;(setq vterm-term-environment-variable "eterm-256color")
+  (setq vterm-kill-buffer-on-exit t)
+  ;(let ((m vterm-mode-map))
+  ;  ;; Toggle from term input to emacs buffer (search/copy) mode.
+  ;  (define-key m (kbd "C-c C-t") #'vterm-copy-mode)
+  ;  (define-key m (kbd "C-c C-l") #'vterm-clear-scrollback))
 )
 #+end_src
 
@@ -2655,17 +2664,52 @@ https://github.com/rranelli/auto-package-update.el
   (setq auto-package-update-delete-old-versions t))
 #+end_src
 
+
 https://gist.github.com/msoeken/4b2e3ee07b7252f8cb99
 #+begin_src emacs-lisp
-(defun toggle-term ()
-  "Toggles between terminal and current buffer (creates terminal, if none exists)"
-  (interactive)
-  (if (string= (buffer-name) "*ansi-term*")
-      (switch-to-buffer (other-buffer (current-buffer)))
-    (if (get-buffer "*ansi-term*")
-        (switch-to-buffer "*ansi-term*")
-      (progn
-        (ansi-term (getenv "SHELL"))
-        (setq show-trailing-whitespace nil)))))
-;(global-set-key (kbd "<f8>") 'toggle-term)
+;(defun toggle-term ()
+;  "Toggles between terminal and current buffer (creates terminal, if none exists)"
+;  (interactive)
+;  (if (string= (buffer-name) "*ansi-term*")
+;      (switch-to-buffer (other-buffer (current-buffer)))
+;    (if (get-buffer "*ansi-term*")
+;        (switch-to-buffer "*ansi-term*")
+;      (progn
+;        (ansi-term (getenv "SHELL"))
+;        (setq show-trailing-whitespace nil)))))
+;;(global-set-key (kbd "S-<f8>") 'toggle-term)
 #+end_src
+
+
+Window placement (replace eshell-toggle?)
+https://github.com/cesarolea/emacs
+#+begin_src emacs-lisp
+;(add-to-list 'display-buffer-alist
+;             '("\\*vterm\\*.*"
+;               (display-buffer-in-side-window)
+;               (inhibit-same-window . t)
+;               (side . bottom)
+;               (window-height . 0.25)
+;               (slot . -1)
+;               (window-parameters . ((no-delete-other-windows . t)))))
+;
+;(setq vterm-buffer-name-string "blarg %s")
+;
+;(defun my/term ()
+;  "Start shell in a terminal emulator."
+;  (interactive)
+;  (let ((switch-to-buffer-obey-display-actions t))
+;    (vterm) ))
+;
+;(define-key global-map (kbd "<f8>") 'my/term)
+;(define-key global-map (kbd "<S-f8>") 'window-toggle-side-windows)
+#+end_src
+
+;;; add dwim?
+;;;###autoload
+(defun multi-vterm-dedicated-toggle ()
+  "Toggle dedicated `multi-vterm' window."
+  (interactive)
+  (if (multi-vterm-dedicated-exist-p)
+      (multi-vterm-dedicated-close)
+    (multi-vterm-dedicated-open)))
