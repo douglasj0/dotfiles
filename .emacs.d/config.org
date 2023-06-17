@@ -2664,46 +2664,45 @@ https://github.com/rranelli/auto-package-update.el
   (setq auto-package-update-delete-old-versions t))
 #+end_src
 
+* Toggle Testing
 
 https://gist.github.com/msoeken/4b2e3ee07b7252f8cb99
-#+begin_src emacs-lisp
-;(defun toggle-term ()
-;  "Toggles between terminal and current buffer (creates terminal, if none exists)"
-;  (interactive)
-;  (if (string= (buffer-name) "*ansi-term*")
-;      (switch-to-buffer (other-buffer (current-buffer)))
-;    (if (get-buffer "*ansi-term*")
-;        (switch-to-buffer "*ansi-term*")
-;      (progn
-;        (ansi-term (getenv "SHELL"))
-;        (setq show-trailing-whitespace nil)))))
-;;(global-set-key (kbd "S-<f8>") 'toggle-term)
-#+end_src
+(defun toggle-term ()
+  "Toggles between terminal and current buffer (creates terminal, if none exists)"
+  (interactive)
+  (if (string= (buffer-name) "*ansi-term*")
+      (switch-to-buffer (other-buffer (current-buffer)))
+    (if (get-buffer "*ansi-term*")
+        (switch-to-buffer "*ansi-term*")
+      (progn
+        (ansi-term (getenv "SHELL"))
+        (setq show-trailing-whitespace nil)))))
+(global-set-key (kbd "S-<f8>") 'toggle-term)
 
 
 Window placement (replace eshell-toggle?)
 https://github.com/cesarolea/emacs
-#+begin_src emacs-lisp
-;(add-to-list 'display-buffer-alist
-;             '("\\*vterm\\*.*"
-;               (display-buffer-in-side-window)
-;               (inhibit-same-window . t)
-;               (side . bottom)
-;               (window-height . 0.25)
-;               (slot . -1)
-;               (window-parameters . ((no-delete-other-windows . t)))))
-;
-;(setq vterm-buffer-name-string "blarg %s")
-;
-;(defun my/term ()
-;  "Start shell in a terminal emulator."
-;  (interactive)
-;  (let ((switch-to-buffer-obey-display-actions t))
-;    (vterm) ))
-;
-;(define-key global-map (kbd "<f8>") 'my/term)
-;(define-key global-map (kbd "<S-f8>") 'window-toggle-side-windows)
-#+end_src
+(add-to-list 'display-buffer-alist
+             '("\\*vterm\\*.*"
+               (display-buffer-in-side-window)
+               (inhibit-same-window . t)
+               (side . bottom)
+               (window-height . 0.25)
+               (slot . -1)
+               (window-parameters . ((no-delete-other-windows . t)))))
+
+(setq vterm-buffer-name-string "blarg %s")
+
+
+(defun my/term ()
+  "Start shell in a terminal emulator."
+  (interactive)
+  (let ((switch-to-buffer-obey-display-actions t))
+    (vterm) ))
+
+(define-key global-map (kbd "<f8>") 'my/term)
+(define-key global-map (kbd "<S-f8>") 'window-toggle-side-windows)
+
 
 ;;; add dwim?
 ;;;###autoload
@@ -2713,3 +2712,44 @@ https://github.com/cesarolea/emacs
   (if (multi-vterm-dedicated-exist-p)
       (multi-vterm-dedicated-close)
     (multi-vterm-dedicated-open)))
+
+toggle vscode layout on/off
+(defvar code-layout 0 "Initial setting for the `dbj-layout` global variable.")
+(defun dj-code-toggle ()
+  "Toggle setup forcoding environment"
+  (interactive)
+    (cond
+      ((= code-layout 0)
+        (message "- Setting up layout")
+          (eshell-toggle)
+          (treemacs)
+        (setq code-layout 1))
+      ((= code-layout 1)
+        (message "- Cleaning up layout")
+          (eshell-toggle)
+          (treemacs-quit)
+        (setq code-layout 0)) ) )
+
+
+https://www.reddit.com/r/emacs/comments/kobq4x/open_treemacs_programmatically_not_working/
+(defun ugt/open-project-smig3 ()
+  "Open workspace for project."
+  (interactive)
+  (treemacs-select-window) ;; opens `treemacs' window
+  (with-current-buffer (find-file "~/Dropbox/org/projects/smig3.org")
+    (delete-other-windows)
+    (split-window-right)
+    (beginning-of-buffer)
+    (ugt/org-show-n-levels 2)))
+
+#+begin_src emacs-lisp
+(defun dj/workspace ()
+  "Open workspace for project."
+  (interactive)
+    (switch-to-buffer "*scratch*")
+    (beginning-of-buffer)
+    (delete-other-windows)
+    (eshell-toggle)
+    (treemacs-select-window) ;; opens `treemacs' window
+)
+#+end_src
