@@ -210,7 +210,7 @@ fi
 #  pyenv init  #
 ################
 if [[ -f $HOME/.dotfiles/NO_PYENV ]]; then
-  echo ". skipping .zshrc pyenv"
+  echo "Skipping .zshrc init pyenv"
 else
   if [[ -d $HOME/.pyenv ]]; then
     if [[ -z ${PYENV_SHELL} ]]; then
