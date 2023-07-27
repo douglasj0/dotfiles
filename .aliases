@@ -42,6 +42,7 @@ alias yolo='sudo $(fc -nl -1)'
 # Emacs aliases
 #alias emacspkgupdate="emacs -nw --eval '(progn (sit-for 2) (auto-package-update-now))"
 alias emacspkgupdate='emacs -nw -f auto-package-update-now'
+alias strip-code-block="sed -e '/^#+begin_/d' -e '/^#+end_/d'"
 
 # Multipass
 alias mp="multipass"
