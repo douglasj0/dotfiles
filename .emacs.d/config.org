@@ -2011,7 +2011,7 @@ Use the following keys to navigate historic version of the file
   :defer t)
 #+end_src
 
-** tree-sitter
+** tree-sitter - tbd
 
 For Emacs 29
 https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
@@ -2451,7 +2451,7 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 (global-set-key (kbd "C-c n r r") 'bms/org-roam-rg-search) ;;was C-c rr
 #+end_src
 
-* Lang-eglot
+* Lang-eglot - disabled
 
 https://www.adventuresinwhy.com/post/eglot/
 
@@ -2472,25 +2472,25 @@ So next time, create the virtual environment in the directory you want (I always
 Then open emacs M-x pyvenv-activate RET dir_to_the_environment/env
 
 #+begin_src emacs-lisp
-(use-package pyvenv
-  :ensure t
-  :defer t
-  :config
-  (pyvenv-mode t)
-
-  ;; Set venvs
-  (setenv "WORKON_HOME" "~/.pyenv/versions")
-  (setq pyvenv-workon "emacs-py") ; Set default venv from versions
-  ;(pyvenv-tracking-mode 1)  ; Automatically use pyvenv-workon via dir-locals
-  ;(setq pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] "))) ;; Show python venv name in modeline
-
-  ;; Set correct Python interpreter
-  (setq pyvenv-post-activate-hooks
-        (list (lambda ()
-                (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python3")))))
-  (setq pyvenv-post-deactivate-hooks
-        (list (lambda ()
-                (setq python-shell-interpreter "python3")))))
+;(use-package pyvenv
+;  :ensure t
+;  :defer t
+;  :config
+;  (pyvenv-mode t)
+;
+;  ;; Set venvs
+;  (setenv "WORKON_HOME" "~/.pyenv/versions")
+;  (setq pyvenv-workon "emacs-py") ; Set default venv from versions
+;  ;(pyvenv-tracking-mode 1)  ; Automatically use pyvenv-workon via dir-locals
+;  ;(setq pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] "))) ;; Show python venv name in modeline
+;
+;  ;; Set correct Python interpreter
+;  (setq pyvenv-post-activate-hooks
+;        (list (lambda ()
+;                (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python3")))))
+;  (setq pyvenv-post-deactivate-hooks
+;        (list (lambda ()
+;                (setq python-shell-interpreter "python3")))))
 #+end_src
 
 ** yasnippet
@@ -2522,31 +2522,31 @@ https://www.reddit.com/r/emacs/comments/ushfzn/python_ide_using_eglot/
 https://taingram.org/blog/emacs-lsp-ide.html
 
 #+begin_src emacs-lisp
-(use-package eglot
-  :ensure t
-  :defer t
-  :init (setq completion-category-overrides '((eglot (styles orderless))))
-  :commands eglot
-  ;:config
-  ;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
-  ;(add-hook 'python-mode-hook 'eglot-ensure)
-  ;(add-hook 'python-mode-hook '(lambda() (add-hook 'before-save-hook 'eglot-format-buffer nil t)))
-  ;(setq python-shell-interpreter "python3")
-)
-
-;; https://emacs.stackexchange.com/questions/74713/python-language-server-with-eglot-cant-get-it-working?rq=1
-(use-package python
-  :interpreter ("python3" . python-mode)
-  :config
-  (add-hook 'python-hook (lambda ()
-             (setq python-indent-guess-indent-offset-verbose nil)))
-  ;(add-hook 'python-mode-hook 'company-mode)
-  (add-hook 'python-mode-hook 'corfu-mode)
-  (add-hook 'python-mode-hook #'yas-minor-mode)
-  (add-hook 'python-mode-hook 'eglot-ensure)
-  (add-hook 'python-mode-hook (lambda () (setq eglot-connect-timeout 120)))
-  (add-hook 'python-mode-hook (lambda () (setq eglot-autoshutdown t)))
-)
+;(use-package eglot
+;  :ensure t
+;  :defer t
+;  :init (setq completion-category-overrides '((eglot (styles orderless))))
+;  :commands eglot
+;  ;:config
+;  ;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
+;  ;(add-hook 'python-mode-hook 'eglot-ensure)
+;  ;(add-hook 'python-mode-hook '(lambda() (add-hook 'before-save-hook 'eglot-format-buffer nil t)))
+;  ;(setq python-shell-interpreter "python3")
+;)
+;
+;;; https://emacs.stackexchange.com/questions/74713/python-language-server-with-eglot-cant-get-it-working?rq=1
+;(use-package python
+;  :interpreter ("python3" . python-mode)
+;  :config
+;  (add-hook 'python-hook (lambda ()
+;             (setq python-indent-guess-indent-offset-verbose nil)))
+;  ;(add-hook 'python-mode-hook 'company-mode)
+;  (add-hook 'python-mode-hook 'corfu-mode)
+;  (add-hook 'python-mode-hook #'yas-minor-mode)
+;  (add-hook 'python-mode-hook 'eglot-ensure)
+;  (add-hook 'python-mode-hook (lambda () (setq eglot-connect-timeout 120)))
+;  (add-hook 'python-mode-hook (lambda () (setq eglot-autoshutdown t)))
+;)
 #+end_src
 
 * Testing
@@ -2744,7 +2744,7 @@ https://www.reddit.com/r/emacs/comments/kobq4x/open_treemacs_programmatically_no
 
 #+begin_src emacs-lisp
 (defun dj/workspace ()
-  "Open workspace for project."
+  "Open workspace for project, like vscode."
   (interactive)
     (switch-to-buffer "*scratch*")
     (beginning-of-buffer)
