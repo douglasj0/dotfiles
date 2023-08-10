@@ -484,7 +484,7 @@ Docs: https://docs.projectile.mx/projectile/index.html
               ("C-c p" . projectile-command-map))
   :custom
   (projectile-known-projects-file
-       (expand-file-name "projectile-bookmarks.eld" ".emacs.d/var/"))
+       (expand-file-name "projectile-bookmarks.eld" "var/"))
 )
 #+end_src
 
@@ -2101,7 +2101,7 @@ hcl-mode https://github.com/syohex/emacs-hcl-mode
   :defer t
   :config
   (add-hook 'yaml-mode-hook
-      '(lambda ()
+      #'(lambda ()
         (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 )
 
