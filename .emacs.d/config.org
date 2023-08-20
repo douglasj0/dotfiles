@@ -26,10 +26,11 @@ TODO:
 
 ;; more useful frame title that shows either a file or a
 ;; buffer name (if the buffer isn't visiting a file)
-(setq frame-title-format
-      '((:eval (if (buffer-file-name)
-                   (abbreviate-file-name (buffer-file-name))
-                 "%b"))))
+;; commented out to see if its causing emacs 29.1 mac hang
+;(setq frame-title-format
+;      '((:eval (if (buffer-file-name)
+;                   (abbreviate-file-name (buffer-file-name))
+;                 "%b"))))
 
 ;;;; Load Customizations if they exist
 ;; https://lupan.pl/dotemacs/

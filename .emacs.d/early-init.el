@@ -19,8 +19,8 @@
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
 ;(menu-bar-mode -1)
-(tool-bar-mode -1)
-(toggle-scroll-bar -1) 
+(tool-bar-mode -1)     ; comment to test emacs 29.1 mac hang
+;(toggle-scroll-bar -1) ; comment to test emacs 29.1 mac hang
 
 ;;; Temporarily disable the file name handler.
 (setq default-file-name-handler-alist file-name-handler-alist)
