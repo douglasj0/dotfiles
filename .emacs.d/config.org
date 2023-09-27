@@ -2114,6 +2114,70 @@ hcl-mode https://github.com/syohex/emacs-hcl-mode
 )
 #+end_src
 
+** tree-sitter
+Now included in Emacs 29
+Docs: https://emacs-tree-sitter.github.io/
+https://github.com/emacs-tree-sitter/elisp-tree-sitter
+https://github.com/emacs-tree-sitter/elisp-tree-sitter
+
+#+begin_src emacs-src
+(setq treesit-language-source-alist
+ '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+   (cmake "https://github.com/uyha/tree-sitter-cmake")
+   (css "https://github.com/tree-sitter/tree-sitter-css")
+   (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+   (go "https://github.com/tree-sitter/tree-sitter-go")
+   (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
+   (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+   (html "https://github.com/tree-sitter/tree-sitter-html")
+   (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+   (json "https://github.com/tree-sitter/tree-sitter-json")
+   (make "https://github.com/alemuller/tree-sitter-make")
+   (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+   (python "https://github.com/tree-sitter/tree-sitter-python")
+   (toml "https://github.com/tree-sitter/tree-sitter-toml")
+   (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+   (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+   (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+#+end_src
+
+** golang
+Install golang and gopls lsp on macOS:
+brew update && brew install golang gopls
+
+Install grammers:
+M-x treesitter-install-language-grammer
+go
+gomod
+
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
+
+(use-package go-ts-mode
+  :ensure t
+  :hook ((go-ts-mode . eglot-ensure)
+         ;(go-ts-mode . company-mode)
+  )
+)
+
+;(use-package company
+;  :ensure t)
+#+end_src
+** python
+
+Install pylsp
+pip install 'python-lsp-server[all]'
+
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+
+(use-package python-ts-mode
+  :hook ((python-ts-mode . eglot-ensure)
+         ;(go-ts-mode . company-mode)
+  )
+)
+#+end_src
+
 ** org
 emacs git repos: https://savannah.gnu.org/git/?group=emacs
 Installation: https://orgmode.org/org.html#Installation
@@ -2510,7 +2574,7 @@ Then open emacs M-x pyvenv-activate RET dir_to_the_environment/env
 ;  :after yasnippet)
 #+end_src
 
-** eglot
+** eglot - include package
 eglot - Emacs Polyglot is the Emacs LSP client that stays out of your way:
 https://github.com/joaotavora/eglot
 
@@ -2665,7 +2729,7 @@ https://github.com/rranelli/auto-package-update.el
   (setq auto-package-update-delete-old-versions t))
 #+end_src
 
-* Toggle Testing
+* Toggle testing
 
 https://gist.github.com/msoeken/4b2e3ee07b7252f8cb99
 (defun toggle-term ()
