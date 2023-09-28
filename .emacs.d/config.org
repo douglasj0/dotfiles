@@ -2086,34 +2086,6 @@ https://www.emacswiki.org/emacs/ShMode
   (after-save . executable-make-buffer-file-executable-if-script-p))
 #+end_src
 
-** json, yaml, hcl modes
-
-json-mode https://github.com/joshwnj/json-mode
-yaml-mode https://github.com/yoshiki/yaml-mode
-hcl-mode https://github.com/syohex/emacs-hcl-mode
-
-#+begin_src emacs-lisp
-(use-package json-mode
-  :ensure t
-  :defer t)
-
-(use-package yaml-mode
-  :ensure t
-  :defer t
-  :config
-  (add-hook 'yaml-mode-hook
-      #'(lambda ()
-        (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
-)
-
-(use-package hcl-mode
-  :ensure t
-  :defer t
-  ;:config
-  ;(hcl-indent-level 2)
-)
-#+end_src
-
 ** tree-sitter
 Now included in Emacs 29
 Docs: https://emacs-tree-sitter.github.io/
@@ -2131,14 +2103,36 @@ https://github.com/renzmann/treesit-auto
 )
 #+end_src
 
+** json, yaml
+
+Removed json-mode and yaml-mode in favor of tree-sitter
+json-mode https://github.com/joshwnj/json-mode
+yaml-mode https://github.com/yoshiki/yaml-mode
+
+TODO: enable lsp for each type
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
+#+end_src
+
+** hcl-mode
+
+hcl-mode https://github.com/syohex/emacs-hcl-mode
+#+begin_src emacs-lisp
+(use-package hcl-mode
+  :ensure t
+  :defer t
+  ;:config
+  ;(hcl-indent-level 2)
+)
+#+end_src
+
 ** golang
 Install golang and gopls lsp on macOS:
-brew update && brew install golang gopls
+$ brew update && brew install golang gopls
 
 Install grammers:
 M-x treesit-install-language-grammer
-go
-gomod
 
 #+begin_src emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
@@ -2146,9 +2140,18 @@ gomod
 (use-package go-ts-mode
   :ensure t
   :hook ((go-ts-mode . eglot-ensure)
+         (go-ts-mode . corfu-mode) ;; same niche as company-mode
          ;(go-ts-mode . company-mode)
   )
 )
+
+;; Try overriding the indent style for golang
+(add-hook 'go-ts-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook 'gofmt-before-save)
+            (setq tab-width 4)
+            (setq standard-indent 4)
+            (setq indent-tabs-mode nil)))
 
 ;(use-package company
 ;  :ensure t)
