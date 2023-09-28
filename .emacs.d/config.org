@@ -2135,14 +2135,12 @@ Install grammers:
 M-x treesit-install-language-grammer
 
 #+begin_src emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
-
 (use-package go-ts-mode
   :ensure t
   :hook ((go-ts-mode . eglot-ensure)
-         (go-ts-mode . corfu-mode) ;; same niche as company-mode
          ;(go-ts-mode . company-mode)
-  )
+         (go-ts-mode . corfu-mode)) ;; same niche as company-mode
+  :mode ("\\.go\\'" . go-ts-mode)
 )
 
 ;; Try overriding the indent style for golang
@@ -2161,14 +2159,33 @@ M-x treesit-install-language-grammer
 Install pylsp
 pip install 'python-lsp-server[all]'
 
-#+begin_src emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
 
-(use-package python-ts-mode
+#+begin_src emacs-lisp
+;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+
+(use-package python
+  :ensure t
   :hook ((python-ts-mode . eglot-ensure)
          ;(go-ts-mode . company-mode)
-  )
-)
+         (go-ts-mode . corfu-mode)) ;; same niche as company-mode
+  :bind (:map python-ts-mode-map
+              ("<f5>" . recompile)
+              ("<f6>" . eglot-format))
+  :mode ("\\.py\\'" . python-ts-mode))
+
+;; requires melpa
+;(use-package conda
+;  :ensure t
+;  :config
+;  (setq conda-env-home-directory
+;         (expand-file-name "~/mambaforge")))
+
+(use-package highlight-indent-guides
+  :ensure t
+  :hook (python-ts-mode . highlight-indent-guides-mode)
+  :config
+  (setq highlight-indent-guides-method 'character))
 #+end_src
 
 ** org
