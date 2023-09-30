@@ -1,14 +1,15 @@
-;;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; eval: (local-set-key (kbd "C-c i") #'consult-outline); outline-regexp: ";;;"; -*-
 
+;; init.el
 ;; from https://github.com/danielmai/.emacs.d/blob/master/init.el
 ;; https://www.reddit.com/r/emacs/comments/5d4hqq/using_babel_to_put_your_init_file_in_org/
 ;; https://www.reddit.com/r/emacs/comments/673wek/emacs_bankruptcy_and_structure/
 
-;;; Don't show the startup screen, disable startup msg in scratch
+;; Don't show the startup screen, disable startup msg in scratch
 (setq inhibit-startup-message t)
 (setq-default initial-scratch-message nil)
 
-;;; Set up package
+;; Set up package
 ;; Use M-x Package-refresh-contents to reload the list of packages after initial run
 (require 'package)
 (setq package-archives
@@ -16,7 +17,7 @@
     ("melpa" . "https://melpa.org/packages/")))  ; milkypostman's pkg archive
 (package-initialize)
 
-;;; Bootstrap use-package
+;; Bootstrap use-package
 ;; Install use-package if it's not already installed.
 ;; use-package is used to configure the rest of the packages.
 ;; diminish info : https://github.com/emacsmirror/diminish

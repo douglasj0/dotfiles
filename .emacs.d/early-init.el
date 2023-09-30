@@ -1,4 +1,5 @@
-;;; early-init.el --- -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; eval: (local-set-key (kbd "C-c i") #'consult-outline); outline-regexp: ";;;"; -*-
+; early-init.el
 ; Author: Douglas Jackson
 ;;; Commentary:
 ; Emacs 27.1 introduced early-init.el, which is run before init.el, before
