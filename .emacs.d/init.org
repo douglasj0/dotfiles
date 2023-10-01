@@ -1,8 +1,9 @@
 # -*- mode: org; fill-column: 78; lexical-binding: t; after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace) -*-
 #+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle init.el
 #+STARTUP: overview
-
-# -*- Mode: org; fill-column: 78 -*-
+#+BEGIN_COMMENT
+tangle: C-c C-v C-t
+#+END_COMMENT
 
 TODO:
 - spelling / grammer / syntax
@@ -16,8 +17,6 @@ TODO:
   :commands, :bind, :bind*, :bind-keymap, :bind-keymap*, :mode, or :interpreter
 - look into tangling the org file to init.el
   https://www.reddit.com/r/emacs/comments/372nxd/how_to_move_init_to_orgbabel/
-
-# tangle: C-c C-v C-t
 
 * Init
 The init.el portion of the init.el/config.org from before
