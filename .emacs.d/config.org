@@ -507,82 +507,169 @@ Docs: https://docs.projectile.mx/projectile/index.html
 
 ** MacOS
 #+begin_src emacs-lisp
-;;; macos
-(cond ((eq system-type 'darwin)
-;	(setq mac-command-modifier 'meta
-;	      mac-option-modifier 'alt
-;	      mac-right-option-modifier 'super)
+;;; === macOS specific settings
+(use-package emacs
+  :if (eq system-type 'darwin)
+  :config
+  ;(setq mac-command-modifier 'meta
+  ;      mac-option-modifier 'alt
+  ;      mac-right-option-modifier 'super)
 
-;; enable srgb mode if compiled in
-;(setq ns-use-srgb-colorspace t)
-;; or turn off if causing problems
-;(setq ns-use-srgb-colorspace nil)
+  ;; enable srgb mode if compiled in
+  ;(setq ns-use-srgb-colorspace t)
+  ;; or turn off if causing problems
+  ;(setq ns-use-srgb-colorspace nil)
 
-;; set keys for Apple keyboard, for emacs in OS X
-(setq mac-command-modifier 'meta) ; make cmd key do Meta
-(setq mac-option-modifier 'super) ; make opt key do Super
-(setq mac-control-modifier 'control) ; make Control key do Control
-;(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
+  ;; set keys for Apple keyboard, for emacs in OS X
+  (setq mac-command-modifier 'meta) ; make cmd key do Meta
+  (setq mac-option-modifier 'super) ; make opt key do Super
+  (setq mac-control-modifier 'control) ; make Control key do Control
+  ;(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
 
-;; force mac modifier keys
-;(setq mac-command-modifier	 'super
-;      ns-command-modifier	 'super
-;      mac-option-modifier	 'meta
-;      ns-option-modifier	 'meta
-;      mac-right-option-modifier 'meta
-;      ns-right-option-modifier	 'meta)
+  ;; force mac modifier keys
+  ;(setq mac-command-modifier	 'super
+  ;      ns-command-modifier	 'super
+  ;      mac-option-modifier	 'meta
+  ;      ns-option-modifier	 'meta
+  ;      mac-right-option-modifier 'meta
+  ;      ns-right-option-modifier	 'meta)
 
-;; Use macOS default shortscuts for Cut/Copy/Paste/Select All
-;; https://www.emacswiki.org/emacs/EmacsForMacOS#h5o-37
-(global-set-key (kbd "M-c") 'kill-ring-save) ; ⌘-c = Copy
-;(global-set-key (kbd "M-x") 'kill-region) ; ⌘-x = Cut (interferes with term extended cmd)
-;(global-set-key (kbd "M-v") 'yank) ; ⌘-v = Paste (interfers with cua-scroll-down)
-(global-set-key (kbd "M-a") 'mark-whole-buffer) ; ⌘-a = Select all
-(global-set-key (kbd "M-z") 'undo) ; ⌘-z = Undo
-(global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
+  ;; Use macOS default shortscuts for Cut/Copy/Paste/Select All
+  ;; https://www.emacswiki.org/emacs/EmacsForMacOS#h5o-37
+  (global-set-key (kbd "M-c") 'kill-ring-save) ; ⌘-c = Copy
+  ;(global-set-key (kbd "M-x") 'kill-region) ; ⌘-x = Cut (interferes with term extended cmd)
+  ;(global-set-key (kbd "M-v") 'yank) ; ⌘-v = Paste (interfers with cua-scroll-down)
+  (global-set-key (kbd "M-a") 'mark-whole-buffer) ; ⌘-a = Select all
+  (global-set-key (kbd "M-z") 'undo) ; ⌘-z = Undo
+  (global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
 
-;; mac 'ls' doesn't support --dired
-(when (string= system-type "darwin")
-  (setq dired-use-ls-dired nil))
+  ;; mac 'ls' doesn't support --dired
+  (when (string= system-type "darwin")
+    (setq dired-use-ls-dired nil))
 
-;; Use meta +/- to change text size
-(bind-key "M-+" 'text-scale-increase)
-(bind-key "M-=" 'text-scale-increase)
-(bind-key "M--" 'text-scale-decrease)
+  ;; Use meta +/- to change text size
+  (bind-key "M-+" 'text-scale-increase)
+  (bind-key "M-=" 'text-scale-increase)
+  (bind-key "M--" 'text-scale-decrease)
 
-;; This is copied from
-;; https://zzamboni.org/post/my-emacs-configuration-with-commentary/
-(defun my/text-scale-reset ()
-  "Reset text-scale to 0."
-  (interactive)
-  (text-scale-set 0))
-(bind-key "M-g 0" 'my/text-scale-reset)
+  ;; This is copied from
+  ;; https://zzamboni.org/post/my-emacs-configuration-with-commentary/
+  (defun my/text-scale-reset ()
+    "Reset text-scale to 0."
+    (interactive)
+    (text-scale-set 0))
+  (bind-key "M-g 0" 'my/text-scale-reset)
 
-;;; set font size to 15, overriding default 12
-;; M-x describe-font:
-;; Monaco:pixelsize=12:weight=normal:slant=normal:width=normal:spacing=100:scalable=true
-;; M-: (face-attribute 'default :font)
-;; #<font-object "-*-Monaco-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1">
-;;(set-face-attribute 'default (selected-frame) :height 150)
-;;(set-face-attribute 'default nil :height 150)
-(set-frame-font "Monaco 15" nil t)
-;(set-frame-font "Menlo 15" nil t) ; fit more lines per frame
+  ;;; set font size to 15, overriding default 12
+  ;; M-x describe-font:
+  ;; Monaco:pixelsize=12:weight=normal:slant=normal:width=normal:spacing=100:scalable=true
+  ;; M-: (face-attribute 'default :font)
+  ;; #<font-object "-*-Monaco-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1">
+  ;;(set-face-attribute 'default (selected-frame) :height 150)
+  ;;(set-face-attribute 'default nil :height 150)
+  (set-frame-font "Monaco 15" nil t)
+  ;(set-frame-font "Menlo 15" nil t) ; fit more lines per frame
 
-;; Testing jetbrains mono font, not sure I like it
-;; https://www.jetbrains.com/lp/mono/
-;; "JetBrains Mono-13:spacing=100"
-;;(set-face-attribute 'default nil :font "JetBrains Mono-15" :height 150)
-;(set-frame-font "JetBrains Mono 15" nil t)
+  ;; Testing jetbrains mono font, not sure I like it
+  ;; https://www.jetbrains.com/lp/mono/
+  ;; "JetBrains Mono-13:spacing=100"
+  ;;(set-face-attribute 'default nil :font "JetBrains Mono-15" :height 150)
+  ;(set-frame-font "JetBrains Mono 15" nil t)
 
-;; Osx-trash
-;; Make Emacs' delete-by-moving-to-trash do what you expect it to do on OS X.
-;; https://github.com/lunaryorn/osx-trash.el
-;(use-package osx-trash
-;   :ensure t
-;   :config
-;   (setq delete-by-moving-to-trash t)
-;   (osx-trash-setup)
-;)
+  ;; Osx-trash
+  ;; Make Emacs' delete-by-moving-to-trash do what you expect it to do on OS X.
+  ;; https://github.com/lunaryorn/osx-trash.el
+  ;(use-package osx-trash
+  ;   :ensure t
+  ;   :config
+  ;   (setq delete-by-moving-to-trash t)
+  ;   (osx-trash-setup)
+  ;)
+
+  ;; Disable railwaycat's tab bar
+  ;; https://github.com/railwaycat/homebrew-emacsmacport/issues/123
+  (defvar mac-frame-tabbing)
+  (setq mac-frame-tabbing nil)
+
+  ;; Don't open up new frames for files dropped on icon, use active frame
+  (defvar ns-pop-up-frames)
+  (setq ns-pop-up-frames nil)
+
+  ;; Drag and drop on the emacs window opens the file in a new buffer instead of
+  ;; appending it to the current buffer
+  ;; http://stackoverflow.com/questions/3805658/how-to-configure-emacs-drag-and-drop-to-open-instead-of-append-on-osx
+  (if (fboundp 'ns-find-file)
+      (global-set-key [ns-drag-file] 'ns-find-file))
+
+  ;; Move deleted files to the System's trash can
+  ;; set trash-directory otherwise uses freedesktop.org-style
+  (setq trash-directory "~/.Trash")
+  (setq delete-by-moving-to-trash t)
+
+  ;; Macbook Pro has no insert key.
+  ;; http://lists.gnu.org/archive/html/help-gnu-emacs/2006-07/msg00220.html
+  (global-set-key (kbd "C-c I") (function overwrite-mode))
+
+  ;; Open up URLs in mac browser
+  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+  ; (setq browse-url-browser-function 'browse-url-default-windows-browser)
+
+  ;; Copy and paste into Emacs Terminal
+  ;; stack overflow, pasting text into emacs on Macintosh
+  ;; Copy - C-x M-w
+  ;; Paste - C-x C-y
+  (defun pt-pbpaste ()
+    "Paste data from pasteboard."
+    (interactive)
+    (shell-command-on-region
+      (point)
+      (if mark-active (mark) (point))
+      "pbpaste" nil t))
+
+  (defun pt-pbcopy ()
+    "Copy region to pasteboard."
+    (interactive)
+    (print (mark))
+    (when mark-active
+      (shell-command-on-region
+        (point) (mark) "pbcopy")
+      (kill-buffer "*Shell Command Output*")))
+  (global-set-key [C-x C-y] 'pt-pbpaste)
+  (global-set-key [C-x M-w] 'pt-pbcopy)
+
+  ;; add the missing man page path for woman
+  ;; https://www.reddit.com/r/emacs/comments/ig7zzo/weekly_tipstricketc_thread/
+  ;(add-to-list 'woman-manpath
+  ;	      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/share/man")
+  ;(add-to-list 'woman-manpath
+  ;	      "/Applications/Xcode.app/Contents/Developer/usr/share/man")
+  ;(add-to-list 'woman-manpath
+  ;	      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man")
+
+  ;; On a Mac: make Emacs detect if you have light or dark mode enabled system wide.
+  ;;If you have two themes, a light one and a dark one, and you want the dark theme by default unless you have light mode enabled, add this to your init.el:
+
+  ;; If we're on a Mac and the file "~/bin/get_dark.osascript" exists
+  ;; and it outputs "false", activate light mode. Otherwise activate
+  ;; dark mode.
+  ;(cond ((and (file-exists-p "~/bin/get_dark.osascript")
+  ;	     (string> (shell-command-to-string "command -v osascript") "")
+  ;	     (equal "false\n"
+  ;		    (shell-command-to-string "osascript ~/bin/get_dark.osascript")))
+  ;	(mcj/theme-set-light))
+  ;      (t (mcj/theme-set-dark)))
+
+  ;; (mcj/theme-set-light and mcj/theme-set-light are functions that enable the light and the dark theme, respectively).
+
+  ;;~/bin/get_dark.osascript contains the following:
+  ;;
+  ;;tell application "System Events"
+  ;;	  tell appearance preferences
+  ;;		get dark mode
+  ;;	  end tell
+  ;;end tell
+)
+
 
 ;A GNU Emacs library to ensure environment variables inside Emacs look the same as in the user's shell
 ;https://github.com/purcell/exec-path-from-shell
@@ -598,113 +685,29 @@ Docs: https://docs.projectile.mx/projectile/index.html
   ;(setq exec-path-from-shell--debug 1) ; print msg if debug enabled
   (setq exec-path-from-shell-variables '("PATH" "MANPATH"))
   (exec-path-from-shell-initialize))
-
-;; Disable railwaycat's tab bar
-;; https://github.com/railwaycat/homebrew-emacsmacport/issues/123
-(defvar mac-frame-tabbing)
-(setq mac-frame-tabbing nil)
-
-;; Don't open up new frames for files dropped on icon, use active frame
-(defvar ns-pop-up-frames)
-(setq ns-pop-up-frames nil)
-
-;; Drag and drop on the emacs window opens the file in a new buffer instead of
-;; appending it to the current buffer
-;; http://stackoverflow.com/questions/3805658/how-to-configure-emacs-drag-and-drop-to-open-instead-of-append-on-osx
-(if (fboundp 'ns-find-file)
-    (global-set-key [ns-drag-file] 'ns-find-file))
-
-;; Move deleted files to the System's trash can
-;; set trash-directory otherwise uses freedesktop.org-style
-(setq trash-directory "~/.Trash")
-(setq delete-by-moving-to-trash t)
-
-;; Macbook Pro has no insert key.
-;; http://lists.gnu.org/archive/html/help-gnu-emacs/2006-07/msg00220.html
-(global-set-key (kbd "C-c I") (function overwrite-mode))
-
-;; Open up URLs in mac browser
-(setq browse-url-browser-function 'browse-url-default-macosx-browser)
-; (setq browse-url-browser-function 'browse-url-default-windows-browser)
-
-;; Copy and paste into Emacs Terminal
-;; stack overflow, pasting text into emacs on Macintosh
-;; Copy - C-x M-w
-;; Paste - C-x C-y
-(defun pt-pbpaste ()
-  "Paste data from pasteboard."
-  (interactive)
-  (shell-command-on-region
-    (point)
-    (if mark-active (mark) (point))
-    "pbpaste" nil t))
-
-(defun pt-pbcopy ()
-  "Copy region to pasteboard."
-  (interactive)
-  (print (mark))
-  (when mark-active
-    (shell-command-on-region
-      (point) (mark) "pbcopy")
-    (kill-buffer "*Shell Command Output*")))
-(global-set-key [C-x C-y] 'pt-pbpaste)
-(global-set-key [C-x M-w] 'pt-pbcopy)
-
-;; add the missing man page path for woman
-;; https://www.reddit.com/r/emacs/comments/ig7zzo/weekly_tipstricketc_thread/
-;(add-to-list 'woman-manpath
-;	      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/share/man")
-;(add-to-list 'woman-manpath
-;	      "/Applications/Xcode.app/Contents/Developer/usr/share/man")
-;(add-to-list 'woman-manpath
-;	      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man")
-
-;; On a Mac: make Emacs detect if you have light or dark mode enabled system wide.
-;;If you have two themes, a light one and a dark one, and you want the dark theme by default unless you have light mode enabled, add this to your init.el:
-
-;; If we're on a Mac and the file "~/bin/get_dark.osascript" exists
-;; and it outputs "false", activate light mode. Otherwise activate
-;; dark mode.
-;(cond ((and (file-exists-p "~/bin/get_dark.osascript")
-;	     (string> (shell-command-to-string "command -v osascript") "")
-;	     (equal "false\n"
-;		    (shell-command-to-string "osascript ~/bin/get_dark.osascript")))
-;	(mcj/theme-set-light))
-;      (t (mcj/theme-set-dark)))
-
-;; (mcj/theme-set-light and mcj/theme-set-light are functions that enable the light and the dark theme, respectively).
-
-;;~/bin/get_dark.osascript contains the following:
-;;
-;;tell application "System Events"
-;;	  tell appearance preferences
-;;		get dark mode
-;;	  end tell
-;;end tell
-))
 #+end_src
 
 ** Linux
 #+begin_src emacs-lisp
-;;; linux
+;;; === Linux specific settings
+(use-package emacs
+  :if (eq system-type 'gnu/linux)
+  :config
+  (defvar browse-url-browser-function)
+  (defvar browse-url-browser-program)
 
-;; -=Linux specific settings
-(cond ((eq system-type 'gnu/linux)
-(defvar browse-url-browser-function)
-(defvar browse-url-browser-program)
-;; http://stackoverflow.com/questions/15277172/how-to-make-emacs-open-all-buffers-in-one-window-debian-linux-gnome
-;(setq pop-up-frames 'graphic-only)
-(setq pop-up-frames nil)
+  ;; http://stackoverflow.com/questions/15277172/how-to-make-emacs-open-all-buffers-in-one-window-debian-linux-gnome
+  ;(setq pop-up-frames 'graphic-only)
+  (setq pop-up-frames nil)
 
-;; http://stackoverflow.com/questions/4506249/how-to-make-emacs-org-mode-open-links-to-sites-in-google-chrome
-;; Open up URLs in browser using gnome-open (errors on bytecompile)
-;(setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "gnome-open")
-(setq browse-url-browser-function 'browse-url-firefox)
+  ;; Open up URLs in browser using gnome-open (errors on bytecompile)
+  ;(setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "gnome-open")
+  (setq browse-url-browser-function 'browse-url-firefox)
 
-;; Problems with minibuffer font size display in KDE/Crunchbang/Unity(?), explictily set font
-;; List fonts with M-x descript-font
-;(set-default-font "Monospace-10")
-))
+  ;; Problems with minibuffer font size display in KDE/Crunchbang/Unity(?), fix explictily set font
+  ;; List fonts with M-x descript-font
+  ;(set-default-font "Monospace-10")
+)
 #+end_src
 
 * Completion
