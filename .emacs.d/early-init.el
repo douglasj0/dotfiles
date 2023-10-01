@@ -98,4 +98,7 @@
 ;(require 'ob-python-mode-mode)
 ;(ob-python-mode-mode 1)
 
+;; allow remembering risky variables, needed for init.org
+(defun risky-local-variable-p (sym &optional _ignored) nil)
+
 (provide 'early-init)

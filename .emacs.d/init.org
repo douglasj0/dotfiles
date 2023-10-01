@@ -1,5 +1,8 @@
-# -*- mode: org; fill-column: 78 -*-
+# -*- mode: org; fill-column: 78; lexical-binding: t; after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
+#+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle init.el
 #+STARTUP: overview
+
+# -*- Mode: org; fill-column: 78 -*-
 
 TODO:
 - spelling / grammer / syntax
@@ -13,6 +16,8 @@ TODO:
   :commands, :bind, :bind*, :bind-keymap, :bind-keymap*, :mode, or :interpreter
 - look into tangling the org file to init.el
   https://www.reddit.com/r/emacs/comments/372nxd/how_to_move_init_to_orgbabel/
+- tangle C-c C-v C-t
+
 #+begin_src text
 Woodstock46 8 yr. ago
 
@@ -54,6 +59,58 @@ Then when I was happy with what I had, I could just C-c C-v C-t to render it. I 
 
 # -*- after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
 #+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle testing.el
+#+end_src
+
+* Init
+The init.el portion of the init.el/config.org from before
+
+#+begin_src emacs-lisp
+;; init.el -*- lexical-binding: t; -*-
+; eval: (local-set-key (kbd "C-c i") #'consult-outline); outline-regexp: ";;;";
+
+;; init.el
+;; from https://github.com/danielmai/.emacs.d/blob/master/init.el
+;; https://www.reddit.com/r/emacs/comments/5d4hqq/using_babel_to_put_your_init_file_in_org/
+;; https://www.reddit.com/r/emacs/comments/673wek/emacs_bankruptcy_and_structure/
+
+;; Don't show the startup screen, disable startup msg in scratch
+(setq inhibit-startup-message t)
+(setq-default initial-scratch-message nil)
+
+;; Set up package
+;; Use M-x Package-refresh-contents to reload the list of packages after initial run
+(require 'package)
+(setq package-archives
+  '(("gnu"   . "https://elpa.gnu.org/packages/") ; default package archive
+    ("melpa" . "https://melpa.org/packages/")))  ; milkypostman's pkg archive
+(package-initialize)
+
+;; Bootstrap use-package
+;; Install use-package if it's not already installed.
+;; use-package is used to configure the rest of the packages.
+;; diminish info : https://github.com/emacsmirror/diminish
+(unless (or (package-installed-p 'use-package)
+            (package-installed-p 'diminish))
+  (package-refresh-contents)
+  (package-install 'use-package)
+  ;(package-install 'diminish)
+)
+
+;; enable use-package profiling (M-x use-package-report)
+(setq use-package-compute-statistics t)
+
+;; Allow loading from the package cache
+;(defvar package-quickstart)
+(setq package-quickstart t)
+
+;; From use-package README
+(eval-when-compile
+  (require 'use-package))
+;(require 'diminish)                ;; if you use :diminish
+(require 'bind-key)
+
+;; Load the config (will re-tangle on org file change)
+;(org-babel-load-file (concat user-emacs-directory "config.org"))
 #+end_src
 
 * Housekeeping
@@ -1481,7 +1538,7 @@ OSX/BSD ls doesn't sort directories first, ls-lisp can
 
 ;; Make clicking on files in Dired buffers open in the current window:
 ;; (This works thanks to mouse-1-click-follows-link.)
-(define-key dired-mode-map [mouse-2] #'dired-mouse-find-file)
+;(define-key dired-mode-map [mouse-2] #'dired-mouse-find-file)
 
 (use-package ls-lisp
   :custom
