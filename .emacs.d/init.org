@@ -1,4 +1,4 @@
-# -*- mode: org; fill-column: 78; lexical-binding: t; after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
+# -*- mode: org; fill-column: 78; lexical-binding: t; after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace) -*-
 #+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle init.el
 #+STARTUP: overview
 
@@ -8,7 +8,7 @@ TODO:
 - spelling / grammer / syntax
   - flyspell / flymake
   - tried jinx spellcheck, but it hung emacs
-- lang: json markdown go rust ansible
+- lang:  markdown rust ansible
 - doom MacOS fixes
 - git-gutter vs diff-hl/vc-gutter
 - fix/revisit venv setup
@@ -16,50 +16,8 @@ TODO:
   :commands, :bind, :bind*, :bind-keymap, :bind-keymap*, :mode, or :interpreter
 - look into tangling the org file to init.el
   https://www.reddit.com/r/emacs/comments/372nxd/how_to_move_init_to_orgbabel/
-- tangle C-c C-v C-t
 
-#+begin_src text
-Woodstock46 8 yr. ago
-
-I have a slightly different approach. My init stuff is in init.org with all the proper babel blocks. Then at the end of the file I have:
-
-;; Local Variables:
-;; eval: (add-hook 'after-save-hook (lambda ()(org-babel-tangle)) nil t)
-;; End:
-
-Then when I save init.org it automatically gets tangled into init.el No bootstrapping necessary.
-
---
-
-CodyChan 8 yr. ago
-
-Check out Sacha Chua's init file, she is using org-babel for init.el, it is really good example.
-
-http://pages.sachachua.com/.emacs.d/Sacha.html
-https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org
-
---
-
-howardthegeek
-·
-8 yr. ago
-
-I found that org-mode files have been really great for keeping my emacs init files organized. Whenever anyone asks me "how do you do that", I can just send them a section link on the Github page.
-
-My initial approach which worked well for a single emacs.org rendered to init.el, was to add some properties at the end of the org-mode file:
-
-#+PROPERTY:    results silent
-#+PROPERTY:    tangle ~/.emacs.d/init.el
-#+PROPERTY:    eval no-export
-#+PROPERTY:    comments org
-
-Then when I was happy with what I had, I could just C-c C-v C-t to render it. I started storing more than just my Emacs init file (like shell profile files and whatnot), so then I wrote a little emacs script to tangle all the files at once.
-
---
-
-# -*- after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
-#+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle testing.el
-#+end_src
+# tangle: C-c C-v C-t
 
 * Init
 The init.el portion of the init.el/config.org from before
