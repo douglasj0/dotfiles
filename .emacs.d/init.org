@@ -482,32 +482,34 @@ last sentence."
 Helpful is an alternative to the built-in Emacs help that provides much more contextual information.
 https://github.com/Wilfred/helpful
 
+helpful-key erroring on TAB
+
 #+begin_src emacs-lisp
 ;;; helpful
-(use-package helpful
-  :ensure t
-  :defer t
-  :bind
-  (("C-h f" . helpful-callable)
-   ("C-h v" . helpful-variable)
-   ("C-h k" . helpful-key)
-  ;;
-  ;; Lookup the current symbol at point. C-c C-d is a common keybinding
-  ;; for this in lisp modes.
-  ;("C-c C-d" . helpful-at-point)  # keys already bound to Cal Deadline
-
-  ;; Look up *F*unctions (excludes macros).
-  ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
-  ;; already links to the manual, if a function is referenced there.
-  ("C-h F" . helpful-function)
-
-  ;; Look up *C*ommands.
-  ;;
-  ;; By default, C-h C is bound to describe `describe-coding-system'. I
-  ;; don't find this very useful, but it's frequently useful to only
-  ;; look at interactive functions.
-  ("C-h C" . helpful-command)
-))
+;(use-package helpful
+;  :ensure t
+;  :defer t
+;  :bind
+;  (("C-h f" . helpful-callable)
+;   ("C-h v" . helpful-variable)
+;   ("C-h k" . helpful-key)
+;  ;;
+;  ;; Lookup the current symbol at point. C-c C-d is a common keybinding
+;  ;; for this in lisp modes.
+;  ;("C-c C-d" . helpful-at-point)  # keys already bound to Cal Deadline
+;
+;  ;; Look up *F*unctions (excludes macros).
+;  ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+;  ;; already links to the manual, if a function is referenced there.
+;  ("C-h F" . helpful-function)
+;
+;  ;; Look up *C*ommands.
+;  ;;
+;  ;; By default, C-h C is bound to describe `describe-coding-system'. I
+;  ;; don't find this very useful, but it's frequently useful to only
+;  ;; look at interactive functions.
+;  ("C-h C" . helpful-command)
+;))
 #+end_src
 
 ** recentf
@@ -2251,6 +2253,69 @@ $ brew update && brew install golang gopls
 Install grammers:
 M-x treesit-install-language-grammer
 
+TODO figure out how to indent with treesitter
+--
+go-ts-mode--indent-rules is a variable defined in ‘go-ts-mode.el’.
+
+Its value is shown below.
+
+Tree-sitter indent rules for ‘go-ts-mode’.
+
+Value:
+((go
+  ((parent-is "source_file")
+   column-0 0)
+  ((node-is ")")
+   parent-bol 0)
+  ((node-is "]")
+   parent-bol 0)
+  ((node-is "}")
+   parent-bol 0)
+  ((node-is "labeled_statement")
+   no-indent 0)
+  ((parent-is "raw_string_literal")
+   no-indent 0)
+  ((parent-is "argument_list")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "block")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "communication_case")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "const_declaration")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "default_case")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "expression_case")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "selector_expression")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "expression_switch_statement")
+   parent-bol 0)
+  ((parent-is "field_declaration_list")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "import_spec_list")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "interface_type")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "labeled_statement")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "literal_value")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "parameter_list")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "select_statement")
+   parent-bol 0)
+  ((parent-is "type_case")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "type_spec")
+   parent-bol go-ts-mode-indent-offset)
+  ((parent-is "type_switch_statement")
+   parent-bol 0)
+  ((parent-is "var_declaration")
+   parent-bol go-ts-mode-indent-offset)
+  (no-node parent-bol 0)))
+
+
 #+begin_src emacs-lisp
 (use-package go-ts-mode
   :ensure t
@@ -2261,12 +2326,12 @@ M-x treesit-install-language-grammer
 )
 
 ;; Try overriding the indent style for golang
-(add-hook 'go-ts-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook 'gofmt-before-save)
-            (setq tab-width 4)
-            (setq standard-indent 4)
-            (setq indent-tabs-mode nil)))
+;(add-hook 'go-ts-mode-hook
+;          (lambda ()
+;            (add-hook 'before-save-hook 'gofmt-before-save)
+;            (setq tab-width 4)
+;            (setq standard-indent 4)
+;            (setq indent-tabs-mode nil)))
 
 ;(use-package company
 ;  :ensure t)
