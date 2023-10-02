@@ -2261,6 +2261,14 @@ go-ts-mode-indent-offset 8
 go-ts-mode-indent-style  ?
 go-ts-mode-indent-defun  ?
 
+yurikhan5 hr. ago
+
+The first rule of customizing indentation in Emacs is that whenever you customize tab-width always follow suit with every mode’s variously named variables that specify basic indent offset and possibly any secondary offsets.
+    Every time I edit a Go file […] Two “4 spaces” tabs are inserted
+This is what happens when you change tab-width to 4 but leave offset at 8. The indentation engine inserts as many tabs as it takes to get to column 8.
+
+To find out which mode-specific variable to change, usually you can do M-x customize-mode and browse for anything that looks relevant.
+
 #+begin_src emacs-lisp
 (use-package go-ts-mode
   :ensure t
@@ -2268,11 +2276,16 @@ go-ts-mode-indent-defun  ?
          ;(go-ts-mode . company-mode)
          (go-ts-mode . corfu-mode)) ;; same niche as company-mode
   :mode ("\\.go\\'" . go-ts-mode)
-  :config
-  (add-hook 'go-ts-mode-hook
-            (lambda()
-              (setq go-ts-mode-indent-offset 4)))
 )
+
+; Overriding the indent style for golang
+(add-hook 'go-ts-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook 'gofmt-before-save)
+            (setq tab-width 4)
+            (setq standard-indent 4)
+            (setq go-ts-mode-indent-offset 4)
+            (setq indent-tabs-mode nil)))
 
 ;(use-package company
 ;  :ensure t)
