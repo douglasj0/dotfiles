@@ -2214,12 +2214,12 @@ https://github.com/emacs-tree-sitter/elisp-tree-sitter
 treesit-auto
 https://github.com/renzmann/treesit-auto
 #+begin_src emacs-lisp
-(use-package treesit-auto
-  :ensure t
-  :config
-  (setq treesit-auto-install 'prompt)
-  (global-treesit-auto-mode)
-)
+;(use-package treesit-auto
+;  :ensure t
+;  :config
+;  (setq treesit-auto-install 'prompt)
+;  (global-treesit-auto-mode)
+;)
 #+end_src
 
 ** json, yaml
@@ -2230,8 +2230,8 @@ yaml-mode https://github.com/yoshiki/yaml-mode
 
 TODO: enable lsp for each type
 #+begin_src emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
+;(add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
+;;(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 #+end_src
 
 ** hcl-mode
@@ -2270,22 +2270,22 @@ This is what happens when you change tab-width to 4 but leave offset at 8. The i
 To find out which mode-specific variable to change, usually you can do M-x customize-mode and browse for anything that looks relevant.
 
 #+begin_src emacs-lisp
-(use-package go-ts-mode
-  :ensure t
-  :hook ((go-ts-mode . eglot-ensure)
-         ;(go-ts-mode . company-mode)
-         (go-ts-mode . corfu-mode)) ;; same niche as company-mode
-  :mode ("\\.go\\'" . go-ts-mode)
-)
-
-; Overriding the indent style for golang
-(add-hook 'go-ts-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook 'gofmt-before-save)
-            (setq tab-width 4)
-            (setq standard-indent 4)
-            (setq go-ts-mode-indent-offset 4)
-            (setq indent-tabs-mode nil)))
+;(use-package go-ts-mode
+;  :ensure t
+;  :hook ((go-ts-mode . eglot-ensure)
+;         ;(go-ts-mode . company-mode)
+;         (go-ts-mode . corfu-mode)) ;; same niche as company-mode
+;  :mode ("\\.go\\'" . go-ts-mode)
+;)
+;
+;; Overriding the indent style for golang
+;(add-hook 'go-ts-mode-hook
+;          (lambda ()
+;            (add-hook 'before-save-hook 'gofmt-before-save)
+;            (setq tab-width 4)
+;            (setq standard-indent 4)
+;            (setq go-ts-mode-indent-offset 4)
+;            (setq indent-tabs-mode nil)))
 
 ;(use-package company
 ;  :ensure t)
@@ -2300,28 +2300,28 @@ Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
 #+begin_src emacs-lisp
 ;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
 
-(use-package python
-  :ensure t
-  :hook ((python-ts-mode . eglot-ensure)
-         ;(go-ts-mode . company-mode)
-         (go-ts-mode . corfu-mode)) ;; same niche as company-mode
-  :bind (:map python-ts-mode-map
-              ("<f5>" . recompile)
-              ("<f6>" . eglot-format))
-  :mode ("\\.py\\'" . python-ts-mode))
-
-;; requires melpa
-;(use-package conda
-;  :ensure t
-;  :config
-;  (setq conda-env-home-directory
-;         (expand-file-name "~/mambaforge")))
-
-(use-package highlight-indent-guides
-  :ensure t
-  :hook (python-ts-mode . highlight-indent-guides-mode)
-  :config
-  (setq highlight-indent-guides-method 'character))
+; (use-package python
+;   :ensure t
+;   :hook ((python-ts-mode . eglot-ensure)
+;          ;(go-ts-mode . company-mode)
+;          (go-ts-mode . corfu-mode)) ;; same niche as company-mode
+;   :bind (:map python-ts-mode-map
+;               ("<f5>" . recompile)
+;               ("<f6>" . eglot-format))
+;   :mode ("\\.py\\'" . python-ts-mode))
+;
+; ;; requires melpa
+; ;(use-package conda
+; ;  :ensure t
+; ;  :config
+; ;  (setq conda-env-home-directory
+; ;         (expand-file-name "~/mambaforge")))
+;
+; (use-package highlight-indent-guides
+;   :ensure t
+;   :hook (python-ts-mode . highlight-indent-guides-mode)
+;   :config
+;   (setq highlight-indent-guides-method 'character))
 #+end_src
 
 ** org
