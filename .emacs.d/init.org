@@ -39,6 +39,7 @@ The init.el portion of the init.el/config.org from before
 (require 'package)
 (setq package-archives
   '(("gnu"   . "https://elpa.gnu.org/packages/") ; default package archive
+    ("gnu1"  .  "http://elpa.gnu.org/packages/") ; default package archive
     ("melpa" . "https://melpa.org/packages/")))  ; milkypostman's pkg archive
 (package-initialize)
 
@@ -2214,6 +2215,9 @@ TODO: enable lsp for each type
       #'(lambda ()
         (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 )
+
+(use-package toml-mode
+  :ensure t)
 #+end_src
 
 hcl-mode https://github.com/syohex/emacs-hcl-mode
@@ -2620,4 +2624,46 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
   (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-buffered --color=always --max-columns=500 --no-heading --line-number . -e ARG OPTS"))
     (consult-ripgrep org-roam-directory)))
 (global-set-key (kbd "C-c n r r") 'bms/org-roam-rg-search) ;;was C-c rr
+#+end_src
+
+** auctex
+
+Useful video
+https://bwestbro.com/blogs/latex.html
+https://www.youtube.com/watch?v=4XJ4IF9BUyQ
+
+#+begin_src emacs-lisp
+(use-package auctex
+  :ensure t
+  :defer t
+  :hook ((LaTeX-mode . flyspell-mode)
+         (LaTeX-mode . display-fill-column-indicator-mode)
+         (LaTeX-mode . hs-minor-mode)
+         (LaTeX-mode .
+	             (lambda ()
+                       (push (list 'output-pdf "Zathura")
+                             TeX-view-program-selection)
+                       (display-line-numbers-mode)
+                       (TeX-add-symbols '("includegraphics" t))
+                       (LaTeX-add-environments
+                        '("frame" LaTeX-env-frame))
+                       (advice-add #'TeX-completing-read-multiple :around
+                                   #'vertico--advice)
+                       (advice-add #'TeX-command-master :before
+                                   (lambda (^rest r) (save-buffer))))))
+  :bind (:map LaTeX-mode-map
+              ("C-c '" . brw/edit-table-remote))
+  :config
+  (setq-default TeX-master nil)
+  (set-face-attribute 'font-latex-string-face nil
+		      :foreground "Brown")
+  (set-face-attribute 'font-latex-sedate-face nil
+		      :foreground "rosy brown")
+
+  (defun my/bibtex-generate-autokey (&rest r)
+     (let* ((names (bibtex-autokey-get-names))
+            (year  (bibtex-autokey-get-year))
+            (title (bibtex-autokey-get-title)))
+       (capitalize (format "%s%s" names year))))
+  (advice-add #'bibtex-geneate-autokey :around #'my/bibtex-generate-autokey))
 #+end_src
