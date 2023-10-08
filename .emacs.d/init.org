@@ -163,6 +163,10 @@ The init.el portion of the init.el/config.org from before
 ;; Invoke M-x without the Alt key (from Steve Yegge's blog)
 (global-set-key (kbd "C-x C-m") 'execute-extended-command)
 ;(global-set-key (kbd "C-c C-m") 'execute-extended-command) ; remapped by org to org-ctrl-c-ret
+
+;; ace-window allows switching to window by number, bind to 'C-x o'
+(global-set-key (kbd "C-x o") 'ace-window)
+;(setq aw-keys '(?a ?b ?c ?d ?e ?f ?g ?h ?i)) ;; letters instead of numbers
 #+end_src
 
 ** global settings
@@ -2716,6 +2720,10 @@ $ brew update && brew install golang gopls
 Install grammers:
 M-x treesit-install-language-grammer
 
+gomod grammer also missing:
+M-x treesit-install-language-grammer
+gomod
+
 TODO figure out how to indent with treesitter
 lastnamebird7 mo. ago
 c-ts-mode-indent-offset, c-ts-mode-indent-style, c-ts-mode-indent-defun. Should be what you need to get started.
@@ -2739,7 +2747,20 @@ To find out which mode-specific variable to change, usually you can do M-x custo
          ;(go-ts-mode . company-mode)
          (go-ts-mode . corfu-mode)) ;; same niche as company-mode
   :mode ("\\.go\\'" . go-ts-mode)
+  :bind (:map go-ts-mode-map
+               ("<f5>" . recompile)
+               ("<f6>" . eglot-format)
+               ;("<f6>"  . gofmt) ;; error, function undefined?
+               ;("C-c 6" . gofmt)
+  )
+  :config
+  ;(add-to-list 'exec-path "~/go/bin")
+  ;(setq gofmt-command "goimports")
 )
+
+;; go delve debugger intergration
+;(use-package go-dlv
+;  :ensure t)
 
 ; Overriding the indent style for golang
 (add-hook 'go-ts-mode-hook
