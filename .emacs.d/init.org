@@ -1905,7 +1905,6 @@ docker
 lookup              ; navigate your code and its documentation
 (lsp +eglot)        ; M-x vscode
 magit               ; a git porcelain for Emacs
-tree-sitter         ; syntax and parsing, sitting in a tree...
 #+end_src
 
 keyboard commands
@@ -2119,175 +2118,49 @@ Use the following keys to navigate historic version of the file
   :defer t)
 #+end_src
 
-* Lang
-#+begin_src text
-emacs-lisp        ; drown in parentheses
-json              ; At least it ain't XML
-latex             ; writing papers in Emacs has never been so fun
-markdown          ; writing docs for people to ignore
-(org +roam2) ; organize your plain life in plain text
-(python +lsp +pyenv) ; beautiful is better than ugly
-sh                ; she sells {ba,z,fi}sh shells on the C xor
-yaml              ; JSON, but readable
-#+end_src
+* TeX
+** auctex
 
-Look at this for info about keybinds
-https://www.reddit.com/r/emacs/comments/n1qyxt/how_to_set_prefix_names_to_appear_with_whichkey/
-
-** keymaps org (C-c n)
-Based on projectile's
+Useful video
+https://bwestbro.com/blogs/latex.html
+https://www.youtube.com/watch?v=4XJ4IF9BUyQ
 
 #+begin_src emacs-lisp
-(defvar org-command-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "l") #'org-store-link)
-    (define-key map (kbd "a") #'org-agenda)
-    (define-key map (kbd "c") #'org-capture)
-    (define-key map (kbd "o") #'org-info)
-    (define-key map (kbd "b") #'org-switchb) ; switch between org buffers
-    map)
-  "Keymap for org-mode commands after `org-keymap-prefix'.")
-(fset 'org-command-map org-command-map)
-(global-set-key (kbd "C-c n") '("org notes" . org-command-map))
-
-(defvar org-roam-command-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "l") #'org-roam-buffer-toggle)
-    (define-key map (kbd "f") #'org-roam-node-find)
-    (define-key map (kbd "i") #'org-roam-node-insert)
-    (define-key map (kbd "g") #'org-roam-graph)
-    (define-key map (kbd "c") #'org-roam-capture)
-    (define-key map (kbd "j") #'org-roam-dailies-capture-today)
-    (define-key map (kbd "r") #'bms/org-roam-rg-search)
-    map)
-  "Keymap for org-roam commands after `org-roam-keymap-prefix'.")
-(fset 'org-roam-command-map org-roam-command-map)
-(global-set-key (kbd "C-c n r") '("org-roam" . org-roam-command-map))
-#+end_src
-
-** sh-script
-shell-script-mode is a major mode for shell script editing.
-https://www.emacswiki.org/emacs/ShMode
-
-#+begin_src emacs-lisp
-(use-package sh-script
-  :mode (("zshecl" . sh-mode)
-         ("\\.zsh\\'" . sh-mode)
-         ("\\.sh\\'" . sh-mode))
-  :custom
-  ;; zsh
-  (system-uses-terminfo nil))
-
-(use-package executable
-  :hook
-  (after-save . executable-make-buffer-file-executable-if-script-p))
-#+end_src
-
-** eglot
-
-eglot - Emacs Polyglot is the Emacs LSP client that stays out of your way
-https://github.com/joaotavora/eglot
-
-#+begin_src emacs-lisp
-(use-package eglot
-  :bind (:map eglot-mode-map
-         ("C-c d" . eldoc)
-         ("C-c a" . eglot-code-actions)
-         ("C-c r" . eglot-rename)))
-#+end_src
-
-** json, yaml, hcl modes
-
-json-mode https://github.com/joshwnj/json-mode
-yaml-mode https://github.com/yoshiki/yaml-mode
-
-TODO: enable lsp for each type
-#+begin_src emacs-lisp
-(use-package json-mode
-  :ensure t
-  :defer t)
-
-(use-package yaml-mode
+(use-package auctex
   :ensure t
   :defer t
+  :hook ((LaTeX-mode . flyspell-mode)
+         (LaTeX-mode . display-fill-column-indicator-mode)
+         (LaTeX-mode . hs-minor-mode)
+         (LaTeX-mode .
+	             (lambda ()
+                       (push (list 'output-pdf "Zathura")
+                             TeX-view-program-selection)
+                       (display-line-numbers-mode)
+                       (TeX-add-symbols '("includegraphics" t))
+                       (LaTeX-add-environments
+                        '("frame" LaTeX-env-frame))
+                       (advice-add #'TeX-completing-read-multiple :around
+                                   #'vertico--advice)
+                       (advice-add #'TeX-command-master :before
+                                   (lambda (^rest r) (save-buffer))))))
+  :bind (:map LaTeX-mode-map
+              ("C-c '" . brw/edit-table-remote))
   :config
-  (add-hook 'yaml-mode-hook
-      #'(lambda ()
-        (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
-)
+  (setq-default TeX-master nil)
+  (set-face-attribute 'font-latex-string-face nil
+		      :foreground "Brown")
+  (set-face-attribute 'font-latex-sedate-face nil
+		      :foreground "rosy brown")
 
-(use-package toml-mode
-  :ensure t)
+  (defun my/bibtex-generate-autokey (&rest r)
+     (let* ((names (bibtex-autokey-get-names))
+            (year  (bibtex-autokey-get-year))
+            (title (bibtex-autokey-get-title)))
+       (capitalize (format "%s%s" names year))))
+  (advice-add #'bibtex-geneate-autokey :around #'my/bibtex-generate-autokey))
 #+end_src
-
-hcl-mode https://github.com/syohex/emacs-hcl-mode
-#+begin_src emacs-lisp
-(use-package hcl-mode
-  :ensure t
-  :defer t
-  ;:config
-  ;(hcl-indent-level 2)
-)
-#+end_src
-
-** golang
-Install golang and gopls lsp on macOS:
-$ brew update && brew install golang gopls
-
-#+begin_src emacs-lisp
-(use-package go-mode
-  :ensure t
-  :hook ((go-mode . eglot-ensure)
-         ;(go--mode . company-mode)
-         (go-mode . corfu-mode)) ;; same niche as company-mode
-  :mode ("\\.go\\'" . go-mode)
-)
-
-; Overriding the indent style for golang
-(add-hook 'go-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook 'gofmt-before-save)
-            (setq tab-width 4)
-            (setq standard-indent 4)
-            (setq indent-tabs-mode nil)))
-
-;(use-package company
-;  :ensure t)
-#+end_src
-** python
-
-Install pylsp
-pip install 'python-lsp-server[all]'
-
-Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
-
-#+begin_src emacs-lisp
-;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
-
- (use-package python
-   :ensure t
-   :hook ((python-mode . eglot-ensure)
-          (python-mode . corfu-mode)) ;; same niche as company-mode
-   :bind (:map python-mode-map
-               ("<f5>" . recompile)
-               ("<f6>" . eglot-format))
-   ;:interpreter ("python3" . python-mode) ; fixed pyslp integration?
-   :mode ("\\.py\\'" . python-mode))
-
- ;; requires melpa
- ;(use-package conda
- ;  :ensure t
- ;  :config
- ;  (setq conda-env-home-directory
- ;         (expand-file-name "~/mambaforge")))
-
- (use-package highlight-indent-guides
-   :ensure t
-   :hook (python-mode . highlight-indent-guides-mode)
-   :config
-   (setq highlight-indent-guides-method 'character))
-#+end_src
-
+* Org-Mode
 ** org
 emacs git repos: https://savannah.gnu.org/git/?group=emacs
 Installation: https://orgmode.org/org.html#Installation
@@ -2626,44 +2499,290 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 (global-set-key (kbd "C-c n r r") 'bms/org-roam-rg-search) ;;was C-c rr
 #+end_src
 
-** auctex
+* Lang
+#+begin_src text
+emacs-lisp        ; drown in parentheses
+json              ; At least it ain't XML
+latex             ; writing papers in Emacs has never been so fun
+markdown          ; writing docs for people to ignore
+(org +roam2) ; organize your plain life in plain text
+(python +lsp +pyenv) ; beautiful is better than ugly
+sh                ; she sells {ba,z,fi}sh shells on the C xor
+yaml              ; JSON, but readable
+#+end_src
 
-Useful video
-https://bwestbro.com/blogs/latex.html
-https://www.youtube.com/watch?v=4XJ4IF9BUyQ
+Look at this for info about keybinds
+https://www.reddit.com/r/emacs/comments/n1qyxt/how_to_set_prefix_names_to_appear_with_whichkey/
+
+** keymaps org (C-c n)
+Based on projectile's
 
 #+begin_src emacs-lisp
-(use-package auctex
+(defvar org-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") #'org-store-link)
+    (define-key map (kbd "a") #'org-agenda)
+    (define-key map (kbd "c") #'org-capture)
+    (define-key map (kbd "o") #'org-info)
+    (define-key map (kbd "b") #'org-switchb) ; switch between org buffers
+    map)
+  "Keymap for org-mode commands after `org-keymap-prefix'.")
+(fset 'org-command-map org-command-map)
+(global-set-key (kbd "C-c n") '("org notes" . org-command-map))
+
+(defvar org-roam-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") #'org-roam-buffer-toggle)
+    (define-key map (kbd "f") #'org-roam-node-find)
+    (define-key map (kbd "i") #'org-roam-node-insert)
+    (define-key map (kbd "g") #'org-roam-graph)
+    (define-key map (kbd "c") #'org-roam-capture)
+    (define-key map (kbd "j") #'org-roam-dailies-capture-today)
+    (define-key map (kbd "r") #'bms/org-roam-rg-search)
+    map)
+  "Keymap for org-roam commands after `org-roam-keymap-prefix'.")
+(fset 'org-roam-command-map org-roam-command-map)
+(global-set-key (kbd "C-c n r") '("org-roam" . org-roam-command-map))
+#+end_src
+
+** sh-script
+shell-script-mode is a major mode for shell script editing.
+https://www.emacswiki.org/emacs/ShMode
+
+#+begin_src emacs-lisp
+(use-package sh-script
+  :mode (("zshecl" . sh-mode)
+         ("\\.zsh\\'" . sh-mode)
+         ("\\.sh\\'" . sh-mode))
+  :custom
+  ;; zsh
+  (system-uses-terminfo nil))
+
+(use-package executable
+  :hook
+  (after-save . executable-make-buffer-file-executable-if-script-p))
+#+end_src
+
+** eglot
+
+eglot - Emacs Polyglot is the Emacs LSP client that stays out of your way
+https://github.com/joaotavora/eglot
+
+#+begin_src emacs-lisp
+(use-package eglot
+  :bind (:map eglot-mode-map
+         ("C-c d" . eldoc)
+         ("C-c a" . eglot-code-actions)
+         ("C-c r" . eglot-rename)))
+#+end_src
+
+** hcl-mode
+
+hcl-mode https://github.com/syohex/emacs-hcl-mode
+#+begin_src emacs-lisp
+(use-package hcl-mode
   :ensure t
   :defer t
-  :hook ((LaTeX-mode . flyspell-mode)
-         (LaTeX-mode . display-fill-column-indicator-mode)
-         (LaTeX-mode . hs-minor-mode)
-         (LaTeX-mode .
-	             (lambda ()
-                       (push (list 'output-pdf "Zathura")
-                             TeX-view-program-selection)
-                       (display-line-numbers-mode)
-                       (TeX-add-symbols '("includegraphics" t))
-                       (LaTeX-add-environments
-                        '("frame" LaTeX-env-frame))
-                       (advice-add #'TeX-completing-read-multiple :around
-                                   #'vertico--advice)
-                       (advice-add #'TeX-command-master :before
-                                   (lambda (^rest r) (save-buffer))))))
-  :bind (:map LaTeX-mode-map
-              ("C-c '" . brw/edit-table-remote))
-  :config
-  (setq-default TeX-master nil)
-  (set-face-attribute 'font-latex-string-face nil
-		      :foreground "Brown")
-  (set-face-attribute 'font-latex-sedate-face nil
-		      :foreground "rosy brown")
+  ;:config
+  ;(hcl-indent-level 2)
+)
+#+end_src
 
-  (defun my/bibtex-generate-autokey (&rest r)
-     (let* ((names (bibtex-autokey-get-names))
-            (year  (bibtex-autokey-get-year))
-            (title (bibtex-autokey-get-title)))
-       (capitalize (format "%s%s" names year))))
-  (advice-add #'bibtex-geneate-autokey :around #'my/bibtex-generate-autokey))
+** toml-mode
+
+#+begin_src emacs-lisp
+(use-package toml-mode
+  :ensure t)
+#+end_src
+
+* Non-Tree-Sitter - disabled
+** json, yaml
+
+json-mode https://github.com/joshwnj/json-mode
+yaml-mode https://github.com/yoshiki/yaml-mode
+
+TODO: enable lsp for each type
+#+begin_src emacs-lisp
+;(use-  package json-mode
+;  :ensure t
+;  :defer t)
+;
+;(use-package yaml-mode
+;  :ensure t
+;  :defer t
+;  :config
+;  (add-hook 'yaml-mode-hook
+;      #'(lambda ()
+;        (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+;)
+#+end_src
+
+** golang
+Install golang and gopls lsp on macOS:
+$ brew update && brew install golang gopls
+
+#+begin_src emacs-lisp
+;(use-package go-mode
+;  :ensure t
+;  :hook ((go-mode . eglot-ensure)
+;         ;(go--mode . company-mode)
+;         (go-mode . corfu-mode)) ;; same niche as company-mode
+;  :mode ("\\.go\\'" . go-mode)
+;)
+;
+;; Overriding the indent style for golang
+;(add-hook 'go-mode-hook
+;          (lambda ()
+;            (add-hook 'before-save-hook 'gofmt-before-save)
+;            (setq tab-width 4)
+;            (setq standard-indent 4)
+;            (setq indent-tabs-mode nil)))
+;
+;;(use-package company
+;;  :ensure t)
+#+end_src
+
+** python
+
+Install pylsp
+pip install 'python-lsp-server[all]'
+
+Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
+
+#+begin_src emacs-lisp
+;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+
+; (use-package python
+;   :ensure t
+;   :hook ((python-mode . eglot-ensure)
+;          (python-mode . corfu-mode)) ;; same niche as company-mode
+;   :bind (:map python-mode-map
+;               ("<f5>" . recompile)
+;               ("<f6>" . eglot-format))
+;   ;:interpreter ("python3" . python-mode) ; fixed pyslp integration?
+;   :mode ("\\.py\\'" . python-mode))
+;
+; ;; requires melpa
+; ;(use-package conda
+; ;  :ensure t
+; ;  :config
+; ;  (setq conda-env-home-directory
+; ;         (expand-file-name "~/mambaforge")))
+;
+; (use-package highlight-indent-guides
+;   :ensure t
+;   :hook (python-mode . highlight-indent-guides-mode)
+;   :config
+;   (setq highlight-indent-guides-method 'character))
+#+end_src
+* Treesitter Testing
+** tree-sitter
+Now included in Emacs 29
+Docs: https://emacs-tree-sitter.github.io/
+https://github.com/emacs-tree-sitter/elisp-tree-sitter
+https://github.com/emacs-tree-sitter/elisp-tree-sitter
+
+treesit-auto
+https://github.com/renzmann/treesit-auto
+#+begin_src emacs-lisp
+(use-package treesit-auto
+  :ensure t
+  :config
+  (setq treesit-auto-install 'prompt)
+  (global-treesit-auto-mode)
+)
+#+end_src
+
+** json, yaml
+
+Removed json-mode and yaml-mode in favor of tree-sitter
+json-mode https://github.com/joshwnj/json-mode
+yaml-mode https://github.com/yoshiki/yaml-mode
+
+TODO: enable lsp for each type
+look into: yaml-pro-ts-mode
+https://github.com/zkry/yaml-pro
+
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-ts-mode))
+#+end_src
+
+** golang
+Install golang and gopls lsp on macOS:
+$ brew update && brew install golang gopls
+
+Install grammers:
+M-x treesit-install-language-grammer
+
+TODO figure out how to indent with treesitter
+lastnamebird7 mo. ago
+c-ts-mode-indent-offset, c-ts-mode-indent-style, c-ts-mode-indent-defun. Should be what you need to get started.
+
+go-ts-mode-indent-offset 8
+go-ts-mode-indent-style  ?
+go-ts-mode-indent-defun  ?
+
+yurikhan5 hr. ago
+
+The first rule of customizing indentation in Emacs is that whenever you customize tab-width always follow suit with every mode’s variously named variables that specify basic indent offset and possibly any secondary offsets.
+    Every time I edit a Go file […] Two “4 spaces” tabs are inserted
+This is what happens when you change tab-width to 4 but leave offset at 8. The indentation engine inserts as many tabs as it takes to get to column 8.
+
+To find out which mode-specific variable to change, usually you can do M-x customize-mode and browse for anything that looks relevant.
+
+#+begin_src emacs-lisp
+(use-package go-ts-mode
+  :ensure t
+  :hook ((go-ts-mode . eglot-ensure)
+         ;(go-ts-mode . company-mode)
+         (go-ts-mode . corfu-mode)) ;; same niche as company-mode
+  :mode ("\\.go\\'" . go-ts-mode)
+)
+
+; Overriding the indent style for golang
+(add-hook 'go-ts-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook 'gofmt-before-save)
+            (setq tab-width 4)
+            (setq standard-indent 4)
+            (setq go-ts-mode-indent-offset 4)
+            (setq indent-tabs-mode nil)))
+
+;(use-package company
+;  :ensure t)
+#+end_src
+** python
+
+Install pylsp
+pip install 'python-lsp-server[all]'
+
+Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
+
+#+begin_src emacs-lisp
+;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+
+ (use-package python
+   :ensure t
+   :hook ((python-ts-mode . eglot-ensure)
+          ;(go-ts-mode . company-mode)
+          (go-ts-mode . corfu-mode)) ;; same niche as company-mode
+   :bind (:map python-ts-mode-map
+               ("<f5>" . recompile)
+               ("<f6>" . eglot-format))
+   :mode ("\\.py\\'" . python-ts-mode))
+
+ ;; requires melpa
+ ;(use-package conda
+ ;  :ensure t
+ ;  :config
+ ;  (setq conda-env-home-directory
+ ;         (expand-file-name "~/mambaforge")))
+
+ (use-package highlight-indent-guides
+   :ensure t
+   :hook (python-ts-mode . highlight-indent-guides-mode)
+   :config
+   (setq highlight-indent-guides-method 'character))
 #+end_src
