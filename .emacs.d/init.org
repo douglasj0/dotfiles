@@ -1863,15 +1863,16 @@ A) It's C-c C-t to toggle vterm-copy-mode.
 
 ** tramp
 
-Initializing tramp via use-package does't seem to add any value, but does increase startup time
-
 #+begin_src emacs-lisp
-;(use-package tramp
-;  :init
-;  ;; Set default connection method for TRAMP
-;  (setq tramp-default-method "sshx"))
-
-(setq tramp-default-method "sshx")
+(use-package tramp
+  :init
+  ;; Set default connection method for TRAMP
+  (setq tramp-default-method "sshx")
+  ;; make sure we get the alist that we're playing with in early-init
+  ;; though, it seems using use-package also fixes tramp
+  ;; error was: "File not found and directory write-protected"
+  ;(setq file-name-handler-alist file-name-handler-alist-original)
+)
 #+end_src
 
 ** eshell-toggle
