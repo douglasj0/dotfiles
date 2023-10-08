@@ -31,20 +31,33 @@
 ;;; ---
 ;;; https://emacs.stackexchange.com/questions/34342/is-there-any-downside-to-setting-gc-cons-threshold-very-high-and-collecting-ga
 ;; Set garbage collection threshold
+;(setq gc-cons-threshold-original gc-cons-threshold)
+;(setq gc-cons-threshold (* 1024 1024 100))
+;; Set file-name-handler-alist
+;(setq file-name-handler-alist-original file-name-handler-alist)
+;(setq file-name-handler-alist nil)
+;; Reset back to original values when idle
+;(run-with-idle-timer
+; 5 nil
+; (lambda ()
+;   (setq gc-cons-threshold gc-cons-threshold-original)
+;   (setq file-name-handler-alist file-name-handler-alist-original)
+;   (makunbound 'gc-cons-threshold-original)
+;   (makunbound 'file-name-handler-alist-original)
+;   (message "gc-cons-threshold and file-name-handler-alist restored")))
+
+;; setting / unsetting file-name-handler-alist is breaking tramp, exclude
+;; Set garbage collection threshold
 (setq gc-cons-threshold-original gc-cons-threshold)
 (setq gc-cons-threshold (* 1024 1024 100))
-;; Set file-name-handler-alist
-(setq file-name-handler-alist-original file-name-handler-alist)
-(setq file-name-handler-alist nil)
 ;; Reset back to original values when idle
 (run-with-idle-timer
  5 nil
  (lambda ()
    (setq gc-cons-threshold gc-cons-threshold-original)
-   (setq file-name-handler-alist file-name-handler-alist-original)
    (makunbound 'gc-cons-threshold-original)
-   (makunbound 'file-name-handler-alist-original)
    (message "gc-cons-threshold and file-name-handler-alist restored")))
+
 
 ;;; ==========================
 
