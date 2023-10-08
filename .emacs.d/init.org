@@ -308,12 +308,24 @@ The init.el portion of the init.el/config.org from before
 ;; allow scroll-down/up-command to move point to buffer end/beginning
 ;(setq scroll-error-top-bottom 'true)
 
-;; New json-mode
+;; New json-mode - disabled, testing json-ts-mode
 ;(setq auto-mode-alist (cons '("\\.json\\'" . js-mode) auto-mode-alist))
-(setq auto-mode-alist
-      (append '(("\\.json\\'" . json-mode)  ; note these are encapsulated in a '() list
-		("\\.jsn\\'" . json-mode))
-	       auto-mode-alist))
+;(setq auto-mode-alist
+;      (append '(("\\.json\\'" . json-mode)  ; note these are encapsulated in a '() list
+;        	("\\.jsn\\'" . json-mode))
+;               auto-mode-alist))
+
+;; electric-pair
+(setq-default electric-pair-inhibit-predicate
+              'electric-pair-conservative-inhibit)
+
+;; desktop
+(desktop-save-mode 1)
+(setq desktop-save 'ask)
+;; can do 'desktop-clear' for cleanup, add files to NOT close here
+(dolist (file
+        '("+current" "+Last" "work.org" "init.org"))
+  (add-to-list 'desktop-clear-preserve-buffers file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bookmarks
@@ -572,9 +584,9 @@ Docs: https://docs.projectile.mx/projectile/index.html
 #+end_src
 
 * OS
-#+begin_src text
+
+From Doom Emacs, look into
 (:if IS-MAC macos)  ; improve compatibility with macOS
-#+end_src
 
 ** MacOS
 #+begin_src emacs-lisp
@@ -639,7 +651,14 @@ Docs: https://docs.projectile.mx/projectile/index.html
   ;;(set-face-attribute 'default (selected-frame) :height 150)
   ;;(set-face-attribute 'default nil :height 150)
   (set-frame-font "Monaco 15" nil t)
-  ;(set-frame-font "Menlo 15" nil t) ; fit more lines per frame
+  ;;(set-frame-font "Menlo 15" nil t) ; fit more lines per frame
+
+  ;;; this works the same as set-frame-font above?
+  ;;(set-face-attribute 'default nil
+  ;;  :font "Monaco"
+  ;;  :height 150
+  ;;  :weight 'regular)
+  ;;(set-face-attribute 'italic nil :slant 'italic :underline nil)
 
   ;; Testing jetbrains mono font, not sure I like it
   ;; https://www.jetbrains.com/lp/mono/
@@ -2033,6 +2052,9 @@ https://github.com/magit/magit
   ;   ("C-c M-g" . global-magit-file-mode))
   :custom
   (magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+  :config
+  (setq magit-log-section-commit-count 25
+        magit-copy-revision-abbreviated t)
 )
 #+end_src
 
@@ -2171,7 +2193,38 @@ https://www.youtube.com/watch?v=4XJ4IF9BUyQ
        (capitalize (format "%s%s" names year))))
   (advice-add #'bibtex-geneate-autokey :around #'my/bibtex-generate-autokey))
 #+end_src
-* Org-Mode
+* Org
+** keymaps org (C-c n)
+Based on projectile's
+
+#+begin_src emacs-lisp
+(defvar org-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") #'org-store-link)
+    (define-key map (kbd "a") #'org-agenda)
+    (define-key map (kbd "c") #'org-capture)
+    (define-key map (kbd "o") #'org-info)
+    (define-key map (kbd "b") #'org-switchb) ; switch between org buffers
+    map)
+  "Keymap for org-mode commands after `org-keymap-prefix'.")
+(fset 'org-command-map org-command-map)
+(global-set-key (kbd "C-c n") '("org notes" . org-command-map))
+
+(defvar org-roam-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") #'org-roam-buffer-toggle)
+    (define-key map (kbd "f") #'org-roam-node-find)
+    (define-key map (kbd "i") #'org-roam-node-insert)
+    (define-key map (kbd "g") #'org-roam-graph)
+    (define-key map (kbd "c") #'org-roam-capture)
+    (define-key map (kbd "j") #'org-roam-dailies-capture-today)
+    (define-key map (kbd "r") #'bms/org-roam-rg-search)
+    map)
+  "Keymap for org-roam commands after `org-roam-keymap-prefix'.")
+(fset 'org-roam-command-map org-roam-command-map)
+(global-set-key (kbd "C-c n r") '("org-roam" . org-roam-command-map))
+#+end_src
+
 ** org
 emacs git repos: https://savannah.gnu.org/git/?group=emacs
 Installation: https://orgmode.org/org.html#Installation
@@ -2525,37 +2578,6 @@ yaml              ; JSON, but readable
 Look at this for info about keybinds
 https://www.reddit.com/r/emacs/comments/n1qyxt/how_to_set_prefix_names_to_appear_with_whichkey/
 
-** keymaps org (C-c n)
-Based on projectile's
-
-#+begin_src emacs-lisp
-(defvar org-command-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "l") #'org-store-link)
-    (define-key map (kbd "a") #'org-agenda)
-    (define-key map (kbd "c") #'org-capture)
-    (define-key map (kbd "o") #'org-info)
-    (define-key map (kbd "b") #'org-switchb) ; switch between org buffers
-    map)
-  "Keymap for org-mode commands after `org-keymap-prefix'.")
-(fset 'org-command-map org-command-map)
-(global-set-key (kbd "C-c n") '("org notes" . org-command-map))
-
-(defvar org-roam-command-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "l") #'org-roam-buffer-toggle)
-    (define-key map (kbd "f") #'org-roam-node-find)
-    (define-key map (kbd "i") #'org-roam-node-insert)
-    (define-key map (kbd "g") #'org-roam-graph)
-    (define-key map (kbd "c") #'org-roam-capture)
-    (define-key map (kbd "j") #'org-roam-dailies-capture-today)
-    (define-key map (kbd "r") #'bms/org-roam-rg-search)
-    map)
-  "Keymap for org-roam commands after `org-roam-keymap-prefix'.")
-(fset 'org-roam-command-map org-roam-command-map)
-(global-set-key (kbd "C-c n r") '("org-roam" . org-roam-command-map))
-#+end_src
-
 ** sh-script
 shell-script-mode is a major mode for shell script editing.
 https://www.emacswiki.org/emacs/ShMode
@@ -2605,6 +2627,63 @@ hcl-mode https://github.com/syohex/emacs-hcl-mode
 (use-package toml-mode
   :ensure t)
 #+end_src
+
+** sed-mode
+
+Mode for editing sed files
+Look for Russ Cox solving advent-of-code using sed
+/usr/bin/sed -f
+
+#+begin_src emacs-lisp
+(use-package sed-mode
+  :ensure t
+)
+#+end_src
+
+** markdown-mode
+
+# Install pandoc for preview
+$ brew install pandoc
+
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :mode ( ;("README\\.md'"   . gfm-mode) ;; github markdown mode?
+         ("\\.md\\'"       . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "pandoc")
+)
+#+end_src
+
+** graphviz-dot-mode
+
+#+begin_src emacs-lisp
+(use-package graphviz-dot-mode
+  :ensure t)
+#+end_src
+
+** gnuplot-mode
+
+#+begin_src emacs-lisp
+(use-package gnuplot
+  :ensure t
+  :defer t
+  :mode ("\\.gp\\'")
+)
+#+end_src
+
+** fortran
+
+Install fortran lsp
+$ pip3 install fortls
+
+# #+begin_src emacs-lisp
+# (add-to-list 'exec-path "~/local/bin") ;; or where fortls is installed if needed
+# (when (executable-find "fortls")
+#   (add-hook 'fortran-mode-hook
+#             (defun my/fortran-hook ()
+#               (abbrev-mode 1))))
+# #+end_src
 
 * Non-Tree-Sitter - disabled
 ** json, yaml
@@ -2704,20 +2783,22 @@ https://github.com/renzmann/treesit-auto
 )
 #+end_src
 
-** json, yaml
+** json-mode
 
-Removed json-mode and yaml-mode in favor of tree-sitter
-json-mode https://github.com/joshwnj/json-mode
-yaml-mode https://github.com/yoshiki/yaml-mode
+#+begin_src emacs-lisp
+(use-package json-ts-mode
+  :mode ("\\.json\\'" . json-ts-mode))
+#+end_src
 
-TODO: enable lsp for each type
+** yaml-ts-mode
+
 look into: yaml-pro-ts-mode
 https://github.com/zkry/yaml-pro
 
 #+begin_src emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-ts-mode))
+(use-package yaml-ts-mode
+  :mode (("\\.yml\\'"  . yaml-ts-mode)
+         ("\\.yaml\\'" . yaml-ts-mode)))
 #+end_src
 
 ** golang
@@ -2813,4 +2894,67 @@ Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
    :hook (python-ts-mode . highlight-indent-guides-mode)
    :config
    (setq highlight-indent-guides-method 'character))
+#+end_src
+* IRC
+** erc
+
+https://www.reddit.com/r/emacs/comments/8ml6na/tip_how_to_make_erc_fun_to_use/
+
+auth-src format: machine irc.freenode.net login <nickname> password <password>
+
+#+begin_src emacs-lisp
+(use-package erc
+  :custom
+  ;(erc-autojoin-channels-alist '(("freenode.net" "#archlinux" "#bash" "#bitcoin"
+  ;                                "#emacs" "#gentoo" "#i3" "#latex" "#org-mode" "#python")))
+  ;(erc-autojoin-channels-alist '("irc.libera.chat" "#systemcrafters" "#emacs"))
+  (erc-server "irc.libera.chat")
+  (erc-nick "douglasj0")
+  (erc-user-full-name "Douglas Jackson")
+  (erc-track-shorten-start 8)
+  (erc-kill-buffer-on-part t)
+  (erc-auto-query 'bury)
+;  (erc-autojoin-timing 'ident)
+;  (erc-fill-function 'erc-fill-static)
+;  (erc-fill-static-center 22)
+;  (erc-hide-list '("JOIN" "PART" "QUIT"))
+;  (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+;  (erc-lurker-threshold-time 43200)
+;  (erc-prompt-for-nickserv-password nil)
+;  (erc-server-reconnect-attempts 5)
+;  (erc-server-reconnect-timeout 3)
+;  (erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
+;                             "324" "329" "332" "333" "353" "477"))
+;  :config
+;  (add-to-list 'erc-modules 'notifications)
+;  (add-to-list 'erc-modules 'spelling)
+;  (erc-services-mode 1)
+;  (erc-update-modules)
+)
+
+(defalias 'erc 'erc-tls)
+
+;(setq auth-sources '("~/Sync/shared/.authinfo.gpg"
+;                     "~/.authinfo.gpg"
+;                     "~/.authinfo"
+;                     "~/.netrc"))
+;
+;;; only run 1 instance of erc
+;(defun my/erc-start-or-switch ()
+;  "Connects to ERC, or switch to last active buffer."
+;  (interactive)
+;  (if (get-buffer "irc.libera.net:6667")
+;      (erc-track-switch-buffer 1)
+;    (when (y-or-n-p "Start ERC? ")
+;      (erc :server "irc.libera.net" :port 6667 :nick "madrak"))))
+;
+;;; associate a color with a pseudonym
+;(use-package erc-hl-nicks
+;  :ensure t
+;  :after erc)
+;
+;;; show images rather then links
+;(use-package erc-image
+;  :ensure t
+;  :after erc)
 #+end_src
