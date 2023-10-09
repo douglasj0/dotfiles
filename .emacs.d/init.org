@@ -102,10 +102,9 @@ The init.el portion of the init.el/config.org from before
     (load custom-file))
 
 ;; Add 'info' and 'elisp' to load-path (C-h v load-path RET)
-;; NOTE: commented out to avoid error:
+;; NOTE: comment out to avoid error on fresh setup:
 ;; "Symbol's value as variable is void: Info-additional-directory-list"
-;; Changed to default from additional
-(add-to-list 'Info-default-directory-list
+(add-to-list 'Info-additional-directory-list
    "~/Sync/my_homedir_files/emacs.d/info")
 (add-to-list 'load-path "~/.emacs.d/elisp/") ;; elisp packages not in pkg mgr
 
