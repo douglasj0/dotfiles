@@ -2691,7 +2691,7 @@ $ pip3 install fortls
 #               (abbrev-mode 1))))
 # #+end_src
 
-* Non-Tree-Sitter - disabled
+* Non-Tree-Sitter
 ** json, yaml
 
 json-mode https://github.com/joshwnj/json-mode
@@ -2699,18 +2699,18 @@ yaml-mode https://github.com/yoshiki/yaml-mode
 
 TODO: enable lsp for each type
 #+begin_src emacs-lisp
-;(use-  package json-mode
-;  :ensure t
-;  :defer t)
-;
-;(use-package yaml-mode
-;  :ensure t
-;  :defer t
-;  :config
-;  (add-hook 'yaml-mode-hook
-;      #'(lambda ()
-;        (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
-;)
+(use-package json-mode
+  :ensure t
+  :defer t)
+
+(use-package yaml-mode
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'yaml-mode-hook
+      #'(lambda ()
+        (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+)
 #+end_src
 
 ** golang
@@ -2718,24 +2718,24 @@ Install golang and gopls lsp on macOS:
 $ brew update && brew install golang gopls
 
 #+begin_src emacs-lisp
-;(use-package go-mode
-;  :ensure t
-;  :hook ((go-mode . eglot-ensure)
-;         ;(go--mode . company-mode)
-;         (go-mode . corfu-mode)) ;; same niche as company-mode
-;  :mode ("\\.go\\'" . go-mode)
-;)
-;
-;; Overriding the indent style for golang
-;(add-hook 'go-mode-hook
-;          (lambda ()
-;            (add-hook 'before-save-hook 'gofmt-before-save)
-;            (setq tab-width 4)
-;            (setq standard-indent 4)
-;            (setq indent-tabs-mode nil)))
-;
-;;(use-package company
-;;  :ensure t)
+(use-package go-mode
+  :ensure t
+  :hook ((go-mode . eglot-ensure)
+         ;(go--mode . company-mode)
+         (go-mode . corfu-mode)) ;; same niche as company-mode
+  :mode ("\\.go\\'" . go-mode)
+)
+
+; Overriding the indent style for golang
+(add-hook 'go-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook 'gofmt-before-save)
+            (setq tab-width 4)
+            (setq standard-indent 4)
+            (setq indent-tabs-mode nil)))
+
+;(use-package company
+;  :ensure t)
 #+end_src
 
 ** python
@@ -2746,32 +2746,32 @@ pip install 'python-lsp-server[all]'
 Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
 
 #+begin_src emacs-lisp
-;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
 
-; (use-package python
-;   :ensure t
-;   :hook ((python-mode . eglot-ensure)
-;          (python-mode . corfu-mode)) ;; same niche as company-mode
-;   :bind (:map python-mode-map
-;               ("<f5>" . recompile)
-;               ("<f6>" . eglot-format))
-;   ;:interpreter ("python3" . python-mode) ; fixed pyslp integration?
-;   :mode ("\\.py\\'" . python-mode))
-;
-; ;; requires melpa
-; ;(use-package conda
-; ;  :ensure t
-; ;  :config
-; ;  (setq conda-env-home-directory
-; ;         (expand-file-name "~/mambaforge")))
-;
-; (use-package highlight-indent-guides
-;   :ensure t
-;   :hook (python-mode . highlight-indent-guides-mode)
-;   :config
-;   (setq highlight-indent-guides-method 'character))
+(use-package python
+  :ensure t
+  :hook ((python-mode . eglot-ensure)
+         (python-mode . corfu-mode)) ;; same niche as company-mode
+  :bind (:map python-mode-map
+              ("<f5>" . recompile)
+              ("<f6>" . eglot-format))
+  ;:interpreter ("python3" . python-mode) ; fixed pyslp integration?
+  :mode ("\\.py\\'" . python-mode))
+
+;; requires melpa
+;(use-package conda
+;  :ensure t
+;  :config
+;  (setq conda-env-home-directory
+;         (expand-file-name "~/mambaforge")))
+
+(use-package highlight-indent-guides
+  :ensure t
+  :hook (python-mode . highlight-indent-guides-mode)
+  :config
+  (setq highlight-indent-guides-method 'character))
 #+end_src
-* Treesitter Testing
+* Treesitter Testing - disabled again
 ** tree-sitter
 Now included in Emacs 29
 Docs: https://emacs-tree-sitter.github.io/
@@ -2781,19 +2781,19 @@ https://github.com/emacs-tree-sitter/elisp-tree-sitter
 treesit-auto
 https://github.com/renzmann/treesit-auto
 #+begin_src emacs-lisp
-(use-package treesit-auto
-  :ensure t
-  :config
-  (setq treesit-auto-install 'prompt)
-  (global-treesit-auto-mode)
-)
+;(use-package treesit-auto
+;  :ensure t
+;  :config
+;  (setq treesit-auto-install 'prompt)
+;  (global-treesit-auto-mode)
+;)
 #+end_src
 
 ** json-mode
 
 #+begin_src emacs-lisp
-(use-package json-ts-mode
-  :mode ("\\.json\\'" . json-ts-mode))
+;(use-package json-ts-mode
+;  :mode ("\\.json\\'" . json-ts-mode))
 #+end_src
 
 ** yaml-ts-mode
@@ -2802,9 +2802,9 @@ look into: yaml-pro-ts-mode
 https://github.com/zkry/yaml-pro
 
 #+begin_src emacs-lisp
-(use-package yaml-ts-mode
-  :mode (("\\.yml\\'"  . yaml-ts-mode)
-         ("\\.yaml\\'" . yaml-ts-mode)))
+;(use-package yaml-ts-mode
+;  :mode (("\\.yml\\'"  . yaml-ts-mode)
+;         ("\\.yaml\\'" . yaml-ts-mode)))
 #+end_src
 
 ** golang
@@ -2835,38 +2835,38 @@ This is what happens when you change tab-width to 4 but leave offset at 8. The i
 To find out which mode-specific variable to change, usually you can do M-x customize-mode and browse for anything that looks relevant.
 
 #+begin_src emacs-lisp
-(use-package go-ts-mode
-  :ensure t
-  :hook ((go-ts-mode . eglot-ensure)
-         ;(go-ts-mode . company-mode)
-         (go-ts-mode . corfu-mode)) ;; same niche as company-mode
-  :mode ("\\.go\\'" . go-ts-mode)
-  :bind (:map go-ts-mode-map
-               ("<f5>" . recompile)
-               ("<f6>" . eglot-format)
-               ;("<f6>"  . gofmt) ;; error, function undefined?
-               ;("C-c 6" . gofmt)
-  )
-  :config
-  ;(add-to-list 'exec-path "~/go/bin")
-  ;(setq gofmt-command "goimports")
-)
-
-;; go delve debugger intergration
-;(use-package go-dlv
-;  :ensure t)
-
-; Overriding the indent style for golang
-(add-hook 'go-ts-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook 'gofmt-before-save)
-            (setq tab-width 4)
-            (setq standard-indent 4)
-            (setq go-ts-mode-indent-offset 4)
-            (setq indent-tabs-mode nil)))
-
-;(use-package company
-;  :ensure t)
+; (use-package go-ts-mode
+;   :ensure t
+;   :hook ((go-ts-mode . eglot-ensure)
+;          ;(go-ts-mode . company-mode)
+;          (go-ts-mode . corfu-mode)) ;; same niche as company-mode
+;   :mode ("\\.go\\'" . go-ts-mode)
+;   :bind (:map go-ts-mode-map
+;                ("<f5>" . recompile)
+;                ("<f6>" . eglot-format)
+;                ;("<f6>"  . gofmt) ;; error, function undefined?
+;                ;("C-c 6" . gofmt)
+;   )
+;   :config
+;   ;(add-to-list 'exec-path "~/go/bin")
+;   ;(setq gofmt-command "goimports")
+; )
+;
+; ;; go delve debugger intergration
+; ;(use-package go-dlv
+; ;  :ensure t)
+;
+; ; Overriding the indent style for golang
+; (add-hook 'go-ts-mode-hook
+;           (lambda ()
+;             (add-hook 'before-save-hook 'gofmt-before-save)
+;             (setq tab-width 4)
+;             (setq standard-indent 4)
+;             (setq go-ts-mode-indent-offset 4)
+;             (setq indent-tabs-mode nil)))
+;
+; ;(use-package company
+; ;  :ensure t)
 #+end_src
 ** python
 
@@ -2876,28 +2876,28 @@ pip install 'python-lsp-server[all]'
 Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
 
 #+begin_src emacs-lisp
-;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
-
- (use-package python
-   :ensure t
-   :hook ((python-ts-mode . eglot-ensure)
-          ;(go-ts-mode . company-mode)
-          (go-ts-mode . corfu-mode)) ;; same niche as company-mode
-   :bind (:map python-ts-mode-map
-               ("<f5>" . recompile)
-               ("<f6>" . eglot-format))
-   :mode ("\\.py\\'" . python-ts-mode))
-
- ;; requires melpa
- ;(use-package conda
- ;  :ensure t
- ;  :config
- ;  (setq conda-env-home-directory
- ;         (expand-file-name "~/mambaforge")))
-
- (use-package highlight-indent-guides
-   :ensure t
-   :hook (python-ts-mode . highlight-indent-guides-mode)
-   :config
-   (setq highlight-indent-guides-method 'character))
+; ;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+;
+;  (use-package python
+;    :ensure t
+;    :hook ((python-ts-mode . eglot-ensure)
+;           ;(go-ts-mode . company-mode)
+;           (go-ts-mode . corfu-mode)) ;; same niche as company-mode
+;    :bind (:map python-ts-mode-map
+;                ("<f5>" . recompile)
+;                ("<f6>" . eglot-format))
+;    :mode ("\\.py\\'" . python-ts-mode))
+;
+;  ;; requires melpa
+;  ;(use-package conda
+;  ;  :ensure t
+;  ;  :config
+;  ;  (setq conda-env-home-directory
+;  ;         (expand-file-name "~/mambaforge")))
+;
+;  (use-package highlight-indent-guides
+;    :ensure t
+;    :hook (python-ts-mode . highlight-indent-guides-mode)
+;    :config
+;    (setq highlight-indent-guides-method 'character))
 #+end_src
