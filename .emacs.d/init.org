@@ -2449,7 +2449,7 @@ SCHEDULED: %^t
           ;(exp . t)       ;
           ;(forth . t)     ;
           ;(fortran . t)   ;Fortran
-          ;(gnuplot . t)   ;requires gnuplot installed
+          (gnuplot . t)   ;requires gnuplot installed
           ;(groovy . t)    ;
           ;(haskell . t)   ;Haskell
           (java . t)      ;Java
