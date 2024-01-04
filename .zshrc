@@ -173,6 +173,9 @@ NNTPSERVER=news.eternal-september.org
 MORE=p
 LESS="-XgmR"
 
+# Homebrew lessopen
+export LESSOPEN="|/opt/homebrew/bin/lesspipe.sh %s"
+
 # Set ripgrep config file
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 

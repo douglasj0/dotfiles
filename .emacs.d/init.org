@@ -658,6 +658,10 @@ From Doom Emacs, look into
   (set-frame-font "Monaco 15" nil t)
   ;;(set-frame-font "Menlo 15" nil t) ; fit more lines per frame
 
+  ;; FantasqueSansMono-Normal
+  ;; https://github.com/belluzj/fantasque-sans
+  ;(set-frame-font "Fantasque Sans Mono 18" nil t)
+
   ;;; this works the same as set-frame-font above?
   ;;(set-face-attribute 'default nil
   ;;  :font "Monaco"
