@@ -157,15 +157,18 @@
 
 # Git repositories that you want to pull and push
 repos = [
-    "~/.dotfiles"
-]
-
-# Repositories that you only want to pull
-pull_only_repos = [
+    "~/.dotfiles",
     "~/.pyenv/plugins/pyenv-virtualenv",
     "~/.pyenv/plugins/pyenv-alias",
     "~/.pyenv"
 ]
+
+# Repositories that you only want to pull
+#pull_predefined = [
+#    "~/.pyenv/plugins/pyenv-virtualenv",
+#    "~/.pyenv/plugins/pyenv-alias",
+#    "~/.pyenv"
+#]
 
 # Repositories that you only want to push
 # push_only_repos = [
