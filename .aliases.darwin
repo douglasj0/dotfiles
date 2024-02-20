@@ -19,3 +19,6 @@ alias vs="/Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron"
 
 # multipass aliases
 alias mp="multipass"
+
+# keepassxc
+alias keepassxc-cli='/Applications/KeePassXC.app/Contents/MacOS/keepassxc-cli'

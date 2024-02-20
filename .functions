@@ -89,8 +89,8 @@ ssh-noid() { ssh -qt -o IdentitiesOnly=yes $@ }
 ssh-vagrant() { ssh -i ${HOME}/.ssh/id_rsa_vagrant -l vagrant $*; } # ssh with explicit vagrant key
 
 # aws ssh functions
-sssh() { AWSIP=$(echo $1 | sed -e 's/ip-//' -e 's/-/./g'); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
-assh() { AWSIP=$(echo $1 | awk -F"-" '{print $2"."$3"."$4"."$5}'); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
+sssh() { AWSIP=$(sed -e 's/ip-//' -e 's/-/./g' <<< "$1"); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
+assh() { AWSIP=$(awk -F"-" '{print $2"."$3"."$4"."$5}' <<< "$1"); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
 
 #greppara: grep by paragraph, http://www.commandlinefu.com/commands/view/4547/
 greppara() {
