@@ -9,23 +9,21 @@
 *.swp
 
 # emacs ignore certain files and directories
-youtube-dl
-*.elc
-.emacs.d/abbrev_defs
-.emacs.d/cache
-.emacs.d/elpa-*
-.emacs.d/eshell/history
-.emacs.d/eshell/lastdir
-.emacs.d/url
-.emacs.d/projectile.cache
-.emacs.d/projectile-bookmarks.eld
-.emacs.d/nov-places
-.emacs.d/emacs-init.el
-.emacs.d/smex-items
-.emacs.d/transient
-.emacs.d/emacs-libvterm
-.emacs.d/.lsp-*
+.emacs.d/.cache
+.emacs.d/.emacs.desktop*
 .emacs.d/.org-id-locations
+.emacs.d/elisp/
+.emacs.d/elpa/
+.emacs.d/eshell/
+.emacs.d/init.el
+.emacs.d/mytmp/
+# ^^^ re-check this
+.emacs.d/org-persist/
+.emacs.d/recentf
+.emacs.d/src/
+.emacs.d/tramp
+.emacs.d/tree-sitter/
+.emacs.d/var/
 
 # bin files to ignore
 sshpass
