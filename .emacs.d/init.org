@@ -831,6 +831,9 @@ company-mode - same niche as corfu, staying with corfu for now
 Modular in-buffer completion framework for Emacs
 https://company-mode.github.io/
 
+embark - Emacs Mini-Buffer Actions Rooted in Keymaps
+https://github.com/oantolin/embark
+
 NOTE: emacs in a terminal settings to use backspace in minibuffer:
  terminal- Preferences, Profiles, Advanced, check Delete sends C-h
  iTerm- Preferences, Profiles, Keys, Delete sensd ^H
@@ -1167,6 +1170,50 @@ https://github.com/karthink/consult-dir
 ;         :map vertico-map
 ;         ("C-x C-d" . consult-dir)
 ;         ("C-x C-j" . consult-dir-jump-file)))
+#+end_src
+
+** embark
+
+Embark: Emacs Mini-Buffer Actions Rooted in Keymaps
+
+NOTE:
+ M-. was bound to xref-find-definitions
+ C-h B was bound to describe-bindings
+
+#+begin_src emacs-lisp
+(use-package embark
+  :ensure t
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+  :init
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  ;; Show the Embark target at point via Eldoc. You may adjust the
+  ;; Eldoc strategy, if you want to see the documentation from
+  ;; multiple providers. Beware that using this can be a little
+  ;; jarring since the message shown in the minibuffer can be more
+  ;; than one line, causing the modeline to move up and down:
+  (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none))))
+)
+
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t ; only need to install it, embark loads it after consult if found
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 
 * UI
@@ -1616,34 +1663,6 @@ Disabled on remote directories for now due to tramp slowdown issues
 ;)
 #+end_src
 
-** which-key
-Emacs package that displays available keybindings in popup
-https://github.com/justbur/emacs-which-key
-
-Paging: C-h
-    Cycle through the pages forward with n (or C-n)
-    Cycle backwards with p (or C-p)
-    Undo the last entered key (!) with u (or C-u)
-    Call the default command bound to C-h, usually describe-prefix-bindings, with h (or C-h)
-
-#+begin_src emacs-lisp
-;;; which-key
-
-(use-package which-key
-  :ensure t
-  :defer t
-  :init (which-key-mode)
-  :config
-  ;(setq which-key-allow-imprecise-window-fit nil)
-  ;(setq which-key-setup-side-window-bottom t) ; Default
-  (setq which-key-idle-delay 1.0
-        which-key-popup-type 'side-window
-        which-key-side-window-location 'bottom
-        which-key-side-window-max-height 0.50
-        which-key-show-remaining-keys t)
-)
-#+end_src
-
 ** ibuffer
 https://www.emacswiki.org/emacs/IbufferMode
 ibuffer - *Nice* buffer switching
@@ -1753,6 +1772,22 @@ Search all marked buffers
                  (ibuffer-switch-to-saved-filter-groups "default")))
 )
 #+end_src
+** casual
+
+Casual - An opinionated Transient-based porcelain to support the casual usage of Emacs Calc.
+https://github.com/kickingvegas/Casual
+
+Usage:
+1. Invoke M-x calc to launch Calc.
+2. When the point is in the Calc window, invoke C-o (or a binding of your choosing) to launch the Casual menu.
+
+#+begin_src emacs-lisp
+(use-package casual
+  :ensure t
+  :defer t
+  :bind (:map calc-mode-map ("C-o" . 'casual-main-menu)))
+#+end_src
+
 * Terminal
 #+begin_src text
 eshell            ; the elisp shell that works everywhere
@@ -1897,8 +1932,10 @@ A) It's C-c C-t to toggle vterm-copy-mode.
 
 ** tramp
 
+Tramp - 'Transparent Remote Access Multiple Protocol' allows us to access files on a remote machine, and edit them locally.
 #+begin_src emacs-lisp
 (use-package tramp
+  :defer t
   :init
   ;; Set default connection method for TRAMP
   (setq tramp-default-method "sshx")
@@ -1906,6 +1943,22 @@ A) It's C-c C-t to toggle vterm-copy-mode.
   ;; though, it seems using use-package also fixes tramp
   ;; error was: "File not found and directory write-protected"
   ;(setq file-name-handler-alist file-name-handler-alist-original)
+
+  :config
+  (setq vc-handled-backends '(Git)
+        file-name-inhibit-locks t
+        tramp-inline-compress-start-size 1000
+        tramp-copy-size-limit 10000
+        tramp-verbose 1)
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+
+  ;eglot is actively working on an issue related to timers causing a
+  ;"Forbidden reentrant call of Tramp" message and freezing.
+  ;In the meantime, this setting was recommended.
+  (setq tramp-use-ssh-controlmaster-options nil)
+
+  ;enabling remote dir-locals could be causing a huge bottleneck
+  (setq enable-remote-dir-locals nil)
 )
 #+end_src
 
@@ -2695,7 +2748,7 @@ $ pip3 install fortls
 #               (abbrev-mode 1))))
 # #+end_src
 
-* Non-Tree-Sitter
+* Lang non-tree-sitter
 ** json, yaml
 
 json-mode https://github.com/joshwnj/json-mode
@@ -2775,133 +2828,14 @@ Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
   :config
   (setq highlight-indent-guides-method 'character))
 #+end_src
-* Treesitter Testing - disabled again
-** tree-sitter
-Now included in Emacs 29
-Docs: https://emacs-tree-sitter.github.io/
-https://github.com/emacs-tree-sitter/elisp-tree-sitter
-https://github.com/emacs-tree-sitter/elisp-tree-sitter
+* treesit-auto
 
-treesit-auto
+treesit-auto - Automatically install and use tree-sitter major modes in Emacs 29+. If the tree-sitter version can’t be used, fall back to the original major mode.
 https://github.com/renzmann/treesit-auto
-#+begin_src emacs-lisp
-;(use-package treesit-auto
-;  :ensure t
-;  :config
-;  (setq treesit-auto-install 'prompt)
-;  (global-treesit-auto-mode)
-;)
-#+end_src
-
-** json-mode
 
 #+begin_src emacs-lisp
-;(use-package json-ts-mode
-;  :mode ("\\.json\\'" . json-ts-mode))
-#+end_src
-
-** yaml-ts-mode
-
-look into: yaml-pro-ts-mode
-https://github.com/zkry/yaml-pro
-
-#+begin_src emacs-lisp
-;(use-package yaml-ts-mode
-;  :mode (("\\.yml\\'"  . yaml-ts-mode)
-;         ("\\.yaml\\'" . yaml-ts-mode)))
-#+end_src
-
-** golang
-Install golang and gopls lsp on macOS:
-$ brew update && brew install golang gopls
-
-Install grammers:
-M-x treesit-install-language-grammer
-
-gomod grammer also missing:
-M-x treesit-install-language-grammer
-gomod
-
-TODO figure out how to indent with treesitter
-lastnamebird7 mo. ago
-c-ts-mode-indent-offset, c-ts-mode-indent-style, c-ts-mode-indent-defun. Should be what you need to get started.
-
-go-ts-mode-indent-offset 8
-go-ts-mode-indent-style  ?
-go-ts-mode-indent-defun  ?
-
-yurikhan5 hr. ago
-
-The first rule of customizing indentation in Emacs is that whenever you customize tab-width always follow suit with every mode’s variously named variables that specify basic indent offset and possibly any secondary offsets.
-    Every time I edit a Go file […] Two “4 spaces” tabs are inserted
-This is what happens when you change tab-width to 4 but leave offset at 8. The indentation engine inserts as many tabs as it takes to get to column 8.
-
-To find out which mode-specific variable to change, usually you can do M-x customize-mode and browse for anything that looks relevant.
-
-#+begin_src emacs-lisp
-; (use-package go-ts-mode
-;   :ensure t
-;   :hook ((go-ts-mode . eglot-ensure)
-;          ;(go-ts-mode . company-mode)
-;          (go-ts-mode . corfu-mode)) ;; same niche as company-mode
-;   :mode ("\\.go\\'" . go-ts-mode)
-;   :bind (:map go-ts-mode-map
-;                ("<f5>" . recompile)
-;                ("<f6>" . eglot-format)
-;                ;("<f6>"  . gofmt) ;; error, function undefined?
-;                ;("C-c 6" . gofmt)
-;   )
-;   :config
-;   ;(add-to-list 'exec-path "~/go/bin")
-;   ;(setq gofmt-command "goimports")
-; )
-;
-; ;; go delve debugger intergration
-; ;(use-package go-dlv
-; ;  :ensure t)
-;
-; ; Overriding the indent style for golang
-; (add-hook 'go-ts-mode-hook
-;           (lambda ()
-;             (add-hook 'before-save-hook 'gofmt-before-save)
-;             (setq tab-width 4)
-;             (setq standard-indent 4)
-;             (setq go-ts-mode-indent-offset 4)
-;             (setq indent-tabs-mode nil)))
-;
-; ;(use-package company
-; ;  :ensure t)
-#+end_src
-** python
-
-Install pylsp
-pip install 'python-lsp-server[all]'
-
-Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
-
-#+begin_src emacs-lisp
-; ;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
-;
-;  (use-package python
-;    :ensure t
-;    :hook ((python-ts-mode . eglot-ensure)
-;           ;(go-ts-mode . company-mode)
-;           (go-ts-mode . corfu-mode)) ;; same niche as company-mode
-;    :bind (:map python-ts-mode-map
-;                ("<f5>" . recompile)
-;                ("<f6>" . eglot-format))
-;    :mode ("\\.py\\'" . python-ts-mode))
-;
-;  ;; requires melpa
-;  ;(use-package conda
-;  ;  :ensure t
-;  ;  :config
-;  ;  (setq conda-env-home-directory
-;  ;         (expand-file-name "~/mambaforge")))
-;
-;  (use-package highlight-indent-guides
-;    :ensure t
-;    :hook (python-ts-mode . highlight-indent-guides-mode)
-;    :config
-;    (setq highlight-indent-guides-method 'character))
+(use-package treesit-auto
+  :ensure t
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all))
 #+end_src
