@@ -2866,7 +2866,6 @@ Using locally download el files
     ;; if you want to use outline-minor-mode
     ;; (outline-minor-mode 1)
     )
-  terraform-toggle-or-indent
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
 
 (use-package hcl-mode
