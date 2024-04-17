@@ -2851,3 +2851,24 @@ json-ts-mode
   :config
   (treesit-auto-add-to-auto-mode-alist 'all))
 #+end_src
+* Terraform and HCL
+
+terraform-mode - Major mode of Terraform configuration file
+hcl-mode - Major mode for Hashicorp Configuration Language
+https://github.com/hcl-emacs
+Using locally download el files
+
+#+begin_src emacs-lisp
+(use-package terraform-mode
+  :custom (terraform-indent-level 2)
+  :config
+  (defun my-terraform-mode-init ()
+    ;; if you want to use outline-minor-mode
+    ;; (outline-minor-mode 1)
+    )
+  terraform-toggle-or-indent
+  (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
+
+(use-package hcl-mode
+  :custom (hcl-indent-level 2))
+#+end_src
