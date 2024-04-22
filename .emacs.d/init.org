@@ -2871,3 +2871,21 @@ Using locally download el files
 (use-package hcl-mode
   :custom (hcl-indent-level 2))
 #+end_src
+* dired-subtree
+
+Tee-Style navigation
+=Tab= key will expand or contract directory at point.
+=C-Tab= will behave like org-mode headings
+hit it once to expande a subdir at point, twice to do it recursively, thrice to contract the tree
+=Shift-Tab= contract the subtree when point is inside it
+
+#+begin_src emacs-lisp
+(use-package dired-subtree
+  :ensure t
+  :after dired
+  :bind (:map dired-mode-map
+              ("<tab>" . dired-subtree-toggle)
+              ("<C-tab>" . dired-subtree-cycle)
+              ;("<tS-iso-lefttab>" . dired-subtree-remove
+))
+#+end_src
