@@ -2826,31 +2826,6 @@ Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
   :config
   (setq highlight-indent-guides-method 'character))
 #+end_src
-* treesit-auto
-
-treesit-auto - Automatically install and use tree-sitter major modes in Emacs 29+. If the tree-sitter version can’t be used, fall back to the original major mode.
-https://github.com/renzmann/treesit-auto
-
-treesitter info
-https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
-
-Build missing grammer:
-`M-x treesit-install-language-grammar RET bash` to get
-
-Test if grammer is installed, elisp on scratch buffer:
-M-: (treesit-language-available-p 'python)
-t
-
-Check if treesitter is loaded:
-M-: major-mode
-json-ts-mode
-
-#+begin_src emacs-lisp
-(use-package treesit-auto
-  :ensure t
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all))
-#+end_src
 * Terraform and HCL
 
 terraform-mode - Major mode of Terraform configuration file
