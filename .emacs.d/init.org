@@ -782,7 +782,10 @@ From Doom Emacs, look into
   ;(setq exec-path-from-shell-arguments nil) ; was '("-l"), breaks aspell?
   ;(setq exec-path-from-shell-debug 1)	; enable debugging
   ;(setq exec-path-from-shell--debug 1) ; print msg if debug enabled
-  (setq exec-path-from-shell-variables '("PATH" "MANPATH"))
+  ;(setq exec-path-from-shell-variables '("PATH" "MANPATH")) ; or use dolist instead
+  (dolist (var '("PATH"
+                 "MANPATH"))
+    (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 #+end_src
 
@@ -1170,6 +1173,34 @@ https://github.com/karthink/consult-dir
 ;         ("C-x C-j" . consult-dir-jump-file)))
 #+end_src
 
+** which-key
+Emacs package that displays available keybindings in popup
+https://github.com/justbur/emacs-which-key
+
+Paging: C-h
+    Cycle through the pages forward with n (or C-n)
+    Cycle backwards with p (or C-p)
+    Undo the last entered key (!) with u (or C-u)
+    Call the default command bound to C-h, usually describe-prefix-bindings, with h (or C-h)
+
+#+begin_src emacs-lisp
+;;; which-key
+
+(use-package which-key
+  :ensure t
+  :defer t
+  :init (which-key-mode)
+  :config
+  ;(setq which-key-allow-imprecise-window-fit nil)
+  ;(setq which-key-setup-side-window-bottom t) ; Default
+  (setq which-key-idle-delay 1.0
+        which-key-popup-type 'side-window
+        which-key-side-window-location 'bottom
+        which-key-side-window-max-height 0.50
+        which-key-show-remaining-keys t)
+)
+#+end_src
+
 ** embark
 
 Embark: Emacs Mini-Buffer Actions Rooted in Keymaps
@@ -1179,39 +1210,39 @@ NOTE:
  C-h B was bound to describe-bindings
 
 #+begin_src emacs-lisp
-(use-package embark
-  :ensure t
-  :bind
-  (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
-   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
-
-  :init
-  ;; Optionally replace the key help with a completing-read interface
-  (setq prefix-help-command #'embark-prefix-help-command)
-
-  ;; Show the Embark target at point via Eldoc. You may adjust the
-  ;; Eldoc strategy, if you want to see the documentation from
-  ;; multiple providers. Beware that using this can be a little
-  ;; jarring since the message shown in the minibuffer can be more
-  ;; than one line, causing the modeline to move up and down:
-  (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
-  (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
-
-  :config
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none))))
-)
-
-
-;; Consult users will also want the embark-consult package.
-(use-package embark-consult
-  :ensure t ; only need to install it, embark loads it after consult if found
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+;(use-package embark
+;  :ensure t
+;  :bind
+;  (("C-." . embark-act)         ;; pick some comfortable binding
+;   ("C-;" . embark-dwim)        ;; good alternative: M-.
+;   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+;
+;  :init
+;  ;; Optionally replace the key help with a completing-read interface
+;  (setq prefix-help-command #'embark-prefix-help-command)
+;
+;  ;; Show the Embark target at point via Eldoc. You may adjust the
+;  ;; Eldoc strategy, if you want to see the documentation from
+;  ;; multiple providers. Beware that using this can be a little
+;  ;; jarring since the message shown in the minibuffer can be more
+;  ;; than one line, causing the modeline to move up and down:
+;  (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+;  (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+;
+;  :config
+;  ;; Hide the mode line of the Embark live/completions buffers
+;  (add-to-list 'display-buffer-alist
+;               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+;                 nil
+;                 (window-parameters (mode-line-format . none))))
+;)
+;
+;
+;;; Consult users will also want the embark-consult package.
+;(use-package embark-consult
+;  :ensure t ; only need to install it, embark loads it after consult if found
+;  :hook
+;  (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 
 * UI
@@ -2677,16 +2708,19 @@ hcl-mode https://github.com/syohex/emacs-hcl-mode
 (use-package hcl-mode
   :ensure t
   :defer t
-  ;:config
-  ;(hcl-indent-level 2)
-)
+  :mode ("\\.hcl\\'" . hcl-mode)
+  :custom (hcl-indent-level 2))
 #+end_src
 
 ** toml-mode
 
+TOML [Tom's Obvious Minimal Language]
+
 #+begin_src emacs-lisp
 (use-package toml-mode
-  :ensure t)
+  :ensure t
+  :mode ("\\.toml\\'" . toml-mode)
+)
 #+end_src
 
 ** sed-mode
@@ -2718,18 +2752,25 @@ $ brew install pandoc
 
 ** graphviz-dot-mode
 
+https://graphviz.org/
+
 #+begin_src emacs-lisp
 (use-package graphviz-dot-mode
-  :ensure t)
+  :ensure t
+  :mode (("\\.gv\\'"  . graphviz-dot-mode)
+         ("\\.dot\\'" . graphviz-dot-mode))
+)
 #+end_src
 
 ** gnuplot-mode
+
+http://www.gnuplot.info/
 
 #+begin_src emacs-lisp
 (use-package gnuplot
   :ensure t
   :defer t
-  :mode ("\\.gp\\'")
+  :mode ("\\.gp\\'" . gnuplot)
 )
 #+end_src
 
@@ -2746,6 +2787,20 @@ $ pip3 install fortls
 #               (abbrev-mode 1))))
 # #+end_src
 
+** cobol
+
+https://elpa.gnu.org/packages/cobol-mode.html
+
+#+begin_src emacs-lisp
+(use-package cobol-mode
+  :ensure t
+  :defer t
+  :mode (("\\.cob\\'" . cobol-mode)
+         ("\\.cbl\\'" . cobol-mode)
+         ("\\.cpy\\'" . cobol-mode))
+)
+#+end_src
+
 * Lang non-tree-sitter
 ** json, yaml
 
@@ -2756,11 +2811,15 @@ TODO: enable lsp for each type
 #+begin_src emacs-lisp
 (use-package json-mode
   :ensure t
-  :defer t)
+  :defer t
+  :mode ("\\.json\\'" . json-mode)
+)
 
 (use-package yaml-mode
   :ensure t
   :defer t
+  :mode (("\\.yml\\'"  . yaml-mode)
+         ("\\.yaml\\'" . yaml-mode))
   :config
   (add-hook 'yaml-mode-hook
       #'(lambda ()
@@ -2842,9 +2901,6 @@ Using locally download el files
     ;; (outline-minor-mode 1)
     )
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
-
-(use-package hcl-mode
-  :custom (hcl-indent-level 2))
 #+end_src
 * dired-subtree
 
