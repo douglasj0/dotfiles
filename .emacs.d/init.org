@@ -1557,8 +1557,12 @@ Multiple Cursors hydra
 https://github.com/abo-abo/hydra/wiki/multiple-cursors
 
 #+begin_src emacs-lisp
-;;; multiple cursors
 
+;;; make sure we've installed hydra before trying to use it
+(use-package hydra
+  :ensure t)
+
+;;; multiple cursors
 (use-package multiple-cursors
   :ensure t
   :defer t)
