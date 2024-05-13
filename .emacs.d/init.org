@@ -1699,6 +1699,61 @@ Disabled on remote directories for now due to tramp slowdown issues
 ;)
 #+end_src
 
+** dired-subtree
+
+Tee-Style navigation
+=Tab= key will expand or contract directory at point.
+=C-Tab= will behave like org-mode headings
+hit it once to expande a subdir at point, twice to do it recursively, thrice to contract the tree
+=Shift-Tab= contract the subtree when point is inside it
+
+#+begin_src emacs-lisp
+(use-package dired-subtree
+  :ensure t
+  :after dired
+  :bind (:map dired-mode-map
+              ("<tab>" . dired-subtree-toggle)
+              ("<C-tab>" . dired-subtree-cycle)
+              ;("<tS-iso-lefttab>" . dired-subtree-remove
+))
+#+end_src
+
+** dired-sidebar
+
+https://github.com/jojojames/dired-sidebar
+
+#+begin_src emacs-lisp
+(use-package dired-sidebar
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar)
+  :bind (("C-c d" . dired-sidebar-toggle-sidebar)) ; was C-x C-n
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+            (lambda ()
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode))))
+  :config
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+
+  (setq dired-sidebar-subtree-line-prefix "__")
+  ;(setq dired-sidebar-theme 'vscode)
+  (setq dired-sidebar-use-term-integration t)
+  ;(setq dired-sidebar-use-custom-font t)
+)
+#+end_src
+
+** casual-dired
+
+https://github.com/kickingvegas/casual-dired
+An opinionated Transient-based porcelain for the Emacs file manager Dired.
+
+#+begin_src emacs-lisp
+(use-package casual-dired
+  :ensure t
+  :bind (:map dired-mode-map ("C-o" . 'casual-dired-tmenu)))
+#+end_src
+
 ** ibuffer
 https://www.emacswiki.org/emacs/IbufferMode
 ibuffer - *Nice* buffer switching
@@ -1808,7 +1863,7 @@ Search all marked buffers
                  (ibuffer-switch-to-saved-filter-groups "default")))
 )
 #+end_src
-** casual
+** casual-calc
 
 Casual - An opinionated Transient-based porcelain to support the casual usage of Emacs Calc.
 https://github.com/kickingvegas/Casual
@@ -2910,46 +2965,36 @@ Using locally download el files
     )
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
 #+end_src
-* dired-subtree
+* testing
 
-Tee-Style navigation
-=Tab= key will expand or contract directory at point.
-=C-Tab= will behave like org-mode headings
-hit it once to expande a subdir at point, twice to do it recursively, thrice to contract the tree
-=Shift-Tab= contract the subtree when point is inside it
+** maximize-window
 
-#+begin_src emacs-lisp
-(use-package dired-subtree
-  :ensure t
-  :after dired
-  :bind (:map dired-mode-map
-              ("<tab>" . dired-subtree-toggle)
-              ("<C-tab>" . dired-subtree-cycle)
-              ;("<tS-iso-lefttab>" . dired-subtree-remove
-))
-#+end_src
-
-* dired-sidebar
-
-https://github.com/jojojames/dired-sidebar
+maximize-window.el
+JDRiverRun
+One capability I use every day that I never see mentioned is vertical/horizontal window maximization. That is, no matter where my selected window is placed in some complicated frame layout, make it occupy the full height(/width) of the frame. Here's a small gist with the code (to which I've also added a natural binding to tear-off-window, thanks!).
+gist: https://gist.github.com/jdtsmith/75d76bee292357cbfe18d7eb4a25c9a9
 
 #+begin_src emacs-lisp
-(use-package dired-sidebar
-  :ensure t
-  :commands (dired-sidebar-toggle-sidebar)
-  :bind (("C-c d" . dired-sidebar-toggle-sidebar)) ; was C-x C-n
-  :init
-  (add-hook 'dired-sidebar-mode-hook
-            (lambda ()
-              (unless (file-remote-p default-directory)
-                (auto-revert-mode))))
-  :config
-  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
-  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+;; Maximize a window vertically or horizontally within its frame
+(defun maximize-window-in-direction (&optional horizontally)
+  "Maximize window.
+Default vertically, unless HORIZONTALLY is non-nil."
+  (interactive)
+  (unless (seq-every-p
+	   (apply-partially #'window-at-side-p nil)
+	   (if horizontally '(left right) '(top bottom)))
+    (let* ((buf (window-buffer))
+	   (top-size (window-size (frame-root-window) (not horizontally)))
+	   (size (min (/ top-size 2) (window-size nil (not horizontally))))
+	   (dir (if horizontally
+		    (if (window-at-side-p nil 'top) 'above 'below)
+		  (if (window-at-side-p nil 'right) 'right 'left))))
+      (delete-window)
+      (set-window-buffer
+       (select-window (split-window (frame-root-window) (- size) dir))
+       buf))))
 
-  (setq dired-sidebar-subtree-line-prefix "__")
-  ;(setq dired-sidebar-theme 'vscode)
-  (setq dired-sidebar-use-term-integration t)
-  ;(setq dired-sidebar-use-custom-font t)
-)
+(bind-key "C-x 7 1" #'tear-off-window) ; into a new frame
+(bind-key "C-x 7 2" #'maximize-window-in-direction) ; vertically
+(bind-key "C-x 7 3" (lambda () (interactive (maximize-window-in-direction 'horizontal))))
 #+end_src
