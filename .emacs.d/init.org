@@ -1743,15 +1743,15 @@ https://github.com/jojojames/dired-sidebar
 )
 #+end_src
 
-** casual-dired
+** casual-dired - unavailable
 
 https://github.com/kickingvegas/casual-dired
 An opinionated Transient-based porcelain for the Emacs file manager Dired.
 
 #+begin_src emacs-lisp
-(use-package casual-dired
-  :ensure t
-  :bind (:map dired-mode-map ("C-o" . 'casual-dired-tmenu)))
+;(use-package casual-dired
+;  :ensure t
+;  :bind (:map dired-mode-map ("C-o" . 'casual-dired-tmenu)))
 #+end_src
 
 ** ibuffer
@@ -1863,7 +1863,7 @@ Search all marked buffers
                  (ibuffer-switch-to-saved-filter-groups "default")))
 )
 #+end_src
-** casual-calc
+** casual-calc - unavailable
 
 Casual - An opinionated Transient-based porcelain to support the casual usage of Emacs Calc.
 https://github.com/kickingvegas/Casual
@@ -1873,10 +1873,10 @@ Usage:
 2. When the point is in the Calc window, invoke C-o (or a binding of your choosing) to launch the Casual menu.
 
 #+begin_src emacs-lisp
-(use-package casual
-  :ensure t
-  :defer t
-  :bind (:map calc-mode-map ("C-o" . 'casual-main-menu)))
+;(use-package casual
+;  :ensure t
+;  :defer t
+;  :bind (:map calc-mode-map ("C-o" . 'casual-main-menu)))
 #+end_src
 
 * Terminal
