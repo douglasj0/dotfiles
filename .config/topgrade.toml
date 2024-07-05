@@ -175,10 +175,14 @@
 # Additional git repositories to pull
 repos = [
     "~/.dotfiles",
-    "~/.pyenv/plugins/pyenv-virtualenv",
-    "~/.pyenv/plugins/pyenv-alias",
-    "~/.pyenv"
+    "~/.pyenv/plugins/pyenv-update"
 ]
+
+# moved pyenv gitrepos out due to pyenv-setup plugin
+# https://github.com/pyenv/pyenv-update.git
+#    "~/.pyenv/plugins/pyenv-virtualenv",
+#    "~/.pyenv/plugins/pyenv-alias",
+#    "~/.pyenv"
 
 # Don't pull the predefined git repos
 # pull_predefined = false
