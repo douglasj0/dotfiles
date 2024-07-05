@@ -234,7 +234,8 @@ fi
 #  Source infra functions  #
 ############################
 if [ -d ${HOME}/.infra ]; then
-  for f in `ls ${HOME}/.infra/`; do source ${HOME}/.infra/$f; done
+  source ${HOME}/.infra/includes.sh
+  for f in `ls ${HOME}/.infra/ | grep -v 'includes.sh'`; do source ${HOME}/.infra/$f; done
   echo ". loaded infra functions"
 fi
 
