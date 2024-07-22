@@ -47,3 +47,4 @@ alias strip-code-block="sed -e '/^#+begin_/d' -e '/^#+end_/d'"
 
 # Multipass
 alias mp="multipass"
+alias wezterm="$HOME/Applications/WezTerm.app/Contents/MacOS/wezterm"
