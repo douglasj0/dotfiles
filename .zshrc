@@ -103,8 +103,11 @@ setopt hist_expire_dups_first
 setopt hist_ignore_dups
 setopt hist_ignore_space
 setopt inc_append_history
+#setopt hist_verify
 #setopt share_history
 setopt no_share_history
+bindkey "^[[A" history-search-backward
+bindkey "^[[B" history-search-forward
 # Changing directories
 setopt auto_cd
 setopt auto_pushd
