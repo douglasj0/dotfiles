@@ -51,6 +51,7 @@ awless
 .config/filezilla/
 .config/gpt4all.io/
 .config/gtk-2.0/
+.config/htop/htoprc
 .config/iterm2/
 .config/qBittorrent/
 
