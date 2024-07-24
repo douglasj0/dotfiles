@@ -54,6 +54,7 @@ awless
 .config/htop/htoprc
 .config/iterm2/
 .config/qBittorrent/
+.config/kitty/current-theme.conf
 
 # ignore patterns for exult
 Exult.app
