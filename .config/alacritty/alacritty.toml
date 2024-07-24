@@ -23,8 +23,8 @@ decorations = "Full"
 #opacity = 0.9
 #blur = true
 #option_as_alt = "Both"
-padding = {x=0, y=0}
-dynamic_padding = false
+padding = {x=5, y=5}
+#dynamic_padding = false
 
 [window.dimensions]
 columns = 80
