@@ -2,8 +2,11 @@
 
 # 0x Default colors
 [colors.primary]
-background = '#300a24'
+#background = '#300a24'
 foreground = '#eeeeec'
+# i\/ Ubuntu from iterm \/
+background = '#3a122e'
+#foreground = '#f1f1ef'
 
 # 0x Colors the cursor will use if `custom_cursor_colors` is true
 [colors.cursor]
