@@ -136,4 +136,6 @@
 ;; allow remembering risky variables, needed for init.org
 (defun risky-local-variable-p (sym &optional _ignored) nil)
 
-(provide 'early-init)
+;; Fake the footer to avoid warnings
+;; (provide 'early-init)
+;;; early-init.el ends here

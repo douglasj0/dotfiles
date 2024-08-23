@@ -17,6 +17,7 @@ TODO:
   :commands, :bind, :bind*, :bind-keymap, :bind-keymap*, :mode, or :interpreter
 - look into tangling the org file to init.el
   https://www.reddit.com/r/emacs/comments/372nxd/how_to_move_init_to_orgbabel/
+- Test combining sparse configs under use-package with use package emacs
 
 * Init
 The init.el portion of the init.el/config.org from before
@@ -328,12 +329,12 @@ The init.el portion of the init.el/config.org from before
               'electric-pair-conservative-inhibit)
 
 ;; desktop
-(desktop-save-mode 1)
-(setq desktop-save 'ask)
+;(desktop-save-mode 1)
+;(setq desktop-save 'ask)
 ;; can do 'desktop-clear' for cleanup, add files to NOT close here
-(dolist (file
-        '("+current" "+Last" "work.org" "init.org"))
-  (add-to-list 'desktop-clear-preserve-buffers file))
+;(dolist (file
+;        '("+current" "+Last" "work.org" "init.org"))
+;  (add-to-list 'desktop-clear-preserve-buffers file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bookmarks
@@ -1409,7 +1410,8 @@ NOTE: Run (all-the-icons-install-fonts) one time after installing
 (use-package doom-modeline
   :ensure t
   ;:defer t
-  :hook (after-init . doom-modeline-mode)
+  ;:hook (after-init . doom-modeline-mode) ;; removed for envrc hook
+  :init (doom-modeline-mode 1)
   :config
   ;; Fix? for Height below 25 not working anymore #187
   ;; https://github.com/seagle0128/doom-modeline/issues/187
@@ -2733,6 +2735,23 @@ yaml              ; JSON, but readable
 Look at this for info about keybinds
 https://www.reddit.com/r/emacs/comments/n1qyxt/how_to_set_prefix_names_to_appear_with_whichkey/
 
+** direnv and envrc
+
+envrc.el - buffer-local direnv integration for Emacs
+https://github.com/purcell/envrc
+The hook has to be loaded last to prepend itself
+The global mode will only have an effect if direnv is installed and available in the default Emacs exec-path.
+
+Install direnv
+macos: brew install direnv
+
+#+begin_src emacs-lisp
+(use-package envrc
+  :ensure t
+  :hook (after-init . envrc-global-mode)
+  :bind ("C-c e" . 'envrc-command-map))
+#+end_src
+
 ** sh-script
 shell-script-mode is a major mode for shell script editing.
 https://www.emacswiki.org/emacs/ShMode
@@ -2997,4 +3016,13 @@ Default vertically, unless HORIZONTALLY is non-nil."
 (bind-key "C-x 7 1" #'tear-off-window) ; into a new frame
 (bind-key "C-x 7 2" #'maximize-window-in-direction) ; vertically
 (bind-key "C-x 7 3" (lambda () (interactive (maximize-window-in-direction 'horizontal))))
+#+end_src
+
+* End
+
+End of init.el footer to handle linter warnings
+#+begin_src emacs-lisp
+;; Fake the footer to avoid warnings
+;; (provide 'init)
+;;; init.el ends here
 #+end_src
