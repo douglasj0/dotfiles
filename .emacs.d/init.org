@@ -490,6 +490,148 @@ last sentence."
 
 * Utilities
 
+** maximize-window
+
+maximize-window.el
+JDRiverRun
+One capability I use every day that I never see mentioned is vertical/horizontal window maximization. That is, no matter where my selected window is placed in some complicated frame layout, make it occupy the full height(/width) of the frame. Here's a small gist with the code (to which I've also added a natural binding to tear-off-window, thanks!).
+gist: https://gist.github.com/jdtsmith/75d76bee292357cbfe18d7eb4a25c9a9
+
+#+begin_src emacs-lisp
+;; Maximize a window vertically or horizontally within its frame
+(defun maximize-window-in-direction (&optional horizontally)
+  "Maximize window.
+Default vertically, unless HORIZONTALLY is non-nil."
+  (interactive)
+  (unless (seq-every-p
+	   (apply-partially #'window-at-side-p nil)
+	   (if horizontally '(left right) '(top bottom)))
+    (let* ((buf (window-buffer))
+	   (top-size (window-size (frame-root-window) (not horizontally)))
+	   (size (min (/ top-size 2) (window-size nil (not horizontally))))
+	   (dir (if horizontally
+		    (if (window-at-side-p nil 'top) 'above 'below)
+		  (if (window-at-side-p nil 'right) 'right 'left))))
+      (delete-window)
+      (set-window-buffer
+       (select-window (split-window (frame-root-window) (- size) dir))
+       buf))))
+
+(bind-key "C-x 7 1" #'tear-off-window) ; into a new frame
+(bind-key "C-x 7 2" #'maximize-window-in-direction) ; vertically
+(bind-key "C-x 7 3" (lambda () (interactive (maximize-window-in-direction 'horizontal))))
+#+end_src
+
+** ibuffer
+https://www.emacswiki.org/emacs/IbufferMode
+ibuffer - *Nice* buffer switching
+
+Search all marked buffers
+  ‘M-s a C-s’ - Do incremental search in the marked buffers.
+  ‘M-s a C-M-s’ - Isearch for regexp in the marked buffers.
+  ‘U’ - Replace by regexp in each of the marked buffers.
+  ‘Q’ - Query replace in each of the marked buffers.
+  ‘I’ - As above, with a regular expression.
+
+#+begin_src emacs-lisp
+;;; ibuffer
+
+(use-package ibuffer
+  :bind ("C-x C-b" . ibuffer) ; replaces electric-buffer-list
+  :config
+    ;; Don't show empty buffer groups
+    (setq ibuffer-show-empty-filter-groups nil)
+
+    ;; work groups for ibuffer
+    (setq ibuffer-saved-filter-groups
+          '(("default"
+             ("version control" (or (mode . svn-status-mode)
+                       (mode . svn-log-edit-mode)
+                       (name . "^\\*svn-")
+                       (name . "^\\*vc\\*$")
+                       (name . "^\\*Annotate")
+                       (name . "^\\*vc-")
+                       (name . "^\\*git-")
+                       (name . "^\\*magit")))
+             ("emacs" (or (name . "^\\*scratch\\*$")
+                          (name . "^\\*Messages\\*$")
+                          (name . "^TAGS\\(<[0-9]+>\\)?$")
+                          (name . "^\\*info\\*$")
+                          (name . "^\\*Occur\\*$")
+                          (name . "^\\*grep\\*$")
+                          (name . "^\\*Compile-Log\\*$")
+                          (name . "^\\*Backtrace\\*$")
+                          (name . "^\\*Process List\\*$")
+                          (name . "^\\*gud\\*$")
+                          (name . "^\\*Man")
+                          (name . "^\\*WoMan")
+                          (name . "^\\*Kill Ring\\*$")
+                          (name . "^\\*Completions\\*$")
+                          (name . "^\\*tramp")
+                          (name . "^\\*shell\\*$")
+                          (name . "^\\*compilation\\*$")))
+             ("Helm" (or (name . "\*helm\*")))
+             ("Help" (or (name . "\*Help\*")
+                         (name . "\*Apropos\*")
+                         (name . "\*info\*")))
+             ("emacs-source" (or (mode . emacs-lisp-mode)
+                                 (filename . "/Applications/Emacs.app")
+                                 (filename . "/bin/emacs")))
+             ("emacs-config" (or (filename . ".emacs.d")
+                                 (filename . "emacs-config")))
+            ("org" (or (name . "^\\*org-")
+                        (name . "^\\*Org")
+                        (mode . org-mode)
+                        (mode . muse-mode)
+                        (name . "^\\*Calendar\\*$")
+                        (name . "^+current$")
+                        (name . "^diary$")
+                        (name . "^\\*Agenda")))
+             ("latex" (or (mode . latex-mode)
+                          (mode . LaTeX-mode)
+                          (mode . bibtex-mode)
+                          (mode . reftex-mode)))
+             ("dired" (or (mode . dired-mode)))
+             ("perl" (mode . cperl-mode))
+             ("erc" (mode . erc-mode))
+             ("shell" (or (mode . shell-mode)
+                            (name . "^\\*terminal\\*$")
+                            (name . "^\\*ansi-term\\*$")
+                            (name . "^\\*shell\\*$")
+                            (name . "^\\*eshell\\*$")))
+             ("gnus" (or (name . "^\\*gnus trace\\*$")
+                            (mode . message-mode)
+                            (mode . bbdb-mode)
+                            (mode . mail-mode)
+                            (mode . gnus-group-mode)
+                            (mode . gnus-summary-mode)
+                            (mode . gnus-article-mode)
+                            (name . "^\\.bbdb$")
+                            (name . "^\\.newsrc-dribble"))))))
+
+    ;; Order the groups so the order is : [Default], [agenda], [emacs]
+    (defadvice ibuffer-generate-filter-groups (after reverse-ibuffer-groups ()
+                                                     activate)
+      (setq ad-return-value (nreverse ad-return-value)))
+
+    ;; Hide the following buffers
+    ;;(setq ibuffer-never-show-predicates
+    ;;      (list "\\*Completions\\*"
+    ;;            "\\*vc\\*"))
+
+    ;; Enable ibuffer expert mode, don't prompt on buffer deletes
+    (setq ibuffer-expert t)
+
+    ;; Load the 'work' group, can set to load groups by location
+    ;; ibuffer-auto-mode is a minor mode that automatically keeps the buffer
+    ;; list up to date. I turn it on in my ibuffer-mode-hook:
+    (add-hook 'ibuffer-mode-hook
+              (lambda ()
+                 (ibuffer-auto-mode 1)
+                 (ibuffer-switch-to-saved-filter-groups "default")))
+)
+#+end_src
+
 ** recentf
 a minor mode that builds a list of recently opened files
 https://www.emacswiki.org/emacs/RecentFiles
@@ -1156,7 +1298,7 @@ Modern Emacs UI
 https://www.youtube.com/watch?v=rwKTc4MNmt8
 - x treemacs/neotree
 - solair
-- x golden-ration
+- golden-ratio
 - verico pos frame (ido/helm)
 - x doom modeline
 - x doom themes (ish)
@@ -1174,27 +1316,11 @@ https://github.com/Alexander-Miller/treemacs
 #+begin_src emacs-lisp
 (use-package treemacs
   :ensure t
-  :bind ("<f5>" . treemacs)
+  :bind ("<f8>" . treemacs)
   :custom
   (treemacs-is-never-other-window t)
   :hook
   (treemacs-mode . treemacs-project-follow-mode))
-#+end_src
-
-** golden-ratio
-
-When working with many windows at the same time, each window has a size that is not convenient for editing.
-
-golden-ratio helps on this issue by resizing automatically the windows you are working on to the size specified in the "Golden Ratio".
-https://github.com/roman/golden-ratio.el
-
-#+begin_src emacs-lisp
-(use-package golden-ratio
-  :ensure t
-  :custom
-  (golden-ration-exclude-modes '(occur-mode))
-  :config
-  (golden-ratio-mode 1))
 #+end_src
 
 ** disable all themes
