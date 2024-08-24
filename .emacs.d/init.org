@@ -1286,6 +1286,480 @@ NOTE: Run (all-the-icons-install-fonts) one time after installing
 )
 #+end_src
 
+* Version Control
+
+#+begin_src text
+:tools - from doom emacs
+ansible
+docker
+(eval +overlay)     ; run code, run (also, repls)
+lookup              ; navigate your code and its documentation
+(lsp +eglot)        ; M-x vscode
+magit               ; a git porcelain for Emacs
+#+end_src
+
+** keymaps versioning (C-c v)
+Based on projectile's
+
+vc-<functions> also under C-x v
+
+#+begin_src emacs-lisp
+(defvar versioning-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "R") '("Git revert file"       . vc-revert))
+    (define-key map (kbd "y") '("Kill link to remote"   . +vc/browse-at-remote-kill))
+    (define-key map (kbd "Y") '("Kill link to homepage" . +vc/browse-at-remote-kill-homepage))
+    (define-key map (kbd "r") '("Git revert hunk"       . +vc-gutter/revert-hunk))
+    (define-key map (kbd "s") '("Git stage hunk"        . +vc-gutter/stage-hunk))
+    (define-key map (kbd "r") '("Git time machine"      . git-timemachine-toggle))
+    (define-key map (kbd "n") '("Jump to next hunk"     . +vc-gutter/next-hunk))
+    (define-key map (kbd "p") '("Jump to previous hunk" . +vc-gutter/previous-hunk))
+    (define-key map (kbd "/") '("Magit dispatch"        . magit-dispatch))
+    (define-key map (kbd ".") '("Magit file dispatch"   . magit-file-dispatch))
+    (define-key map (kbd "'") '("Forge dispatch"        . forge-dispatch))
+    (define-key map (kbd "g") '("Magit status"          . magit-status))
+    (define-key map (kbd "G") '("Magit status here"     . magit-status-here))
+    (define-key map (kbd "x") '("Magit file delete"     . magit-file-delete))
+    (define-key map (kbd "B") '("Magit blame"           . magit-blame-addition))
+    (define-key map (kbd "C") '("Magit clone"           . magit-clone))
+    (define-key map (kbd "F") '("Magit fetch"           . magit-fetch))
+    (define-key map (kbd "L") '("Magit buffer log"      . magit-log-buffer-file))
+    (define-key map (kbd "S") '("Git stage file"        . magit-stage-file))
+    (define-key map (kbd "U") '("Git unstage file"      . magit-unstage-file))
+    map)
+  "Keymap for version commands after `versioning-keymap-prefix'.")
+(fset 'versioning-command-map versioning-command-map)
+(global-set-key (kbd "C-c v") '("versioning" . versioning-command-map))
+
+    ;; sub-menues (c+create, f+find, l+list, o+open in browser
+(defvar vc-find-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "f") '("Find file"           . magit-find-file))
+    (define-key map (kbd "g") '("Find gitconfig file" . magit-find-git-config-file))
+    (define-key map (kbd "c") '("Find commit"         . magit-show-commit))
+    (define-key map (kbd "i") '("Find issue"          . forge-visit-issue))
+    (define-key map (kbd "p") '("Find pull request"   . forge-visit-pullreq))
+    map)
+  "Keymap for vc find commands after `vc-find-keymap-prefix'.")
+(fset 'vc-find-command-map vc-find-command-map)
+(global-set-key (kbd "C-c v f") '("vc-find" . vc-find-command-map))
+
+(defvar vc-open-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd ".") '("Browse file or region" . +vc/browse-at-remote))
+    (define-key map (kbd "h") '("Browse homepage"       . +vc/browse-at-remote-homepage))
+    (define-key map (kbd "r") '("Browse remote"         . forge-browse-remote))
+    (define-key map (kbd "c") '("Browse commit"         . forge-browse-commit))
+    (define-key map (kbd "i") '("Browse an issue"       . forge-browse-issue))
+    (define-key map (kbd "p") '("Browse a pull request" . forge-browse-pullreq))
+    (define-key map (kbd "I") '("Browse issues"         . forge-browse-issues))
+    (define-key map (kbd "P") '("Browse pull requests"  . forge-browse-pullreqs))
+    map)
+  "Keymap for vc open commands after `vc-open-keymap-prefix'.")
+(fset 'vc-open-command-map vc-open-command-map)
+(global-set-key (kbd "C-c v o") '("vc-open" . vc-open-command-map))
+
+
+(defvar vc-list-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "g") '("List gists"          . gist-list))
+    (define-key map (kbd "r") '("List repositories"   . magit-list-repositories))
+    (define-key map (kbd "s") '("List submodules"     . magit-list-submodules))
+    (define-key map (kbd "i") '("List issues"         . forge-list-issues))
+    (define-key map (kbd "p") '("List pull requests"  . forge-list-pullreqs))
+    (define-key map (kbd "n") '("List notifications"  . forge-list-notifications))
+    map)
+  "Keymap for vc list commands after `vc-list-keymap-prefix'.")
+(fset 'vc-list-command-map vc-list-command-map)
+(global-set-key (kbd "C-c v l") '("vc-list" . vc-list-command-map))
+
+(defvar vc-create-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "r") '("Initialize repo" . magit-init))
+    (define-key map (kbd "R") '("Clone repo"      . magit-clone))
+    (define-key map (kbd "c") '("Commit"          . magit-commit-create))
+    (define-key map (kbd "f") '("Fixup"           . magit-commit-fixup))
+    (define-key map (kbd "i") '("Issue"           . forge-create-issue))
+    (define-key map (kbd "p") '("Pull request"    . forge-create-pullreq))
+    map)
+  "Keymap for vc create commands after `vc-creaet-keymap-prefix'.")
+(fset 'vc-create-command-map vc-create-command-map)
+(global-set-key (kbd "C-c v c") '("vc-create" . vc-create-command-map))
+#+end_src
+
+** magit
+It's Magit! A Git porcelain inside Emacs. https://magit.vc
+https://github.com/magit/magit
+
+#+begin_src emacs-lisp
+;; Fixes for emacs 27
+;; Magit Error: Warning (with-editor): Cannot determine a suitable Emacsclient
+(setq-default with-editor-emacsclient-executable "emacsclient")
+
+(use-package magit
+  :ensure t
+  :defer t
+  :commands magit
+  ;:bind
+  ;  (("C-x g" . magit-status)
+  ;   ("C-x G" . magit-status-with-prefix)
+  ;   ("C-x M-g" . magit-dispatch)
+  ;   ("C-c M-g" . global-magit-file-mode))
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+  :config
+  (setq magit-log-section-commit-count 25
+        magit-copy-revision-abbreviated t)
+)
+#+end_src
+
+#+begin_src text
+PriorOutcome
+
+I often find myself wanting to be able to switch between master and a feature branch in magit quickly:
+
+(defun lw-magit-checkout-last (&optional start-point)
+    (interactive)
+    (magit-branch-checkout "-" start-point))
+(transient-append-suffix 'magit-branch "w"
+  '("-" "last branch" lw-magit-checkout-last))
+
+So that C-x g b - switches to the last branch I was on, similar to cd -.
+#+end_src
+
+** diff-hl (git-gutter)
+diff-hl: https://github.com/dgutov/diff-hl
+
+#+begin_src emacs-lisp
+(use-package diff-hl
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  (diff-hl-mode t)
+  ;(global-diff-hl-mode)
+)
+#+end_src
+
+** git-timemachine
+Copied file to elisp directory
+https://github.com/emacsmirror/git-timemachine
+
+#+begin_src text
+Usage
+
+Visit a git-controlled file and issue M-x git-timemachine (or bind it to a keybinding of your choice). If you just need to toggle the time machine you can use M-x git-timemachine-toggle.
+
+Use the following keys to navigate historic version of the file
+- p Visit previous historic version
+- n Visit next historic version
+- w Copy the abbreviated hash of the current historic version
+- W Copy the full hash of the current historic version
+- g Goto nth revision
+- t Goto revision by selected commit message
+- q Exit the time machine.
+- b Run magit-blame on the currently visited revision (if magit available).
+- c Show current commit using magit (if magit available).
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package git-timemachine
+  :defer t)
+#+end_src
+
+* Languages
+#+begin_src text
+emacs-lisp        ; drown in parentheses
+json              ; At least it ain't XML
+latex             ; writing papers in Emacs has never been so fun
+markdown          ; writing docs for people to ignore
+(org +roam2) ; organize your plain life in plain text
+(python +lsp +pyenv) ; beautiful is better than ugly
+sh                ; she sells {ba,z,fi}sh shells on the C xor
+yaml              ; JSON, but readable
+#+end_src
+
+Look at this for info about keybinds
+https://www.reddit.com/r/emacs/comments/n1qyxt/how_to_set_prefix_names_to_appear_with_whichkey/
+
+** sh-script
+shell-script-mode is a major mode for shell script editing.
+https://www.emacswiki.org/emacs/ShMode
+
+#+begin_src emacs-lisp
+(use-package sh-script
+  :mode (("zshecl" . sh-mode)
+         ("\\.zsh\\'" . sh-mode)
+         ("\\.sh\\'" . sh-mode))
+  :custom
+  ;; zsh
+  (system-uses-terminfo nil))
+
+(use-package executable
+  :hook
+  (after-save . executable-make-buffer-file-executable-if-script-p))
+#+end_src
+
+** hcl-mode
+
+hcl-mode https://github.com/syohex/emacs-hcl-mode
+#+begin_src emacs-lisp
+(use-package hcl-mode
+  :ensure t
+  :defer t
+  :mode ("\\.hcl\\'" . hcl-mode)
+  :custom (hcl-indent-level 2))
+#+end_src
+
+** toml-mode
+
+TOML [Tom's Obvious Minimal Language]
+
+#+begin_src emacs-lisp
+(use-package toml-mode
+  :ensure t
+  :mode ("\\.toml\\'" . toml-mode)
+)
+#+end_src
+
+** sed-mode
+
+Mode for editing sed files
+Look for Russ Cox solving advent-of-code using sed
+/usr/bin/sed -f
+
+#+begin_src emacs-lisp
+(use-package sed-mode
+  :ensure t
+)
+#+end_src
+
+** markdown-mode
+
+# Install pandoc for preview
+$ brew install pandoc
+
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :mode ( ;("README\\.md'"   . gfm-mode) ;; github markdown mode?
+         ("\\.md\\'"       . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "pandoc")
+)
+#+end_src
+
+** graphviz-dot-mode
+
+https://graphviz.org/
+
+#+begin_src emacs-lisp
+(use-package graphviz-dot-mode
+  :ensure t
+  :mode (("\\.gv\\'"  . graphviz-dot-mode)
+         ("\\.dot\\'" . graphviz-dot-mode))
+)
+#+end_src
+
+** gnuplot-mode
+
+http://www.gnuplot.info/
+
+#+begin_src emacs-lisp
+(use-package gnuplot
+  :ensure t
+  :defer t
+  :mode ("\\.gp\\'" . gnuplot)
+)
+#+end_src
+
+** fortran
+
+Install fortran lsp
+$ pip3 install fortls
+
+# #+begin_src emacs-lisp
+# (add-to-list 'exec-path "~/local/bin") ;; or where fortls is installed if needed
+# (when (executable-find "fortls")
+#   (add-hook 'fortran-mode-hook
+#             (defun my/fortran-hook ()
+#               (abbrev-mode 1))))
+# #+end_src
+
+** cobol
+
+https://elpa.gnu.org/packages/cobol-mode.html
+
+#+begin_src emacs-lisp
+(use-package cobol-mode
+  :ensure t
+  :defer t
+  :mode (("\\.cob\\'" . cobol-mode)
+         ("\\.cbl\\'" . cobol-mode)
+         ("\\.cpy\\'" . cobol-mode))
+)
+#+end_src
+
+** json, yaml
+
+json-mode https://github.com/joshwnj/json-mode
+yaml-mode https://github.com/yoshiki/yaml-mode
+
+TODO: enable lsp for each type
+#+begin_src emacs-lisp
+(use-package json-mode
+  :ensure t
+  :defer t
+  :mode ("\\.json\\'" . json-mode)
+)
+
+(use-package yaml-mode
+  :ensure t
+  :defer t
+  :mode (("\\.yml\\'"  . yaml-mode)
+         ("\\.yaml\\'" . yaml-mode))
+  :config
+  (add-hook 'yaml-mode-hook
+      #'(lambda ()
+        (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+)
+#+end_src
+
+** Terraform and HCL
+
+terraform-mode - Major mode of Terraform configuration file
+hcl-mode - Major mode for Hashicorp Configuration Language
+https://github.com/hcl-emacs
+Using locally download el files
+
+#+begin_src emacs-lisp
+(use-package terraform-mode
+  :custom (terraform-indent-level 2)
+  :config
+  (defun my-terraform-mode-init ()
+    ;; if you want to use outline-minor-mode
+    ;; (outline-minor-mode 1)
+    )
+  (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
+#+end_src
+
+* Programming
+
+** smartparens
+Smartparens is a minor mode for dealing with pairs in Emacs.
+https://github.com/Fuco1/smartparens
+
+NOTE: changed smartparens-global-mode to show-smartparens-global-mode
+https://github.com/Fuco1/smartparens/wiki/Show-smartparens-mode
+
+Cheatsheat
+https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
+
+#+begin_src emacs-lisp
+;(use-package smartparens
+;  :hook (after-init . show-smartparens-global-mode)
+;  :config (require 'smartparens-config)
+;    (add-hook 'python-mode-hook #'smartparens-mode)
+;)
+
+(use-package smartparens
+  :ensure t
+  :defer t
+  :hook
+  (prog-mode . smartparens-mode)
+  (org-mode . smartparens-mode)
+)
+#+end_src
+** eglot
+
+eglot - Emacs Polyglot is the Emacs LSP client that stays out of your way
+https://github.com/joaotavora/eglot
+
+#+begin_src emacs-lisp
+(use-package eglot
+  :bind (:map eglot-mode-map
+         ("C-c d" . eldoc)
+         ("C-c a" . eglot-code-actions)
+         ("C-c r" . eglot-rename)))
+#+end_src
+
+** golang
+Install golang and gopls lsp on macOS:
+$ brew update && brew install golang gopls
+
+#+begin_src emacs-lisp
+(use-package go-mode
+  :ensure t
+  :hook ((go-mode . eglot-ensure)
+         ;(go--mode . company-mode)
+         (go-mode . corfu-mode)) ;; same niche as company-mode
+  :mode ("\\.go\\'" . go-mode)
+)
+
+; Overriding the indent style for golang
+(add-hook 'go-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook 'gofmt-before-save)
+            (setq tab-width 4)
+            (setq standard-indent 4)
+            (setq indent-tabs-mode nil)))
+
+;(use-package company
+;  :ensure t)
+#+end_src
+
+** python
+
+Install pylsp
+pip install 'python-lsp-server[all]'
+
+Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
+
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+
+(use-package python
+  :ensure t
+  :hook ((python-mode . eglot-ensure)
+         (python-mode . corfu-mode)) ;; same niche as company-mode
+  :bind (:map python-mode-map
+              ("<f5>" . recompile)
+              ("<f6>" . eglot-format))
+  ;:interpreter ("python3" . python-mode) ; fixed pyslp integration?
+  :mode ("\\.py\\'" . python-mode))
+
+;; requires melpa
+;(use-package conda
+;  :ensure t
+;  :config
+;  (setq conda-env-home-directory
+;         (expand-file-name "~/mambaforge")))
+
+(use-package highlight-indent-guides
+  :ensure t
+  :hook (python-mode . highlight-indent-guides-mode)
+  :config
+  (setq highlight-indent-guides-method 'character))
+#+end_src
+
+** direnv and envrc
+
+envrc.el - buffer-local direnv integration for Emacs
+https://github.com/purcell/envrc
+The hook has to be loaded last to prepend itself
+The global mode will only have an effect if direnv is installed and available in the default Emacs exec-path.
+
+Install direnv
+macos: brew install direnv
+
+#+begin_src emacs-lisp
+(use-package envrc
+  :ensure t
+  :hook (after-init . envrc-global-mode)
+  :bind ("C-c e" . 'envrc-command-map))
+#+end_src
+
 * Org
 ** keymaps org (C-c n)
 Based on projectile's
