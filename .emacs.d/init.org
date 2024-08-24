@@ -1553,18 +1553,32 @@ I often find myself wanting to be able to switch between master and a feature br
 So that C-x g b - switches to the last branch I was on, similar to cd -.
 #+end_src
 
-** TODO diff-hl / git-gutter
+** diff-hl / git-gutter
+
 diff-hl: https://github.com/dgutov/diff-hl
 
 #+begin_src emacs-lisp
 (use-package diff-hl
   :ensure t
-  :defer t
+  ;:defer t
   :config
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  (diff-hl-mode t)
+
+  ;; Highlight changes to the current file in the fringe
+  ;(add-hook 'prog-mode-hook #'diff-hl-mode)
+  ;(add-hook 'org-mode-hook #'diff-hl-mode)
+  ;; Highlight changed files in the fringe of Dired
+  ;(add-hook 'dired-mode-hook 'diff-hl-dired-mode)
+  ;; Fall back to the display margin, if the fringe is unavailable
+  ;(unless (display-graphic-p) (diff-hl-margin-mode))
+  ;(setq diff-hl-fringe-bmp-function 'diff-hl-fringe-bmp-from-type)
+  ;(setq diff-hl-margin-side 'right)
+  ;(diff-hl-margin-mode)
+
+  (diff-hl-mode)
   ;(global-diff-hl-mode)
+  ;(diff-hl-margin-mode)
   ;(diff-hl-flydiff-mode)
 )
 #+end_src
