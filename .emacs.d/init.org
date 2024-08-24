@@ -1427,7 +1427,7 @@ I often find myself wanting to be able to switch between master and a feature br
 So that C-x g b - switches to the last branch I was on, similar to cd -.
 #+end_src
 
-** diff-hl (git-gutter)
+** TODO diff-hl / git-gutter
 diff-hl: https://github.com/dgutov/diff-hl
 
 #+begin_src emacs-lisp
@@ -1439,7 +1439,16 @@ diff-hl: https://github.com/dgutov/diff-hl
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   (diff-hl-mode t)
   ;(global-diff-hl-mode)
+  ;(diff-hl-flydiff-mode)
 )
+#+end_src
+
+#+begin_src emacs-lisp
+;(use-package git-gutter
+;  :ensure t
+;  :init
+;  (global-git-gutter-mode 1)
+;)
 #+end_src
 
 ** git-timemachine
