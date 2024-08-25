@@ -4,6 +4,8 @@
 *~
 *.o
 *.a
+*.env
+*.envrc
 
 # Vim swap files
 *.swp
