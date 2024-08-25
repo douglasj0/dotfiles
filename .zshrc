@@ -242,12 +242,21 @@ if [ -d ${HOME}/.infra ]; then
   echo ". loaded infra functions"
 fi
 
-# setup fzf if installed
-if [[ -f /opt/homebrew/bin/fzf ]]; then
+#####################################
+# setup fzf and direnv if installed #
+#####################################
+if command -v fzf >/dev/null 2>&1; then
   eval "$(fzf --zsh)"
   export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+  echo ". initialized fzf"
+fi
+
+# set direnv if installed
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+  echo ". initialized direnv"
 fi
 
 
