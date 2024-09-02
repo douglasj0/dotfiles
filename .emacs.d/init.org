@@ -1826,11 +1826,11 @@ eglot - Emacs Polyglot is the Emacs LSP client that stays out of your way
 https://github.com/joaotavora/eglot
 
 #+begin_src emacs-lisp
-(use-package eglot
-  :bind (:map eglot-mode-map
-         ("C-c d" . eldoc)
-         ("C-c a" . eglot-code-actions)
-         ("C-c r" . eglot-rename)))
+;(use-package eglot
+;  :bind (:map eglot-mode-map
+;         ("C-c d" . eldoc)
+;         ("C-c a" . eglot-code-actions)
+;         ("C-c r" . eglot-rename)))
 #+end_src
 
 ** golang
@@ -1838,24 +1838,24 @@ Install golang and gopls lsp on macOS:
 $ brew update && brew install golang gopls
 
 #+begin_src emacs-lisp
-(use-package go-mode
-  :ensure t
-  :hook ((go-mode . eglot-ensure)
-         ;(go--mode . company-mode)
-         (go-mode . corfu-mode)) ;; same niche as company-mode
-  :mode ("\\.go\\'" . go-mode)
-)
-
-; Overriding the indent style for golang
-(add-hook 'go-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook 'gofmt-before-save)
-            (setq tab-width 4)
-            (setq standard-indent 4)
-            (setq indent-tabs-mode nil)))
-
-;(use-package company
-;  :ensure t)
+; (use-package go-mode
+;   :ensure t
+;   :hook ((go-mode . eglot-ensure)
+;          ;(go--mode . company-mode)
+;          (go-mode . corfu-mode)) ;; same niche as company-mode
+;   :mode ("\\.go\\'" . go-mode)
+; )
+;
+; ; Overriding the indent style for golang
+; (add-hook 'go-mode-hook
+;           (lambda ()
+;             (add-hook 'before-save-hook 'gofmt-before-save)
+;             (setq tab-width 4)
+;             (setq standard-indent 4)
+;             (setq indent-tabs-mode nil)))
+;
+; ;(use-package company
+; ;  :ensure t)
 #+end_src
 
 ** python
@@ -1866,30 +1866,30 @@ pip install 'python-lsp-server[all]'
 Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
 
 #+begin_src emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
-
-(use-package python
-  :ensure t
-  :hook ((python-mode . eglot-ensure)
-         (python-mode . corfu-mode)) ;; same niche as company-mode
-  :bind (:map python-mode-map
-              ("<f5>" . recompile)
-              ("<f6>" . eglot-format))
-  ;:interpreter ("python3" . python-mode) ; fixed pyslp integration?
-  :mode ("\\.py\\'" . python-mode))
-
-;; requires melpa
-;(use-package conda
-;  :ensure t
-;  :config
-;  (setq conda-env-home-directory
-;         (expand-file-name "~/mambaforge")))
-
-(use-package highlight-indent-guides
-  :ensure t
-  :hook (python-mode . highlight-indent-guides-mode)
-  :config
-  (setq highlight-indent-guides-method 'character))
+; (add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+;
+; (use-package python
+;   :ensure t
+;   :hook ((python-mode . eglot-ensure)
+;          (python-mode . corfu-mode)) ;; same niche as company-mode
+;   :bind (:map python-mode-map
+;               ("<f5>" . recompile)
+;               ("<f6>" . eglot-format))
+;   ;:interpreter ("python3" . python-mode) ; fixed pyslp integration?
+;   :mode ("\\.py\\'" . python-mode))
+;
+; ;; requires melpa
+; ;(use-package conda
+; ;  :ensure t
+; ;  :config
+; ;  (setq conda-env-home-directory
+; ;         (expand-file-name "~/mambaforge")))
+;
+; (use-package highlight-indent-guides
+;   :ensure t
+;   :hook (python-mode . highlight-indent-guides-mode)
+;   :config
+;   (setq highlight-indent-guides-method 'character))
 #+end_src
 
 ** direnv and envrc
