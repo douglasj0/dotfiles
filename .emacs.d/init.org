@@ -1650,17 +1650,6 @@ https://www.emacswiki.org/emacs/ShMode
   (after-save . executable-make-buffer-file-executable-if-script-p))
 #+end_src
 
-** hcl-mode
-
-hcl-mode https://github.com/syohex/emacs-hcl-mode
-#+begin_src emacs-lisp
-(use-package hcl-mode
-  :ensure t
-  :defer t
-  :mode ("\\.hcl\\'" . hcl-mode)
-  :custom (hcl-indent-level 2))
-#+end_src
-
 ** toml-mode
 
 TOML [Tom's Obvious Minimal Language]
@@ -1699,57 +1688,6 @@ $ brew install pandoc
 )
 #+end_src
 
-** graphviz-dot-mode
-
-https://graphviz.org/
-
-#+begin_src emacs-lisp
-(use-package graphviz-dot-mode
-  :ensure t
-  :mode (("\\.gv\\'"  . graphviz-dot-mode)
-         ("\\.dot\\'" . graphviz-dot-mode))
-)
-#+end_src
-
-** gnuplot-mode
-
-http://www.gnuplot.info/
-
-#+begin_src emacs-lisp
-(use-package gnuplot
-  :ensure t
-  :defer t
-  :mode ("\\.gp\\'" . gnuplot)
-)
-#+end_src
-
-** fortran
-
-Install fortran lsp
-$ pip3 install fortls
-
-# #+begin_src emacs-lisp
-# (add-to-list 'exec-path "~/local/bin") ;; or where fortls is installed if needed
-# (when (executable-find "fortls")
-#   (add-hook 'fortran-mode-hook
-#             (defun my/fortran-hook ()
-#               (abbrev-mode 1))))
-# #+end_src
-
-** cobol
-
-https://elpa.gnu.org/packages/cobol-mode.html
-
-#+begin_src emacs-lisp
-(use-package cobol-mode
-  :ensure t
-  :defer t
-  :mode (("\\.cob\\'" . cobol-mode)
-         ("\\.cbl\\'" . cobol-mode)
-         ("\\.cpy\\'" . cobol-mode))
-)
-#+end_src
-
 ** json, yaml
 
 json-mode https://github.com/joshwnj/json-mode
@@ -1775,12 +1713,21 @@ TODO: enable lsp for each type
 )
 #+end_src
 
-** Terraform and HCL
+** terraform and hcl
 
 terraform-mode - Major mode of Terraform configuration file
 hcl-mode - Major mode for Hashicorp Configuration Language
 https://github.com/hcl-emacs
 Using locally download el files
+
+hcl-mode https://github.com/syohex/emacs-hcl-mode
+#+begin_src emacs-lisp
+(use-package hcl-mode
+  :ensure t
+  :defer t
+  :mode ("\\.hcl\\'" . hcl-mode)
+  :custom (hcl-indent-level 2))
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package terraform-mode
@@ -1791,6 +1738,57 @@ Using locally download el files
     ;; (outline-minor-mode 1)
     )
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
+#+end_src
+
+** graphviz-dot-mode
+
+https://graphviz.org/
+
+#+begin_src emacs-lisp
+;(use-package graphviz-dot-mode
+;  :ensure t
+;  :mode (("\\.gv\\'"  . graphviz-dot-mode)
+;         ("\\.dot\\'" . graphviz-dot-mode))
+;)
+#+end_src
+
+** gnuplot-mode
+
+http://www.gnuplot.info/
+
+#+begin_src emacs-lisp
+;(use-package gnuplot
+;  :ensure t
+;  :defer t
+;  :mode ("\\.gp\\'" . gnuplot)
+;)
+#+end_src
+
+** fortran
+
+Install fortran lsp
+$ pip3 install fortls
+
+#+begin_src emacs-lisp
+;(add-to-list 'exec-path "~/local/bin") ;; or where fortls is installed if needed
+;(when (executable-find "fortls")
+;  (add-hook 'fortran-mode-hook
+;            (defun my/fortran-hook ()
+;              (abbrev-mode 1))))
+#+end_src
+
+** cobol
+
+https://elpa.gnu.org/packages/cobol-mode.html
+
+#+begin_src emacs-lisp
+;(use-package cobol-mode
+;  :ensure t
+;  :defer t
+;  :mode (("\\.cob\\'" . cobol-mode)
+;         ("\\.cbl\\'" . cobol-mode)
+;         ("\\.cpy\\'" . cobol-mode))
+;)
 #+end_src
 
 * Programming
