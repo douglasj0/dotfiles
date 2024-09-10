@@ -233,31 +233,7 @@ else
   fi
 fi
 
-############################
-#  Source infra functions  #
-############################
-if [ -d ${HOME}/.infra ]; then
-  source ${HOME}/.infra/includes.sh
-  for f in `ls ${HOME}/.infra/ | grep -v 'includes.sh'`; do source ${HOME}/.infra/$f; done
-  echo ". loaded infra functions"
-fi
 
-#####################################
-# setup fzf and direnv if installed #
-#####################################
-if command -v fzf >/dev/null 2>&1; then
-  eval "$(fzf --zsh)"
-  export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-  export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
-  echo ". initialized fzf"
-fi
-
-# set direnv if installed
-if command -v direnv >/dev/null 2>&1; then
-  eval "$(direnv hook zsh)"
-  echo ". initialized direnv"
-fi
 
 
 ###################
@@ -292,6 +268,32 @@ Darwin)  # Darwin Environment
 
     # Tell homebrew to not autoupdate every single time I run it (just once a week).
     export HOMEBREW_AUTO_UPDATE_SECS=604800
+
+    ############################
+    #  Source infra functions  #
+    ############################
+    if [ -d ${HOME}/.infra ]; then
+      echo "... load infra functions"
+      source ${HOME}/.infra/includes.sh
+      for f in `ls ${HOME}/.infra/ | grep -v 'includes.sh'`; do source ${HOME}/.infra/$f; done
+    fi
+
+    #####################################
+    # setup fzf and direnv if installed #
+    #####################################
+    if command -v fzf >/dev/null 2>&1; then
+      echo "... initialize fzf"
+      eval "$(fzf --zsh)"
+      export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+      export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+      export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+    fi
+
+    # set direnv if installed, execute LAST in config
+    if command -v direnv >/dev/null 2>&1; then
+      echo "... initialize direnv"
+      eval "$(direnv hook zsh)"
+    fi
 
     ;; # end Darwin
 
