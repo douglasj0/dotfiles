@@ -22,7 +22,8 @@ PATH="${HOME}/bin:${HOME}/myscripts:\
 /Applications/Emacs.app/Contents/MacOS/bin:\
 /usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:\
 /usr/local/sbin:/usr/local/bin:/Library/TeX/texbin"
-MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man"
+MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man:\
+/Applications/kitty.app/Contents/Resources/man"
 TMPDIR="/tmp"
 
 # Set architecture-specific paths, mainly for Homebrew
