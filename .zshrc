@@ -20,60 +20,65 @@
 unlimit
 limit stack 8192
 limit core 0
-
 umask 077
 
 
-### --- Prompt Config or Starship
-# Startship shell prompt
-if command -v starship >/dev/null 2>&1; then
-  echo "... initialize starship"
-  eval "$(starship init zsh)"
-else
-  # prompt colors and substitution
-  autoload -U colors && colors
-  setopt prompt_subst
+### --- Prompt Config ---
+# https://salferrarello.com/zsh-git-status-prompt/
+# prompt colors
+autoload -U colors && colors
 
-  # zsh add git branch if available
-  autoload -Uz vcs_info
-  zstyle ':vcs_info:git:*' formats '(%b)'
-  precmd() {
-    vcs_info
-    psvar[1]="${vcs_info_msg_0_}"
-  }
+# zsh add git branch if available
+autoload -Uz vcs_info
+zstyle ':vcs_info:git:*' formats '(%b)'
+precmd() {
+  vcs_info
+  psvar[1]="${vcs_info_msg_0_}"
+}
 
-  # Prompt settings based on hostname
-  case ${HOST%%.*} in
-    QYCMJGH2QG)
-      PROMPT_COLOR="yellow"
-      PROMPT_HOST="thorn"
-      ;;
-    lothlorien)
-      PROMPT_COLOR="yellow"
-      PROMPT_HOST="%m"
-      ;;
-    lothlorien-wifi)
-      PROMPT_COLOR="green"
-      PROMPT_HOST="%m"
-      ;;
-    flowers)
-      PROMPT_COLOR="green"
-      PROMPT_HOST="%m"
-      ;;
-    *)
-      PROMPT_COLOR="white"
-      PROMPT_HOST="%m"
-      ;;
-  esac
+# Enable substition in the prompt
+setopt prompt_subst
 
-  #function _zsh_prompt {
-  NEWLINE=$'\n'
-  PS1='%F{$PROMPT_COLOR}%T %n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f$NEWLINE%F{white}%# %f'
-  #}
+# Prompt settings based on hostname
+case ${HOST%%.*} in
+  QYCMJGH2QG)
+    PROMPT_COLOR="yellow"
+    PROMPT_HOST="thorn"
+    ;;
+  lothlorien)
+    PROMPT_COLOR="yellow"
+    PROMPT_HOST="%m"
+    ;;
+  lothlorien-wifi)
+    PROMPT_COLOR="green"
+    PROMPT_HOST="%m"
+    ;;
+  flowers)
+    PROMPT_COLOR="green"
+    PROMPT_HOST="%m"
+    ;;
+  *)
+    PROMPT_COLOR="white"
+    PROMPT_HOST="%m"
+    ;;
+esac
 
-  #precmd() { eval "$PROMPT_COMMAND" }
-  #PROMPT_COMMAND=_zsh_prompt
-fi
+#function _zsh_prompt {
+NEWLINE=$'\n'
+PS1='%F{$PROMPT_COLOR}%T %n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f$NEWLINE%F{white}%# %f'
+#}
+
+#precmd() { eval "$PROMPT_COMMAND" }
+#PROMPT_COMMAND=_zsh_prompt
+
+# Enable checking for (un)staged changes, enabling use of %u and %c
+zstyle ':vcs_info:*' check-for-changes true
+# Set custom strings for an unstaged vcs repo changes (*) and staged changes (+)
+zstyle ':vcs_info:*' unstagedstr ' *'
+zstyle ':vcs_info:*' stagedstr ' +'
+# Set the format of the Git information for vcs_info
+zstyle ':vcs_info:git:*' formats       '(%b%u%c)'
+zstyle ':vcs_info:git:*' actionformats '(%b|%a%u%c)'
 ### --- Prompt Config or Startship End ---
 
 
@@ -154,20 +159,6 @@ autoload -Uz compinit && compinit -i
 #bindkey -s '\M-/' \\\\
 #bindkey -s '\M-=' \|
 
-# jsamuels stuff
-
-# PROMPT="%m:%3c[$SHLVL]>"
-# RPROMPT="%B%*%b"
-#HISTFILE=~/.zhistory
-#SAVEHIST='1000'
-#HISTSIZE='1000'
-# DIRSTACKSIZE=50
-# WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
-# stty intr '^C'
-# chpwd () { print -Pn '' }
-
-# cd
-
 # stty erase ^H
 ##stty -echoprt
 
@@ -214,7 +205,7 @@ fi
 ################
 #  pyenv init  #
 ################
-if [[ -f $HOME/.dotfiles/NO_PYENV ]]; then
+if [[ -f $HOME/.config/NO_ZSH_PYENV ]]; then
   echo "Skipping .zshrc init pyenv"
 else
   if [[ -d $HOME/.pyenv ]]; then
@@ -266,18 +257,14 @@ Darwin)  # Darwin Environment
     # Tell homebrew to not autoupdate every single time I run it (just once a week).
     export HOMEBREW_AUTO_UPDATE_SECS=604800
 
-    ############################
-    #  Source infra functions  #
-    ############################
+    # Source infra functions
     if [ -d ${HOME}/.infra ]; then
       echo "... load infra functions"
       source ${HOME}/.infra/includes.sh
       for f in `ls ${HOME}/.infra/ | grep -v 'includes.sh'`; do source ${HOME}/.infra/$f; done
     fi
 
-    #####################################
-    # setup fzf and direnv if installed #
-    #####################################
+    # setup fzf (fuzzy finder)
     if command -v fzf >/dev/null 2>&1; then
       echo "... initialize fzf"
       eval "$(fzf --zsh)"
@@ -285,13 +272,6 @@ Darwin)  # Darwin Environment
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
       export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
     fi
-
-    # set direnv if installed, execute LAST in config
-    #if command -v direnv >/dev/null 2>&1; then
-    #  echo "... initialize direnv"
-    #  eval "$(direnv hook zsh)"
-    #fi
-
     ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
