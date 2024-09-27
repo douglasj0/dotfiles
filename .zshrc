@@ -37,35 +37,26 @@ precmd() {
 }
 
 # Enable substition in the prompt
+# red, blue, green, cyan, yellow, magenta, black, & white
 setopt prompt_subst
 
-# Prompt settings based on hostname
+# Prompt colors based on hostname
 case ${HOST%%.*} in
   QYCMJGH2QG)
-    PROMPT_COLOR="yellow"
-    PROMPT_HOST="thorn"
-    ;;
+    PROMPT_COLOR="yellow"; PROMPT_HOST="thorn" ;;
   lothlorien)
-    PROMPT_COLOR="yellow"
-    PROMPT_HOST="%m"
-    ;;
+    PROMPT_COLOR="green"; PROMPT_HOST="%m" ;;
   lothlorien-wifi)
-    PROMPT_COLOR="green"
-    PROMPT_HOST="%m"
-    ;;
+    PROMPT_COLOR="green"; PROMPT_HOST="%m" ;;
   flowers)
-    PROMPT_COLOR="green"
-    PROMPT_HOST="%m"
-    ;;
+    PROMPT_COLOR="green"; PROMPT_HOST="%m" ;;
   *)
-    PROMPT_COLOR="white"
-    PROMPT_HOST="%m"
-    ;;
+    PROMPT_COLOR="white"; PROMPT_HOST="%m" ;;
 esac
 
 #function _zsh_prompt {
 NEWLINE=$'\n'
-PS1='%F{$PROMPT_COLOR}%T %n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f$NEWLINE%F{white}%# %f'
+PS1='%F{blue}%T%f %F{$PROMPT_COLOR}%n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f$NEWLINE%F{white}%# %f'
 #}
 
 #precmd() { eval "$PROMPT_COMMAND" }
@@ -82,11 +73,10 @@ zstyle ':vcs_info:git:*' actionformats '(%b|%a%u%c)'
 ### --- Prompt Config or Startship End ---
 
 
-# Prevent text pasted into the terminal from being highlighted
-# Introduced in zsh 5.1
+# Prevent text pasted into the terminal from being highlighted, introduced in zsh 5.1
 zle_highlight+=(paste:none)
 
-# functions to autoload
+# Functions to autoload
 # autoload cx acx mere yu yp randline proto namedir ilogin
 #autoload -Uz compinit && compinit -i #autocompletion on hosts and usernames
 # small letters will match small and capital letters. (i.e. capital letters match only capital letters.)
