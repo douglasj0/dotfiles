@@ -24,58 +24,57 @@ limit core 0
 umask 077
 
 
-# prompt colors
-autoload -U colors && colors
+### --- Prompt Config or Starship
+# Startship shell prompt
+if command -v starship >/dev/null 2>&1; then
+  echo "... initialize starship"
+  eval "$(starship init zsh)"
+else
+  # prompt colors and substitution
+  autoload -U colors && colors
+  setopt prompt_subst
 
-# zsh add git branch if available
-#autoload -Uz vcs_info
-#precmd_vcs_info() { vcs_info }
-#precmd_functions+=( precmd_vcs_info )
-#setopt prompt_subst
-#zstyle ':vcs_info:git:*' formats '(%b)'
+  # zsh add git branch if available
+  autoload -Uz vcs_info
+  zstyle ':vcs_info:git:*' formats '(%b)'
+  precmd() {
+    vcs_info
+    psvar[1]="${vcs_info_msg_0_}"
+  }
 
-# zsh add git branch if available
-autoload -Uz vcs_info
-zstyle ':vcs_info:git:*' formats '(%b)'
-precmd() {
-  vcs_info
-  psvar[1]="${vcs_info_msg_0_}"
-}
+  # Prompt settings based on hostname
+  case ${HOST%%.*} in
+    QYCMJGH2QG)
+      PROMPT_COLOR="yellow"
+      PROMPT_HOST="thorn"
+      ;;
+    lothlorien)
+      PROMPT_COLOR="yellow"
+      PROMPT_HOST="%m"
+      ;;
+    lothlorien-wifi)
+      PROMPT_COLOR="green"
+      PROMPT_HOST="%m"
+      ;;
+    flowers)
+      PROMPT_COLOR="green"
+      PROMPT_HOST="%m"
+      ;;
+    *)
+      PROMPT_COLOR="white"
+      PROMPT_HOST="%m"
+      ;;
+  esac
 
-# Set prompt, was PROMPT='%T %m[%h]%# ', reset color %{$reset_color%}%
-#if [[ $(echo $HOST | grep "b.local") ]]; then HOSTNAME="thorn"; else; HOSTNAME="$HOST"; fi
+  #function _zsh_prompt {
+  NEWLINE=$'\n'
+  PS1='%F{$PROMPT_COLOR}%T %n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f$NEWLINE%F{white}%# %f'
+  #}
 
-# Prompt settings based on hostname
-case ${HOST%%.*} in
-  QYCMJGH2QG)
-    PROMPT_COLOR="yellow"
-    PROMPT_HOST="thorn"
-    ;;
-  lothlorien)
-    PROMPT_COLOR="yellow"
-    PROMPT_HOST="%m"
-    ;;
-  lothlorien-wifi)
-    PROMPT_COLOR="green"
-    PROMPT_HOST="%m"
-    ;;
-  flowers)
-    PROMPT_COLOR="green"
-    PROMPT_HOST="%m"
-    ;;
-  *)
-    PROMPT_COLOR="white"
-    PROMPT_HOST="%m"
-    ;;
-esac
-
-#function _zsh_prompt {
-PS1='%F{$PROMPT_COLOR}%T %n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f
-%F{white}%# %f'
-#}
-
-#precmd() { eval "$PROMPT_COMMAND" }
-#PROMPT_COMMAND=_zsh_prompt
+  #precmd() { eval "$PROMPT_COMMAND" }
+  #PROMPT_COMMAND=_zsh_prompt
+fi
+### --- Prompt Config or Startship End ---
 
 
 # Prevent text pasted into the terminal from being highlighted
@@ -126,7 +125,7 @@ zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 # Other
-setopt prompt_subst
+
 #setopt shwordsplit # behave like Bash for word splitting
 
 # test command line editing module
@@ -140,9 +139,9 @@ bindkey "^X^E" edit-command-line
 #DIRSTACKSIZE=50
 
 setopt notify cdablevars autolist \
-        sun_keyboard_hack auto_cd recexact long_list_jobs \
-        hist_ignore_dups no_clobber \
-        extended_glob rc_quotes nobeep
+       sun_keyboard_hack auto_cd recexact long_list_jobs \
+       hist_ignore_dups no_clobber \
+       extended_glob rc_quotes nobeep
 unsetopt bgnice
 
 # Turn on auto completetion (ssh, ssh with user, etc)
@@ -232,8 +231,6 @@ else
     echo ".. pyenv directory not found, exiting"
   fi
 fi
-
-
 
 
 ###################

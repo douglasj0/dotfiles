@@ -1400,7 +1400,7 @@ NOTE: Run (all-the-icons-install-fonts) one time after installing
 (use-package doom-modeline
   :ensure t
   ;:defer t
-  ;:hook (after-init . doom-modeline-mode) ;; removed for envrc hook
+  :hook (after-init . doom-modeline-mode) ;; removed for envrc hook
   :init (doom-modeline-mode 1)
   :config
   ;; Fix? for Height below 25 not working anymore #187
