@@ -42,16 +42,11 @@ setopt prompt_subst
 
 # Prompt colors based on hostname
 case ${HOST%%.*} in
-  QYCMJGH2QG)
-    PROMPT_COLOR="yellow"; PROMPT_HOST="thorn" ;;
-  lothlorien)
-    PROMPT_COLOR="green"; PROMPT_HOST="%m" ;;
-  lothlorien-wifi)
-    PROMPT_COLOR="green"; PROMPT_HOST="%m" ;;
-  flowers)
-    PROMPT_COLOR="green"; PROMPT_HOST="%m" ;;
-  *)
-    PROMPT_COLOR="white"; PROMPT_HOST="%m" ;;
+  QYCMJGH2QG)      PROMPT_COLOR="yellow"; PROMPT_HOST="thorn" ;;
+  lothlorien)      PROMPT_COLOR="green";  PROMPT_HOST="%m" ;;
+  lothlorien-wifi) PROMPT_COLOR="green";  PROMPT_HOST="%m" ;;
+  flowers)         PROMPT_COLOR="green";  PROMPT_HOST="%m" ;;
+  *)               PROMPT_COLOR="white";  PROMPT_HOST="%m" ;;
 esac
 
 #function _zsh_prompt {
@@ -120,7 +115,6 @@ zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 # Other
-
 #setopt shwordsplit # behave like Bash for word splitting
 
 # test command line editing module
@@ -172,24 +166,28 @@ if [ -f $HOME/.functions ]; then
     . $HOME/.functions
 fi
 
-# Emacs vterm clear
-if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
+# -- Emacs shell setup --
+if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
+  echo ".. inside Emacs"
+  export TERM=vt100
+
+  #export EDITOR=emacsclient
+  export VISUAL=emacsclient
+  export PAGER=cat
+
+  alias amagit="emacsclient -ne '(magit-status)'"
+  function man() { emacsclient -ne "(man \"$1\")"; }
+
+  # Emacs vterm clear
+  if [[ "${INSIDE_EMACS}" =~ 'vterm' ]]; then
     alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
+    # Emacs vterm name buffer - doesn't work?
+    autoload -U add-zsh-hook
+    add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
+  fi
+else
+  export TERM=xterm-256color
 fi
-
-# work this in
-#if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
-#    #export EDITOR=emacsclient
-#    export VISUAL=emacsclient
-#    export PAGER=cat
-#
-#    alias magit="emacsclient -ne '(magit-status)'"
-#    function man() { emacsclient -ne "(man \"$1\")"; }
-#fi
-
-# Emacs vterm name buffer - doesn't work?
-#autoload -U add-zsh-hook
-#add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
 
 
 ################
@@ -231,13 +229,6 @@ Darwin)  # Darwin Environment
         . $HOME/.functions.darwin
     fi
 
-    if [[ $INSIDE_EMACS ]]; then
-        echo ".. Inside emacs"
-        export TERM=vt100
-    else
-        export TERM=xterm-256color
-    fi
-
     # Fix date/gdate issues, if we have gdate use it
     #if [[ -e /opt/homebrew/bin/gdate ]]; then alias date=gdate; fi
 
@@ -262,6 +253,7 @@ Darwin)  # Darwin Environment
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
       export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
     fi
+
     ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
@@ -276,8 +268,6 @@ Linux)  # Based off of Ubuntu
     if [[ -f $HOME/.functions.linux ]]; then
         . $HOME/.functions.linux
     fi
-
-    export TERM=xterm-color
 
     # export EDITOR="emacsclient -t"
     [[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
