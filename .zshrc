@@ -290,10 +290,10 @@ Darwin)  # Darwin Environment
     fi
 
     # set direnv if installed, execute LAST in config
-    if command -v direnv >/dev/null 2>&1; then
-      echo "... initialize direnv"
-      eval "$(direnv hook zsh)"
-    fi
+    #if command -v direnv >/dev/null 2>&1; then
+    #  echo "... initialize direnv"
+    #  eval "$(direnv hook zsh)"
+    #fi
 
     ;; # end Darwin
 
