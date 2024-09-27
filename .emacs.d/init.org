@@ -1632,6 +1632,32 @@ yaml              ; JSON, but readable
 Look at this for info about keybinds
 https://www.reddit.com/r/emacs/comments/n1qyxt/how_to_set_prefix_names_to_appear_with_whichkey/
 
+** smartparens
+Smartparens is a minor mode for dealing with pairs in Emacs.
+https://github.com/Fuco1/smartparens
+
+NOTE: changed smartparens-global-mode to show-smartparens-global-mode
+https://github.com/Fuco1/smartparens/wiki/Show-smartparens-mode
+
+Cheatsheat
+https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
+
+#+begin_src emacs-lisp
+;(use-package smartparens
+;  :hook (after-init . show-smartparens-global-mode)
+;  :config (require 'smartparens-config)
+;    (add-hook 'python-mode-hook #'smartparens-mode)
+;)
+
+(use-package smartparens
+  :ensure t
+  :defer t
+  :hook
+  (prog-mode . smartparens-mode)
+  (org-mode . smartparens-mode)
+)
+#+end_src
+
 ** sh-script
 shell-script-mode is a major mode for shell script editing.
 https://www.emacswiki.org/emacs/ShMode
@@ -1648,17 +1674,6 @@ https://www.emacswiki.org/emacs/ShMode
 (use-package executable
   :hook
   (after-save . executable-make-buffer-file-executable-if-script-p))
-#+end_src
-
-** toml-mode
-
-TOML [Tom's Obvious Minimal Language]
-
-#+begin_src emacs-lisp
-(use-package toml-mode
-  :ensure t
-  :mode ("\\.toml\\'" . toml-mode)
-)
 #+end_src
 
 ** sed-mode
@@ -1685,6 +1700,17 @@ $ brew install pandoc
          ("\\.md\\'"       . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "pandoc")
+)
+#+end_src
+
+** toml-mode
+
+TOML [Tom's Obvious Minimal Language]
+
+#+begin_src emacs-lisp
+(use-package toml-mode
+  :ensure t
+  :mode ("\\.toml\\'" . toml-mode)
 )
 #+end_src
 
@@ -1738,173 +1764,6 @@ hcl-mode https://github.com/syohex/emacs-hcl-mode
     ;; (outline-minor-mode 1)
     )
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
-#+end_src
-
-** graphviz-dot-mode
-
-https://graphviz.org/
-
-#+begin_src emacs-lisp
-;(use-package graphviz-dot-mode
-;  :ensure t
-;  :mode (("\\.gv\\'"  . graphviz-dot-mode)
-;         ("\\.dot\\'" . graphviz-dot-mode))
-;)
-#+end_src
-
-** gnuplot-mode
-
-http://www.gnuplot.info/
-
-#+begin_src emacs-lisp
-;(use-package gnuplot
-;  :ensure t
-;  :defer t
-;  :mode ("\\.gp\\'" . gnuplot)
-;)
-#+end_src
-
-** fortran
-
-Install fortran lsp
-$ pip3 install fortls
-
-#+begin_src emacs-lisp
-;(add-to-list 'exec-path "~/local/bin") ;; or where fortls is installed if needed
-;(when (executable-find "fortls")
-;  (add-hook 'fortran-mode-hook
-;            (defun my/fortran-hook ()
-;              (abbrev-mode 1))))
-#+end_src
-
-** cobol
-
-https://elpa.gnu.org/packages/cobol-mode.html
-
-#+begin_src emacs-lisp
-;(use-package cobol-mode
-;  :ensure t
-;  :defer t
-;  :mode (("\\.cob\\'" . cobol-mode)
-;         ("\\.cbl\\'" . cobol-mode)
-;         ("\\.cpy\\'" . cobol-mode))
-;)
-#+end_src
-
-* Programming
-
-** smartparens
-Smartparens is a minor mode for dealing with pairs in Emacs.
-https://github.com/Fuco1/smartparens
-
-NOTE: changed smartparens-global-mode to show-smartparens-global-mode
-https://github.com/Fuco1/smartparens/wiki/Show-smartparens-mode
-
-Cheatsheat
-https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
-
-#+begin_src emacs-lisp
-;(use-package smartparens
-;  :hook (after-init . show-smartparens-global-mode)
-;  :config (require 'smartparens-config)
-;    (add-hook 'python-mode-hook #'smartparens-mode)
-;)
-
-(use-package smartparens
-  :ensure t
-  :defer t
-  :hook
-  (prog-mode . smartparens-mode)
-  (org-mode . smartparens-mode)
-)
-#+end_src
-** eglot
-
-eglot - Emacs Polyglot is the Emacs LSP client that stays out of your way
-https://github.com/joaotavora/eglot
-
-#+begin_src emacs-lisp
-;(use-package eglot
-;  :bind (:map eglot-mode-map
-;         ("C-c d" . eldoc)
-;         ("C-c a" . eglot-code-actions)
-;         ("C-c r" . eglot-rename)))
-#+end_src
-
-** golang
-Install golang and gopls lsp on macOS:
-$ brew update && brew install golang gopls
-
-#+begin_src emacs-lisp
-; (use-package go-mode
-;   :ensure t
-;   :hook ((go-mode . eglot-ensure)
-;          ;(go--mode . company-mode)
-;          (go-mode . corfu-mode)) ;; same niche as company-mode
-;   :mode ("\\.go\\'" . go-mode)
-; )
-;
-; ; Overriding the indent style for golang
-; (add-hook 'go-mode-hook
-;           (lambda ()
-;             (add-hook 'before-save-hook 'gofmt-before-save)
-;             (setq tab-width 4)
-;             (setq standard-indent 4)
-;             (setq indent-tabs-mode nil)))
-;
-; ;(use-package company
-; ;  :ensure t)
-#+end_src
-
-** python
-
-Install pylsp
-pip install 'python-lsp-server[all]'
-
-Brent's video: https://www.youtube.com/watch?v=SbTzIt6rISg
-
-#+begin_src emacs-lisp
-; (add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
-;
-; (use-package python
-;   :ensure t
-;   :hook ((python-mode . eglot-ensure)
-;          (python-mode . corfu-mode)) ;; same niche as company-mode
-;   :bind (:map python-mode-map
-;               ("<f5>" . recompile)
-;               ("<f6>" . eglot-format))
-;   ;:interpreter ("python3" . python-mode) ; fixed pyslp integration?
-;   :mode ("\\.py\\'" . python-mode))
-;
-; ;; requires melpa
-; ;(use-package conda
-; ;  :ensure t
-; ;  :config
-; ;  (setq conda-env-home-directory
-; ;         (expand-file-name "~/mambaforge")))
-;
-; (use-package highlight-indent-guides
-;   :ensure t
-;   :hook (python-mode . highlight-indent-guides-mode)
-;   :config
-;   (setq highlight-indent-guides-method 'character))
-#+end_src
-
-** direnv and envrc
-
-envrc.el - buffer-local direnv integration for Emacs
-https://github.com/purcell/envrc
-The hook has to be loaded last to prepend itself
-The global mode will only have an effect if direnv is installed and available in the default Emacs exec-path.
-
-Install direnv
-macos: brew install direnv
-
-#+begin_src emacs-lisp
-(use-package envrc
-  :ensure t
-  :hook (after-init . envrc-global-mode)
-  :bind ("C-c e" . 'envrc-command-map))
 #+end_src
 
 * Org
