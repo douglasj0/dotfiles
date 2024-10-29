@@ -18,6 +18,7 @@ Darwin)  # Darwin Environment
 #  export PKG_CONFIG_PATH="/usr/local/opt/ruby/lib/pkgconfig"
 
 PATH="${HOME}/bin:${HOME}/myscripts:\
+/Users/djackson/.local/bin:\
 /Applications/Emacs.app/Contents/MacOS:\
 /Applications/Emacs.app/Contents/MacOS/bin:\
 /usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:\

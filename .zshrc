@@ -134,6 +134,7 @@ setopt notify cdablevars autolist \
 unsetopt bgnice
 
 # Turn on auto completetion (ssh, ssh with user, etc)
+fpath+=~/.zfunc
 autoload -Uz compinit && compinit -i
 
 # some nice bindings
