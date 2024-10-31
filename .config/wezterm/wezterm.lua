@@ -24,9 +24,8 @@ config.font = wezterm.font_with_fallback({
 -- config.freetype_load_flags = 'NO_HINTING'
 config.font_size = 15.0
 config.front_end = 'WebGpu'
--- config.freetype_load_target = 'Normal'
-config.freetype_load_target = 'Light'
-config.freetype_render_target = 'HorizontalLcd'
+-- config.freetype_load_target = 'Light'
+-- config.freetype_render_target = 'HorizontalLcd'
 -- config.cell_width = 0.9
 
 -- check size: echo $(tty) TERM=$TERM with ${COLUMNS}x${LINES}
