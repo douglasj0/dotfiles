@@ -44,6 +44,7 @@ config.hide_tab_bar_if_only_one_tab = true
 
 -- Add more configuration here
 --
-config.use_fancy_tab_bar = true
+config.use_fancy_tab_bar = false
+config.quit_when_all_windows_are_closed = false
 
 return config
