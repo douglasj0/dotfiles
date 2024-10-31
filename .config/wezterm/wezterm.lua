@@ -17,7 +17,17 @@ config.font = wezterm.font_with_fallback({
     "Menlo",
     "Apple Color Emoji"
   }, {weight="Regular"})
+--  }, {weight="Bold"})
+--  }, {weight="Medium"})
+-- config.font_size = 15.0
+-- config.freetype_render_target = "HorizontalLcd"
+-- config.freetype_load_flags = 'NO_HINTING'
 config.font_size = 15.0
+config.front_end = 'WebGpu'
+-- config.freetype_load_target = 'Normal'
+config.freetype_load_target = 'Light'
+config.freetype_render_target = 'HorizontalLcd'
+-- config.cell_width = 0.9
 
 -- check size: echo $(tty) TERM=$TERM with ${COLUMNS}x${LINES}
 config.initial_cols = 80
@@ -34,5 +44,6 @@ config.hide_tab_bar_if_only_one_tab = true
 
 -- Add more configuration here
 --
+config.use_fancy_tab_bar = true
 
 return config
