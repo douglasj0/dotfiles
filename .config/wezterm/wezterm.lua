@@ -1,3 +1,7 @@
+-- Notes
+-- split pane default shortcuts
+--   horizontal ctrl-shift-option-"
+--   vertical   ctrl-shift-option-%
 -- Pull in the wezterm API
 local wezterm =  require("wezterm")
 
