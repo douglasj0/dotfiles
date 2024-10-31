@@ -8,7 +8,8 @@ local wezterm =  require("wezterm")
 -- This will hold the configuration
 local config = wezterm.config_builder()
 
--- Set color scheme, font, and initial size
+-- Set theme
+-- More themes could be found here - https://wezfurlong.org/wezterm/colorschemes/index.html
 -- config.color_scheme = 'Ubuntu'
 config.color_scheme = 'Dracula'
 
@@ -20,23 +21,21 @@ config.font = wezterm.font_with_fallback({
     {family="Monaco", harfbuzz_features={"kern", "clig", "liga=0"}},
     "Menlo",
     "Apple Color Emoji"
-  }, {weight="Regular"})
---  }, {weight="Bold"})
---  }, {weight="Medium"})
--- config.font_size = 15.0
--- config.freetype_render_target = "HorizontalLcd"
--- config.freetype_load_flags = 'NO_HINTING'
+  }, {weight="Regular"}) -- choices: Bold, Medium
 config.font_size = 15.0
 config.front_end = 'WebGpu'
--- config.freetype_load_target = 'Light'
--- config.freetype_render_target = 'HorizontalLcd'
 -- config.cell_width = 0.9
 
--- check size: echo $(tty) TERM=$TERM with ${COLUMNS}x${LINES}
-config.initial_cols = 80
-config.initial_rows = 25
+-- config.freetype_render_target = "HorizontalLcd"
+-- config.freetype_load_flags = 'NO_HINTING'
+-- config.freetype_load_target = 'Light'
+-- config.freetype_render_target = 'HorizontalLcd'
 
--- config.scrollback_lines = 8500
+-- Set the initial Terminal Size here
+-- check size: echo $(tty) TERM=$TERM with ${COLUMNS}x${LINES}
+config.initial_cols = 80 -- width
+config.initial_rows = 25 -- height
+
 config.scrollback_lines = 10000
 config.enable_scroll_bar = true
 config.hide_tab_bar_if_only_one_tab = true
