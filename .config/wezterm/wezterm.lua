@@ -49,4 +49,10 @@ config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false
 config.quit_when_all_windows_are_closed = false
 
+-- Redifned cwd for new windows
+config.keys = {
+  { key = 'n', mods = 'CMD', action = wezterm.action.SpawnCommandInNewWindow { cwd=wezterm.home_dir } },
+}
+
+
 return config
