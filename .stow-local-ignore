@@ -6,3 +6,5 @@ README.md
 \.launchd.conf
 \.bash_profile
 \.bashrc
+.*~
+.*\.(swp|bak|tmp)

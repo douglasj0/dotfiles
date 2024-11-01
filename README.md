@@ -13,6 +13,6 @@ Converted to gnu stow (wasn't that happy with chezmoi, the principle of least su
 
 Clone this repo into ~/.dotfiles
 cd .dotfiles
-stow . -n # show what would change
-stow .
-stow -D . # delete symlinks stow created
+stow -v -n . # show what would change
+stow -v .
+stow -v -D . # delete symlinks stow created
