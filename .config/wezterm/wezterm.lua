@@ -1,7 +1,3 @@
--- Notes
--- split pane default shortcuts
---   horizontal ctrl-shift-option-"
---   vertical   ctrl-shift-option-%
 -- Pull in the wezterm API
 local wezterm =  require("wezterm")
 
@@ -49,9 +45,49 @@ config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false
 config.quit_when_all_windows_are_closed = false
 
--- Redifned cwd for new windows
+-- leader key
+-- https://alexplescan.com/posts/2024/08/10/wezterm/
+config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
+
+local function move_pane(key, direction)
+  return {
+    key = key,
+    mods = 'LEADER',
+    action = wezterm.action.ActivatePaneDirection(direction),
+  }
+end
+
 config.keys = {
+  -- ... add these new entries to your config.keys table
+  -- Redefine cwd for new windows, but not tabs
   { key = 'n', mods = 'CMD', action = wezterm.action.SpawnCommandInNewWindow { cwd=wezterm.home_dir } },
+  {
+    key = 'a',
+    -- When we're in leader mode _and_ CTRL + A is pressed...
+    mods = 'LEADER|CTRL',
+    -- Actually send CTRL + A key to the terminal
+    action = wezterm.action.SendKey { key = 'a', mods = 'CTRL' },
+  },
+  {
+    -- I'm used to tmux bindings, so am using the quotes (") key to
+    -- split horizontally, and the percent (%) key to split vertically.
+    key = '"',
+    -- Note that instead of a key modifier mapped to a key on your keyboard
+    -- like CTRL or ALT, we can use the LEADER modifier instead.
+    -- This means that this binding will be invoked when you press the leader
+    -- (CTRL + A), quickly followed by quotes (").
+    mods = 'LEADER',
+    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+  },
+  {
+    key = '%',
+    mods = 'LEADER',
+    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+  },
+  move_pane('DownArrow', 'Down'),
+  move_pane('UpArrow', 'Up'),
+  move_pane('LeftArrow', 'Left'),
+  move_pane('RightArrow', 'Right'),
 }
 
 
