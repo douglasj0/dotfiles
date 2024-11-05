@@ -47,7 +47,7 @@ config.quit_when_all_windows_are_closed = false
 
 -- leader key
 -- https://alexplescan.com/posts/2024/08/10/wezterm/
-config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
+config.leader = { key = 'z', mods = 'CTRL', timeout_milliseconds = 1000 }
 
 local function move_pane(key, direction)
   return {
@@ -62,11 +62,11 @@ config.keys = {
   -- Redefine cwd for new windows, but not tabs
   { key = 'n', mods = 'CMD', action = wezterm.action.SpawnCommandInNewWindow { cwd=wezterm.home_dir } },
   {
-    key = 'a',
+    key = 'z',
     -- When we're in leader mode _and_ CTRL + A is pressed...
     mods = 'LEADER|CTRL',
     -- Actually send CTRL + A key to the terminal
-    action = wezterm.action.SendKey { key = 'a', mods = 'CTRL' },
+    action = wezterm.action.SendKey { key = 'z', mods = 'CTRL' },
   },
   {
     -- I'm used to tmux bindings, so am using the quotes (") key to
