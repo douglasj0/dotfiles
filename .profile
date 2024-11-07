@@ -21,10 +21,10 @@ PATH="${HOME}/bin:${HOME}/myscripts:\
 /Users/djackson/.local/bin:\
 /Applications/Emacs.app/Contents/MacOS:\
 /Applications/Emacs.app/Contents/MacOS/bin:\
+/Applications/WezTerm.app/Contents/MacOS:\
 /usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:\
 /usr/local/sbin:/usr/local/bin:/Library/TeX/texbin"
-MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man:\
-/Applications/kitty.app/Contents/Resources/man"
+MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man:"
 TMPDIR="/tmp"
 
 # Set architecture-specific paths, mainly for Homebrew
