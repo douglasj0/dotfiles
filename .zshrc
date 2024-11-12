@@ -259,6 +259,13 @@ Darwin)  # Darwin Environment
       }
     fi
 
+    # Homebrew completions
+    #if type brew &>/dev/null; then
+    #   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+    #   autoload -Uz compinit
+    #   compinit
+    #fi
+
     ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
