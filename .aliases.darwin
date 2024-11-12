@@ -1,8 +1,13 @@
 # -*- mode: sh -*-
 # Darwin specific aliases
 
-#alias ls="ls -G" # colorize output
-alias ls="eza"
+# eza ls replacement
+# https://github.com/eza-community/eza/blob/main/INSTALL.md
+if command -v eza >/dev/null 2>&1; then
+  alias ls="eza"
+else
+  alias ls="ls -G" # colorize output
+fi
 alias lsa="eza --icons --long --header"
 alias ldd="otool -L"
 alias vmstat="vm_stat"
