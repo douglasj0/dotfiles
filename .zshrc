@@ -243,7 +243,7 @@ Darwin)  # Darwin Environment
     if [ -d ${HOME}/.infra ]; then
       echo "... load infra functions"
       source ${HOME}/.infra/includes.sh
-      for f in `ls ${HOME}/.infra/ | egrep -v 'includes.sh|~$'`; do source ${HOME}/.infra/$f; done
+      for f in `\ls ${HOME}/.infra/ | egrep -v 'includes.sh|~$'`; do source ${HOME}/.infra/$f; done
     fi
 
     # setup fzf (fuzzy finder)
