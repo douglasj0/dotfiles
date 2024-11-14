@@ -9,8 +9,11 @@ if command -v lsd >/dev/null 2>&1; then
   alias l='ls -l'
   alias la='ls -a'
   alias lla='ls -la'
-  alias lt='ls --tree'
   alias lg='ls -la --git'
+  alias lt='ls --tree --depth 1'
+  alias ltt='ls --tree --depth 2'
+  alias lttt='ls --tree --depth 3'
+  alias ltttt='ls --tree --depth 4'
 else
   alias ls='ls -G' # colorize output
 fi
