@@ -1703,21 +1703,13 @@ $ brew install pandoc
 )
 #+end_src
 
-** toml-mode
-
-TOML [Tom's Obvious Minimal Language]
-
-#+begin_src emacs-lisp
-(use-package toml-mode
-  :ensure t
-  :mode ("\\.toml\\'" . toml-mode)
-)
-#+end_src
-
-** json, yaml
+** json, yaml, toml, lua
 
 json-mode https://github.com/joshwnj/json-mode
 yaml-mode https://github.com/yoshiki/yaml-mode
+lua-mode  https://github.com/immerrr/lua-mode
+TOML [Tom's Obvious Minimal Language]
+toml-mode https://github.com/dryman/toml-mode.el
 
 TODO: enable lsp for each type
 #+begin_src emacs-lisp
@@ -1736,6 +1728,18 @@ TODO: enable lsp for each type
   (add-hook 'yaml-mode-hook
       #'(lambda ()
         (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+)
+
+(use-package toml-mode
+  :ensure t
+  :defer t
+  :mode ("\\.toml\\'" . toml-mode)
+)
+
+(use-package lua-mode
+  :ensure t
+  :defer t
+  :mode ("\\.lua\\'"  . lua-mode)
 )
 #+end_src
 
