@@ -110,8 +110,13 @@ config.keys = {
   -- Redefine cwd for new windows, but not tabs
   { key = 'n', mods = 'CMD', action = wezterm.action.SpawnCommandInNewWindow { cwd=wezterm.home_dir } },
   { key = 'z', mods = 'LEADER|CTRL', action = wezterm.action.SendKey { key = 'z', mods = 'CTRL' } },
-  { key='"', mods='LEADER', action=wezterm.action.SplitHorizontal {domain='CurrentPaneDomain'} },
-  { key = '%', mods='LEADER', action=wezterm.action.SplitVertical {domain='CurrentPaneDomain'} },
+  -- split window (was " and %), switch with CTRL-SHIFT-arrow
+  -- maybe add PaneSelect too
+  -- https://wezfurlong.org/wezterm/config/lua/keyassignment/PaneSelect.html
+  { key='\\', mods='LEADER', action=wezterm.action.SplitHorizontal {domain='CurrentPaneDomain'} },
+  { key='-',  mods='LEADER', action=wezterm.action.SplitVertical {domain='CurrentPaneDomain'} },
+  { key='Z',  mods='LEADER', action=wezterm.action.TogglePaneZoomState },
+
   move_pane('DownArrow', 'Down'),
   move_pane('UpArrow', 'Up'),
   move_pane('LeftArrow', 'Left'),
