@@ -234,7 +234,7 @@ repos = [
 # use_sudo = true
 
 
-[deno]
+#[deno]
 # Upgrade deno executable to the given version.
 # version = "stable"
 
@@ -282,7 +282,7 @@ repos = [
 # (default: false)
 # use_sudo = false
 
-[julia]
+#[julia]
 # If disabled, Topgrade invokes julia with the --startup-file=no CLI option.
 #
 # This may be desirable to avoid loading outdated packages with "using" directives
