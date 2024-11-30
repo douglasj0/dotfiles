@@ -57,6 +57,10 @@ awless
 .config/iterm2/
 .config/qBittorrent/
 .config/kitty/current-theme.conf
+.config/tmux/plugins/
+.config/USE_LSD
+.config/USE_EZA
+.config/NO_ZSH_PYENV
 
 # ignore patterns for exult
 Exult.app
