@@ -141,12 +141,7 @@ setopt notify cdablevars autolist \
 unsetopt bgnice
 
 # Turn on auto completetion (ssh, ssh with user, etc)
-#fpath+=~/.zfunc
-fpath=(
-  ~/.zfunc
-  /opt/homebrew/share/zsh/site-functions
-  "${fpath[@]}"
- )
+fpath+=~/.zfunc
 autoload -Uz compinit && compinit -i
 
 # some nice bindings

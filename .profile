@@ -17,14 +17,12 @@ Darwin)  # Darwin Environment
 #For pkg-config to find ruby you may need to set:
 #  export PKG_CONFIG_PATH="/usr/local/opt/ruby/lib/pkgconfig"
 
-PATH="${HOME}/bin:${HOME}/myscripts:\
-/Users/djackson/.local/bin:\
+PATH="${HOME}/bin:${HOME}/myscripts:${HOME}/.local/bin:\
 /Applications/Emacs.app/Contents/MacOS:\
 /Applications/Emacs.app/Contents/MacOS/bin:\
-/Applications/WezTerm.app/Contents/MacOS:\
-/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:\
-/usr/local/sbin:/usr/local/bin:/Library/TeX/texbin"
-MANPATH="/usr/local/share/man:/usr/local/man:/usr/share/man:/usr/X11/man:"
+/bin:/sbin:/usr/bin:/usr/sbin:/opt/X11/bin:\
+/usr/local/sbin:/usr/local/bin:"
+MANPATH="/usr/local/share/man:/usr/share/man:"
 TMPDIR="/tmp"
 
 # Set architecture-specific paths, mainly for Homebrew
@@ -37,17 +35,22 @@ TMPDIR="/tmp"
 case $(uname -m) in  # switch to x86 shell: arch -x86_64 zsh
   arm64)
     #PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/openssl@1.1/bin:${PATH}"
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-    PATH="/opt/homebrew/opt/openssl@1.1/bin:${PATH}"
+    #eval "$(/opt/homebrew/bin/brew shellenv)"
+    export HOMEBREW_PREFIX="/opt/homebrew";
+    export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
+    export HOMEBREW_REPOSITORY="/opt/homebrew";
+    fpath[1,0]="/opt/homebrew/share/zsh/site-functions";
+    export PATH="${PATH}:/opt/homebrew/bin:/opt/homebrew/sbin"
+    [ -z "${MANPATH-}" ] || export MANPATH=":${MANPATH#:}";
+    export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
     ;;
   x86_64)
     #PATH="/usr/local/sbin:/usr/local/bin:/usr/local/opt/openssl@1.1/bin:${PATH}"
     eval "$(/usr/local/bin/brew shellenv)"
-    PATH="/usr/local/opt/openssl@1.1/bin:${PATH}"
     ;;
   *)
     #PATH="/usr/local/sbin:/usr/local/bin"
-    echo "no known Architecture found, no Homebrew path set."
+    echo "no known Architecture found, Homebrew path not set."
     ;;
 esac
 export PATH MANPATH TMPDIR

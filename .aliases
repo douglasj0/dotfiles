@@ -25,7 +25,7 @@ alias terraform_graph='terraform graph | dot -Tpng > graph.png'
 # git aliases
 alias gg="git grep"
 alias git-unfuck="git reset --hard HEAD"
-alias gitGraph='git log --graph --oneline --all --decorate --color'
+alias git-graph='git log --graph --oneline --all --decorate --color'
 alias git-repo-name='git remote show -n origin | grep Fetch | cut -d: -f2-'
 alias git-repo-tag='git checkout master; git pull --rebase; git tag | sort -V | tail -1'
 
@@ -53,6 +53,7 @@ alias emacs-delete-backups="fd --glob '*~' -tf -u -E .emacs.d/backups/ -X rm"
 
 # Multipass
 alias mp="multipass"
-#alias wezterm="$HOME/Applications/WezTerm.app/Contents/MacOS/wezterm"
+
+# Kitty
 alias kitten="/Applications/kitty.app/Contents/MacOS/kitten"
 alias kitty="/Applications/kitty.app/Contents/MacOS/kitty"
