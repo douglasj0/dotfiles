@@ -68,6 +68,8 @@ zstyle ':vcs_info:git:*' actionformats '(%b|%a%u%c)'
 ### --- Prompt Config or Startship End ---
 
 
+
+
 # Prevent text pasted into the terminal from being highlighted, introduced in zsh 5.1
 zle_highlight+=(paste:none)
 
@@ -83,31 +85,36 @@ zle_highlight+=(paste:none)
 
 
 # https://www.viget.com/articles/zsh-config-productivity-plugins-for-mac-oss-default-shell/
-# History
+
+### --- History ---
 [ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
-HISTSIZE=50000
 SAVEHIST=10000
-setopt extended_history
-setopt hist_expire_dups_first
-setopt hist_ignore_dups
-setopt hist_ignore_space
-setopt inc_append_history
-#setopt hist_verify
-#setopt share_history
-setopt no_share_history
-bindkey "^[[A" history-search-backward
-bindkey "^[[B" history-search-forward
+HISTSIZE=50000                 # set HISTSIZE > SAVEHIST
+setopt EXTENDED_HISTORY        # include timestamp
+setopt HIST_EXPIRE_DUPS_FIRST  # trim dupes first if history is full
+setopt HIST_FIND_NO_DUPS       # do not display previously found command
+setopt HIST_IGNORE_DUPS        # do not save duplicate of prior command
+setopt HIST_IGNORE_SPACE       # do not save if line starts with space
+setopt HIST_NO_STORE           # do not save history commands
+setopt HIST_REDUCE_BLANKS      # strip superfluous blanks
+setopt INC_APPEND_HISTORY      # don’t wait for shell to exit to save history lines
+unsetopt SHARE_HISTORY
+#bindkey "^[[A" history-search-backward
+#bindkey "^[[B" history-search-forward
+
+
 # Changing directories
-setopt auto_cd
-setopt auto_pushd
-unsetopt pushd_ignore_dups
-setopt pushdminus
+setopt AUTO_CD      # interactive cd command to directory
+setopt AUTO_PUSHD   # Make cd push old directory onto the directory stack
+unsetopt PUSHD_IGNORE_DUPS # Don’t push multiple copies of the same directory onto the directory stack.
+setopt PUSHD_MINUS
+
 # Completion
-setopt auto_menu
-setopt always_to_end
-setopt complete_in_word
-unsetopt flow_control
-unsetopt menu_complete
+setopt AUTO_MENU        # use menu completion after the second consecutive request for completion
+setopt ALWAYS_TO_END    # Cursor moved to  end of the word if a single match/menu completion performed
+setopt COMPLETE_IN_WORD # completion is done from both ends.
+unsetopt FLOW_CONTROL
+unsetopt MENU_COMPLETE
 zstyle ':completion:*:*:*:*:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' 'r:|=*' 'l:|=* r:|=*'
 zstyle ':completion::complete:*' use-cache 1
@@ -115,7 +122,7 @@ zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 # Other
-#setopt shwordsplit # behave like Bash for word splitting
+unsetopt SHWORDSPLIT # behave like Bash for word splitting
 
 # test command line editing module
 autoload -z edit-command-line
@@ -134,7 +141,12 @@ setopt notify cdablevars autolist \
 unsetopt bgnice
 
 # Turn on auto completetion (ssh, ssh with user, etc)
-fpath+=~/.zfunc
+#fpath+=~/.zfunc
+fpath=(
+  ~/.zfunc
+  /opt/homebrew/share/zsh/site-functions
+  "${fpath[@]}"
+ )
 autoload -Uz compinit && compinit -i
 
 # some nice bindings

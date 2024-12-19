@@ -1,11 +1,12 @@
 # -*- mode: sh -*-
 # General shell aliases
-alias -- la='ls -a'
-alias -- lf='ls -F'
-alias -- ll='ls -la'
-alias -- pu='pushd'
-alias -- po='popd'
-alias -- t1='TERM=vt100; export TERM; stty rows 24; DISPLAY=kludge:0.0; export DISPLAY'
+#alias la='ls -a'
+alias la='ls -lathr'
+alias lf='ls -F'
+alias ll='ls -la'
+alias pu='pushd'
+alias po='popd'
+alias t1='TERM=vt100; export TERM; stty rows 24; DISPLAY=kludge:0.0; export DISPLAY'
 
 alias keepalive='while true; do date; sleep 120; done'
 
@@ -39,6 +40,9 @@ git-repo-remaster() {
 
 # Recreate yolo sudo last command
 alias yolo='sudo $(fc -nl -1)'
+
+# find all files recursively and sort by last mod, ignore hidden files
+alias lastmod='find . -type f -not -path "*/\.*" -exec ls -lrt {} +'
 
 # Emacs aliases
 #alias emacspkgupdate="emacs -nw --eval '(progn (sit-for 2) (auto-package-update-now))"

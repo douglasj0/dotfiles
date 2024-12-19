@@ -24,9 +24,10 @@ The init.el portion of the init.el/config.org from before
 ;; Use M-x Package-refresh-contents to reload the list of packages after initial run
 (require 'package)
 (setq package-archives
-  '(("gnu"   . "https://elpa.gnu.org/packages/") ; default package archive, secure
-    ("gnu1"  .  "http://elpa.gnu.org/packages/") ; default package archive
-    ("melpa" . "https://melpa.org/packages/")))  ; milkypostman's pkg archive
+  '(("gnu"    . "https://elpa.gnu.org/packages/") ; default package archive, secure
+    ("gnu1"   .  "http://elpa.gnu.org/packages/") ; default package archive
+    ("melpa"  . "https://melpa.org/packages/")    ; milkypostman's pkg archive
+    ("nongnu" . "https://elpa.nongnu.org/nongnu/"))) ; eat terminal and others
 (package-initialize)
 
 ;; Bootstrap use-package
@@ -308,6 +309,10 @@ The init.el portion of the init.el/config.org from before
 ;; electric-pair
 (setq-default electric-pair-inhibit-predicate
               'electric-pair-conservative-inhibit)
+
+;; repl alias for lisp -- read-eval-print-loop
+;(defun repl() (interactive) (ielm))
+(defalias 'repl 'ielm)
 
 ;; desktop-save
 ;(desktop-save-mode 1)
@@ -1768,6 +1773,21 @@ hcl-mode https://github.com/syohex/emacs-hcl-mode
     ;; (outline-minor-mode 1)
     )
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
+#+end_src
+
+* Terminals
+
+** eat
+
+eat stands for "Emulate A Terminal"
+https://codeberg.org/akib/emacs-eat
+
+#+begin_src emacs-lisp
+(use-package eat
+  :ensure t
+  :config
+  (eat-eshell-mode)
+  (setq eshell-visual-commands '()))
 #+end_src
 
 * Org

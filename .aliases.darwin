@@ -1,46 +1,7 @@
 # -*- mode: sh -*-
 # Darwin specific aliases
 
-if [[ -f $HOME/.config/USE_LSD ]]; then
-  # lsd ls replacement
-  # https://github.com/lsd-rs/lsd
-  # $HOME/.config/lsd
-  if command -v lsd >/dev/null 2>&1; then
-    alias ls='lsd --icon never --group-directories-first'
-    alias lsa='lsd --icon auto --group-directories-first'
-    alias l='ls -l'
-    alias la='ls -a'
-    alias lla='ls -la'
-    alias lg='ls -la --git'
-    alias lt='ls --tree --depth 1'
-    alias ltt='ls --tree --depth 2'
-    alias lttt='ls --tree --depth 3'
-    alias ltttt='ls --tree --depth 4'
-  else
-    alias ls='ls -G' # colorize output
-  fi
-elif [[ -f $HOME/.config/USE_EZA ]]; then
-  # eza ls replacement
-  # https://github.com/eza-community/eza/blob/main/INSTALL.md
-  # https://github.com/eza-community/eza-themes
-  # export EZA_COLORS='uu=38;5;178:gu=38;5;178:un=38;5;141:gn=38;5;141'
-  if command -v eza >/dev/null 2>&1; then
-    alias ls="eza --group-directories-first"
-    alias lsa="eza --icons --long --header"
-    #TREE_IGNORE="cache|log|logs|node_modules|vendor"
-    TREE_IGNORE="log|logs"
-    alias lg=' ls --git -la'
-    alias lt=' ls --tree -D -L 2 -I ${TREE_IGNORE}'
-    alias ltt=' ls --tree -D -L 3 -I ${TREE_IGNORE}'
-    alias lttt=' ls --tree -D -L 4 -I ${TREE_IGNORE}'
-    alias ltttt=' ls --tree -D -L 5 -I ${TREE_IGNORE}'
-  else
-     alias ls="ls -G" # colorize output
-  fi
-else
-   alias ls="ls -G" # colorize output
-fi
-
+alias ls="ls -G" # colorize output
 alias ldd="otool -L"
 alias vmstat="vm_stat"
 alias truss="dtruss"
