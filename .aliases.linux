@@ -6,13 +6,14 @@ alias fullline='perl -p00e "s/\r?\n //gi"'
 alias fgrep='fgrep --color=auto'
 alias grep='grep --color=auto'
 alias truss="strace"
-alias about='cat /etc/redhat-release && cat /proc/version && uname -a'
+alias rhabout='cat /etc/redhat-release && cat /proc/version && uname -a'
 
 # Debian
 alias agc='df -h; apt-get autoclean ; apt-get clean ; apt-get autoremove ; df -h'
 alias agi='apt-get install '
 alias acs='apt-cache search '
 alias agdu='apt-get update ; apt-get dist-upgrade'
+alias debabout='cat /etc/debian_version && cat /proc/version && uname -a'
 
 # OS X like pbcopy/pbpaste.
 alias pbcopy='xclip -selection clipboard'

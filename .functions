@@ -52,7 +52,8 @@ rot13() {  # For some reason, rot13 pops up everywhere
 }
 
 # Top 10 most used commands in shell history (TODO update for MacOS)
-top10 () { history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -nr | head -10; }
+# Not that useful for zsh where we're not keeping dupe history entries
+#top10 () { history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -nr | head -10; }
 
 ## Extract common archive formats
 extract () {
@@ -78,15 +79,15 @@ extract () {
 
 # ssh key functions
 ssh-del-host() { ssh-keygen -R $@; }  # remove entry from ~/.ssh/known_hosts
-ssh-add-all() { LIST=$(ls $HOME/.ssh/id_* | grep -v '.pub'); ssh-add $LIST; } # add all ssh keys
 ssh-del-all() { ssh-add -D; }                             # delete all ssh keys
-ssh-add-work() { ssh-add ${HOME}/.ssh/id_rsa_work; }      # add work key
-ssh-del-work() { ssh-add -d ${HOME}/.ssh/id_rsa_work; }   # delete work key
-ssh-add-home() { ssh-add ${HOME}/.ssh/id_rsa_home; }      # add home github key
-ssh-del-home() { ssh-add -d ${HOME}/.ssh/id_rsa_home; }   # delete home github key
+#ssh-add-all() { LIST=$(ls $HOME/.ssh/id_* | grep -v '.pub'); ssh-add $LIST; } # add all ssh keys
+#ssh-add-work() { ssh-add ${HOME}/.ssh/id_rsa_work; }      # add work key
+#ssh-del-work() { ssh-add -d ${HOME}/.ssh/id_rsa_work; }   # delete work key
+#ssh-add-home() { ssh-add ${HOME}/.ssh/id_rsa_home; }      # add home github key
+#ssh-del-home() { ssh-add -d ${HOME}/.ssh/id_rsa_home; }   # delete home github key
+#ssh-vagrant() { ssh -i ${HOME}/.ssh/id_rsa_vagrant -l vagrant $*; } # ssh with explicit vagrant key
 ssh-nopub() { ssh -qt -o ControlMaster=no -o pubkeyauthentication=no $@ }
 ssh-noid() { ssh -qt -o IdentitiesOnly=yes $@ }
-ssh-vagrant() { ssh -i ${HOME}/.ssh/id_rsa_vagrant -l vagrant $*; } # ssh with explicit vagrant key
 
 # aws ssh functions
 sssh() { AWSIP=$(sed -e 's/ip-//' -e 's/-/./g' <<< "$1"); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
@@ -97,7 +98,7 @@ greppara() {
     [ $# -eq 1 ] && perl -00ne "print if /$1/i" || perl -00ne "print if /$1/i" < "$2"
 }
 
-# Push ssh authorized_keys to remote host
+# Push ssh authorized_keys to remote host (needs work)
 pushkey() {
   if [ -z $1 ]; then
      echo "no host specified"

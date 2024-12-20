@@ -12,7 +12,7 @@ case $(uname) in
         #[ ! -z "$PS1" ] && echo ". darwin zshenv loaded"
 
         # disable reading of /etc/zprofile (global profiles) on MacOSX it changes path order
-        setopt no_global_rcs
+        setopt NO_GLOBAL_RCS  # disable ANY global files, except for the global zshenv file
         # might need to add 'setopt global_rcs' to ~/.zprofile to re-enable for /etc/zshrc and /etc/zlogin
 
         # Source .profile if readable, shared between bourne shells
@@ -22,8 +22,8 @@ case $(uname) in
     Linux)  # Based off of Ubuntu
         #[ ! -z "$PS1" ] && echo ". linux zshenv loaded"
 
+        # Source .profile if readable, shared between bourne shells
         [[ -r ~/.profile ]] && source ~/.profile # shared PATH setup
-
         ;; # end Linux
 
     *)

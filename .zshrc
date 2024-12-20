@@ -21,6 +21,14 @@ unlimit
 limit stack 8192
 limit core 0
 umask 077
+#MAILCHECK=30
+#HISTSIZE=600
+#DIRSTACKSIZE=50
+#stty erase ^H
+#stty -echoprt
+NNTPSERVER=news.eternal-september.org
+MORE=p
+LESS="-XgmR" # no termcap, hilite last search match, long prompt, raw ctrl chars
 
 
 ### --- Prompt Config ---
@@ -49,13 +57,13 @@ case ${HOST%%.*} in
   *)               PROMPT_COLOR="white";  PROMPT_HOST="%m" ;;
 esac
 
-#function _zsh_prompt {
+function _zsh_prompt {
 NEWLINE=$'\n'
 PS1='%F{blue}%T%f %F{$PROMPT_COLOR}%n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f$NEWLINE%F{white}%# %f'
-#}
+}
 
-#precmd() { eval "$PROMPT_COMMAND" }
-#PROMPT_COMMAND=_zsh_prompt
+precmd() { eval "$PROMPT_COMMAND" }
+PROMPT_COMMAND=_zsh_prompt
 
 # Enable checking for (un)staged changes, enabling use of %u and %c
 zstyle ':vcs_info:*' check-for-changes true
@@ -68,11 +76,6 @@ zstyle ':vcs_info:git:*' actionformats '(%b|%a%u%c)'
 ### --- Prompt Config or Startship End ---
 
 
-
-
-# Prevent text pasted into the terminal from being highlighted, introduced in zsh 5.1
-zle_highlight+=(paste:none)
-
 # Functions to autoload
 # autoload cx acx mere yu yp randline proto namedir ilogin
 #autoload -Uz compinit && compinit -i #autocompletion on hosts and usernames
@@ -83,8 +86,6 @@ zle_highlight+=(paste:none)
 # If you want case-insensitive matching only if there are no case-sensitive matches add '', e.g.
 #zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
 
-
-# https://www.viget.com/articles/zsh-config-productivity-plugins-for-mac-oss-default-shell/
 
 ### --- History ---
 [ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
@@ -130,39 +131,25 @@ zle -N edit-command-line
 bindkey "^X^E" edit-command-line
 # also: You can use fc to edit the last command in history.
 
-#MAILCHECK=30
-#HISTSIZE=600
-#DIRSTACKSIZE=50
 
-setopt notify cdablevars autolist \
-       sun_keyboard_hack auto_cd recexact long_list_jobs \
-       hist_ignore_dups no_clobber \
-       extended_glob rc_quotes nobeep
-unsetopt bgnice
+setopt NOTIFY      # Report the status of background jobs immediately
+setopt CDABLE_VARS # try to expand the expression as if it were preceded by a ‘~’
+setopt AUTO_LIST   # list choices on an ambiguous completion
+setopt AUTO_CD     # if can't execute command, perform a cd instead
+setopt REC_EXACT   # if string cli exactly matches possible completion, it is accepted
+setopt LONG_LIST_JOBS # Print job notifications in the long format by default.
+setopt NO_CLOBBER  # no error is reported for '>>' redirect to nonexistant file
+setopt EXTENDED_GLOB
+setopt RC_QUOTES   # Character sequence ‘’’’ signify single quote in singly quoted strings
+setopt NO_BEEP     # turn off beep/bell
+unsetopt BG_NICE   # Run all background jobs at a lower priority.
+
+# Prevent text pasted into the terminal from being highlighted, introduced in zsh 5.1
+zle_highlight+=(paste:none)
 
 # Turn on auto completetion (ssh, ssh with user, etc)
 fpath+=~/.zfunc
 autoload -Uz compinit && compinit -i
-
-# some nice bindings
-#bindkey '^X^Z' universal-argument ' ' magic-space
-#bindkey '^X^A' vi-find-prev-char-skip
-#bindkey '^Z' accept-and-hold
-#bindkey -s '\M-/' \\\\
-#bindkey -s '\M-=' \|
-
-# stty erase ^H
-##stty -echoprt
-
-NNTPSERVER=news.eternal-september.org
-MORE=p
-LESS="-XgmR"
-
-# Homebrew lessopen
-#export LESSOPEN="|/opt/homebrew/bin/lesspipe.sh %s"
-
-# Set ripgrep config file
-export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
 # Load general aliases
 if [ -f $HOME/.aliases ]; then
@@ -197,10 +184,10 @@ else
   export TERM=xterm-256color
 fi
 
+# Set ripgrep config file
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
-################
-#  pyenv init  #
-################
+# pyenv init
 if [[ -f $HOME/.config/NO_ZSH_PYENV ]]; then
   echo "Skipping .zshrc init pyenv"
 else
@@ -265,13 +252,6 @@ Darwin)  # Darwin Environment
         dir=$(find ${1:-.} -type d -not -path '*/\.*' 2> /dev/null | fzf +m) && cd "$dir"
       }
     fi
-
-    # Homebrew completions
-    #if type brew &>/dev/null; then
-    #   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-    #   autoload -Uz compinit
-    #   compinit
-    #fi
 
     ;; # end Darwin
 
