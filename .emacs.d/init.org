@@ -2163,8 +2163,19 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 
 ** denote
 
-From system crafters stream
+denote: Simple notes with an efficient file-naming scheme
+https://github.com/protesilaos/denote
+https://protesilaos.com/codelog/2024-09-04-emacs-denote-3-1-0/
+
+Manual: https://protesilaos.com/emacs/denote
+
+Notes from system crafters stream
 https://systemcrafters.net/live-streams/october-6-2023/
+
+Note, for silos create a .dir-local.el file
+M-x add-dir-local-variable
+  denote-directory
+  denote-known-keywords
 
 #+begin_src emacs-lisp
 ;(defun dw/denote-rename-buffer-with-prefixed-title (&optional buffer)
@@ -2204,6 +2215,27 @@ https://systemcrafters.net/live-streams/october-6-2023/
                    :jump-to-captured t)))
 )
 #+end_src
+
+consult-denot
+Integrate denote package with Daniel Mendler's consult
+https://github.com/protesilaos/consult-denote
+https://protesilaos.com/emacs/consult-denote
+
+#+begin_src emacs-lisp
+(use-package consult-denote
+  :ensure t
+  :after (denote consult)
+  :bind
+  (("C-c n d f" . consult-denote-find)
+   ("C-c n d g" . consult-denote-grep))
+  :config
+  (consult-denote-mode 1)
+)
+#+end_src
+
+Additionally, consult-notes could be useful
+https://github.com/mclear-tools/consult-notes
+
 * End
 
 End of init.el footer to handle linter warnings
