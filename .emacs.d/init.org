@@ -687,6 +687,13 @@ Docs: https://docs.projectile.mx/projectile/index.html
 )
 #+end_src
 
+** dired
+
+Enable dwim - Dired tries to guess a default target directory.
+#+begin_src emacs-lisp
+(setq dired-dwim-target t)
+#+end_src
+
 * OS
 
 From Doom Emacs, look into
@@ -1312,6 +1319,46 @@ https://www.youtube.com/watch?v=rwKTc4MNmt8
 - x all-the-icons
 - dashboard
 - pair programming
+
+** better defaults
+A small number of better defaults for Emacs
+Some taken from:
+  https://github.com/technomancy/better-defaults
+  https://git.sr.ht/~technomancy/better-defaults
+
+#+begin_src emacs-lisp
+;;; better defaults
+
+(require 'uniquify)
+  (setq uniquify-buffer-name-style 'forward)
+
+;; When you visit a file, point goes to the last place where it was when you previously visited the same file.
+;; https://www.emacswiki.org/emacs/SavePlace
+(save-place-mode 1)
+;(setq save-place-file (locate-user-emacs-file "places" ".emacs-places"))
+(setq save-place-file (concat user-emacs-directory "var/places"))
+(setq save-place-forget-unreadable-files nil)
+
+(global-set-key (kbd "M-/") 'hippie-expand)
+
+(show-paren-mode 1)
+(setq-default indent-tabs-mode nil)
+(savehist-mode 1)
+
+(setq save-interprogram-paste-before-kill t
+      apropos-do-all t
+      ;mouse-yank-at-point t
+      require-final-newline t
+      visible-bell t
+      delete-old-versions t
+      load-prefer-newer t
+      ediff-window-setup-function 'ediff-setup-windows-plain
+      backup-directory-alist `(("." . ,(concat user-emacs-directory
+                                               "var/backups"))))
+
+(setq auto-save-list-file-prefix "~/.emacs.d/var/auto-save-list/") ; set prefix for auto-saves
+(setq transient-history-file "~/.emacs.d/var/transient/history.el")
+#+end_src
 
 ** treemacs
 
