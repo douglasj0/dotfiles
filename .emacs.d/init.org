@@ -2271,7 +2271,6 @@ https://protesilaos.com/emacs/consult-denote
 #+begin_src emacs-lisp
 (use-package consult-denote
   :ensure t
-  :after (denote consult)
   :bind
   (("C-c n d f" . consult-denote-find)
    ("C-c n d g" . consult-denote-grep))
