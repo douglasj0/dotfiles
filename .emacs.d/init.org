@@ -2248,6 +2248,15 @@ M-x add-dir-local-variable
     (setq denote-directory "~/denote-home/")
   (setq denote-directory "~/denote/"))
 
+;; override org front-matter to add startup overview
+(defvar denote-org-front-matter
+  "#+title:      %s
+#+date:       %s
+#+filetags:   %s
+#+identifier: %s
+#+startup:    overview
+\n")
+
 (use-package denote
   :ensure t
   :hook (dired-mode . denote-dired-mode)
