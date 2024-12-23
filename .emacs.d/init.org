@@ -179,7 +179,7 @@ The init.el portion of the init.el/config.org from before
 (delete-selection-mode 1)
 
 ;; add org-roam-directory to safe variables
-(add-to-list 'safe-local-variable-values '(org-roam-directory . "."))
+;(add-to-list 'safe-local-variable-values '(org-roam-directory . "."))
 
 ;; set default shell to zsh
 (setq explicit-shell-file-name "/bin/zsh")
@@ -1854,19 +1854,33 @@ Based on projectile's
 (fset 'org-command-map org-command-map)
 (global-set-key (kbd "C-c n") '("org notes" . org-command-map))
 
-(defvar org-roam-command-map
+;(defvar org-roam-command-map
+;  (let ((map (make-sparse-keymap)))
+;    (define-key map (kbd "l") #'org-roam-buffer-toggle)
+;    (define-key map (kbd "f") #'org-roam-node-find)
+;    (define-key map (kbd "i") #'org-roam-node-insert)
+;    (define-key map (kbd "g") #'org-roam-graph)
+;    (define-key map (kbd "c") #'org-roam-capture)
+;    (define-key map (kbd "j") #'org-roam-dailies-capture-today)
+;    (define-key map (kbd "r") #'bms/org-roam-rg-search)
+;    map)
+;  "Keymap for org-roam commands after `org-roam-keymap-prefix'.")
+;(fset 'org-roam-command-map org-roam-command-map)
+;(global-set-key (kbd "C-c n r") '("org-roam" . org-roam-command-map))
+
+(defvar denote-command-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "l") #'org-roam-buffer-toggle)
-    (define-key map (kbd "f") #'org-roam-node-find)
-    (define-key map (kbd "i") #'org-roam-node-insert)
-    (define-key map (kbd "g") #'org-roam-graph)
-    (define-key map (kbd "c") #'org-roam-capture)
-    (define-key map (kbd "j") #'org-roam-dailies-capture-today)
-    (define-key map (kbd "r") #'bms/org-roam-rg-search)
+    (define-key map (kbd "n") #'denote)
+    (define-key map (kbd "o") #'denote-open-or-create)
+    (define-key map (kbd "r") #'denote-rename-file)
+    (define-key map (kbd "i") #'denote-link) ; "insert" mnemonic
+    (define-key map (kbd "b") #'denote-backlinks)
+    (define-key map (kbd "f") #'consult-denote-find)
+    (define-key map (kbd "g") #'consult-denote-grep)
     map)
-  "Keymap for org-roam commands after `org-roam-keymap-prefix'.")
-(fset 'org-roam-command-map org-roam-command-map)
-(global-set-key (kbd "C-c n r") '("org-roam" . org-roam-command-map))
+  "Keymap for org-roam commands after `denote-keymap-prefix'.")
+(fset 'denote-command-map denote-command-map)
+(global-set-key (kbd "C-c n d") '("denote" . denote-command-map))
 #+end_src
 
 ** org
@@ -2146,7 +2160,7 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 ; (if (string-match "\\`lothlorien" (system-name))
 ;     (setq org-roam-directory "~/org-roam-home")
 ;   (setq org-roam-directory "~/org-roam/"))
-; 
+;
 ; (use-package org-roam
 ;   :ensure t
 ;   :after org
@@ -2167,7 +2181,7 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 ;   (org-roam-db-autosync-mode)
 ;   ;; If using org-roam-protocol
 ;   ;(require 'org-roam-protocol)
-; 
+;
 ;   ;;
 ;   ;; Configure default capture template (try without $G)
 ;   ;; "%<%Y%m%d$G>-${slug}.org -- saves $G in filename, removing for now
@@ -2177,14 +2191,14 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 ;      :if-new (file+head "%<%Y%m%d>-${slug}.org"
 ;                         "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n#+category: ${title}\n#+filetags: \n")
 ;      :unnarrowed t)))
-; 
+;
 ;   ;; Configure default dailies capture template, from docs
 ;   (setq org-roam-dailies-capture-templates
 ;         '(("d" "default" entry
 ;            "* %?"
 ;            :if-new (file+head "%<%Y-%m-%d>.org"
 ;                               "#+startup: overview\n#+title: %<%Y-%m-%d>\n"))))
-; 
+;
 ;   ;;
 ;   ;; Update a field (#+LAST_MODIFIED: ) at save using bulit in time-stamp
 ;   ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
@@ -2197,7 +2211,7 @@ ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 ;                                        time-stamp-format "\[%Y-%m-%d %a %H:%M\]")
 ;                            (add-hook 'before-save-hook 'time-stamp nil 'local)))
 ; )
-; 
+;
 ; ;; Using consult-ripgrep with org-roam for searching notes
 ; ;; https://org-roam.discourse.group/t/using-consult-ripgrep-with-org-roam-for-searching-notes/1226
 ; (defun bms/org-roam-rg-search ()
@@ -2237,12 +2251,12 @@ M-x add-dir-local-variable
 (use-package denote
   :ensure t
   :hook (dired-mode . denote-dired-mode)
-  :bind
-  (("C-c n d n" . denote)
-   ("C-c n d o" . denote-open-or-create)
-   ("C-c n d r" . denote-rename-file)
-   ("C-c n d i" . denote-link) ; "insert" mnemonic
-   ("C-c n d b" . denote-backlinks))
+;  :bind
+;  (("C-c n d n" . denote)
+;   ("C-c n d o" . denote-open-or-create)
+;   ("C-c n d r" . denote-rename-file)
+;   ("C-c n d i" . denote-link) ; "insert" mnemonic
+;   ("C-c n d b" . denote-backlinks))
   ;:custom
   ;(denote-directory "~/denote-home")
   ;;; No longer needed in denote 3+ to add [d]
@@ -2271,9 +2285,9 @@ https://protesilaos.com/emacs/consult-denote
 #+begin_src emacs-lisp
 (use-package consult-denote
   :ensure t
-  :bind
-  (("C-c n d f" . consult-denote-find)
-   ("C-c n d g" . consult-denote-grep))
+;  :bind
+;  (("C-c n d f" . consult-denote-find)
+;   ("C-c n d g" . consult-denote-grep))
   :config
   (consult-denote-mode 1)
 )
