@@ -2142,70 +2142,70 @@ NOTE: can use  sub-directories by adding to capture templates, has to exist firs
 ex. :if-new (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org" "#+title:
 
 #+begin_src emacs-lisp
-;; Set org-roam-directory based on system-name
-(if (string-match "\\`lothlorien" (system-name))
-    (setq org-roam-directory "~/org-roam-home")
-  (setq org-roam-directory "~/org-roam/"))
-
-(use-package org-roam
-  :ensure t
-  :after org
-  :defer t
-  :init
-  (setq org-roam-v2-ack t)
-  :custom
-  ;; setup org-roam-daily directory
-  ;By default, Org Roam will create daily files under the daily/ subfolder of your org-roam-directory
-  (org-roam-completion-everywhere t)
-  ;
-  (org-roam-db-location "~/.emacs.d/var/org-roam.db")
-  (org-roam-index-file "index.org")
-  :config
- ;; If you're using a vertical completion framework, you might want a more informative completion interface
-  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-  (org-roam-setup)
-  (org-roam-db-autosync-mode)
-  ;; If using org-roam-protocol
-  ;(require 'org-roam-protocol)
-
-  ;;
-  ;; Configure default capture template (try without $G)
-  ;; "%<%Y%m%d$G>-${slug}.org -- saves $G in filename, removing for now
-  ;;
-  (setq org-roam-capture-templates
-  '(("d" "default" plain "%?"
-     :if-new (file+head "%<%Y%m%d>-${slug}.org"
-                        "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n#+category: ${title}\n#+filetags: \n")
-     :unnarrowed t)))
-
-  ;; Configure default dailies capture template, from docs
-  (setq org-roam-dailies-capture-templates
-        '(("d" "default" entry
-           "* %?"
-           :if-new (file+head "%<%Y-%m-%d>.org"
-                              "#+startup: overview\n#+title: %<%Y-%m-%d>\n"))))
-
-  ;;
-  ;; Update a field (#+LAST_MODIFIED: ) at save using bulit in time-stamp
-  ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
-  ;;
-  (add-hook 'org-mode-hook (lambda ()
-                           (setq-local time-stamp-active t
-                                       time-stamp-line-limit 18
-                                       time-stamp-start "^#\\+LAST_MODIFIED: [ \t]*"
-                                       time-stamp-end "$"
-                                       time-stamp-format "\[%Y-%m-%d %a %H:%M\]")
-                           (add-hook 'before-save-hook 'time-stamp nil 'local)))
-)
-
-;; Using consult-ripgrep with org-roam for searching notes
-;; https://org-roam.discourse.group/t/using-consult-ripgrep-with-org-roam-for-searching-notes/1226
-(defun bms/org-roam-rg-search ()
-  "Search org-roam directory using consult-ripgrep. With live-preview."
-  (interactive)
-  (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-buffered --color=always --max-columns=500 --no-heading --line-number . -e ARG OPTS"))
-    (consult-ripgrep org-roam-directory)))
-(global-set-key (kbd "C-c n r r") 'bms/org-roam-rg-search) ;;was C-c rr
+; ;; Set org-roam-directory based on system-name
+; (if (string-match "\\`lothlorien" (system-name))
+;     (setq org-roam-directory "~/org-roam-home")
+;   (setq org-roam-directory "~/org-roam/"))
+; 
+; (use-package org-roam
+;   :ensure t
+;   :after org
+;   :defer t
+;   :init
+;   (setq org-roam-v2-ack t)
+;   :custom
+;   ;; setup org-roam-daily directory
+;   ;By default, Org Roam will create daily files under the daily/ subfolder of your org-roam-directory
+;   (org-roam-completion-everywhere t)
+;   ;
+;   (org-roam-db-location "~/.emacs.d/var/org-roam.db")
+;   (org-roam-index-file "index.org")
+;   :config
+;  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+;   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+;   (org-roam-setup)
+;   (org-roam-db-autosync-mode)
+;   ;; If using org-roam-protocol
+;   ;(require 'org-roam-protocol)
+; 
+;   ;;
+;   ;; Configure default capture template (try without $G)
+;   ;; "%<%Y%m%d$G>-${slug}.org -- saves $G in filename, removing for now
+;   ;;
+;   (setq org-roam-capture-templates
+;   '(("d" "default" plain "%?"
+;      :if-new (file+head "%<%Y%m%d>-${slug}.org"
+;                         "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n#+STARTUP: overview\n#+category: ${title}\n#+filetags: \n")
+;      :unnarrowed t)))
+; 
+;   ;; Configure default dailies capture template, from docs
+;   (setq org-roam-dailies-capture-templates
+;         '(("d" "default" entry
+;            "* %?"
+;            :if-new (file+head "%<%Y-%m-%d>.org"
+;                               "#+startup: overview\n#+title: %<%Y-%m-%d>\n"))))
+; 
+;   ;;
+;   ;; Update a field (#+LAST_MODIFIED: ) at save using bulit in time-stamp
+;   ;; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321
+;   ;;
+;   (add-hook 'org-mode-hook (lambda ()
+;                            (setq-local time-stamp-active t
+;                                        time-stamp-line-limit 18
+;                                        time-stamp-start "^#\\+LAST_MODIFIED: [ \t]*"
+;                                        time-stamp-end "$"
+;                                        time-stamp-format "\[%Y-%m-%d %a %H:%M\]")
+;                            (add-hook 'before-save-hook 'time-stamp nil 'local)))
+; )
+; 
+; ;; Using consult-ripgrep with org-roam for searching notes
+; ;; https://org-roam.discourse.group/t/using-consult-ripgrep-with-org-roam-for-searching-notes/1226
+; (defun bms/org-roam-rg-search ()
+;   "Search org-roam directory using consult-ripgrep. With live-preview."
+;   (interactive)
+;   (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-buffered --color=always --max-columns=500 --no-heading --line-number . -e ARG OPTS"))
+;     (consult-ripgrep org-roam-directory)))
+; (global-set-key (kbd "C-c n r r") 'bms/org-roam-rg-search) ;;was C-c rr
 #+end_src
 
 ** denote
