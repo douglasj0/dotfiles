@@ -57,12 +57,12 @@ case ${HOST%%.*} in
   *)               PROMPT_COLOR="white";  PROMPT_HOST="%m" ;;
 esac
 
-function _zsh_prompt {
+#function _zsh_prompt {
 NEWLINE=$'\n'
 PS1='%F{blue}%T%f %F{$PROMPT_COLOR}%n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f$NEWLINE%F{white}%# %f'
-}
+#}
 
-precmd() { eval "$PROMPT_COMMAND" }
+#precmd() { eval "$PROMPT_COMMAND" }
 PROMPT_COMMAND=_zsh_prompt
 
 # Enable checking for (un)staged changes, enabling use of %u and %c
