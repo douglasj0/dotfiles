@@ -207,6 +207,8 @@ else
 fi
 
 
+
+
 ###################
 #   OS Specific   #
 ###################
@@ -251,6 +253,15 @@ Darwin)  # Darwin Environment
         local dir
         dir=$(find ${1:-.} -type d -not -path '*/\.*' 2> /dev/null | fzf +m) && cd "$dir"
       }
+    fi
+
+    # Enable awscli command completion (requires bashcompinit for 'complete')
+    # Must run after python is enabled (pyenv init or .infra)
+    if type aws_completer &>/dev/null; then
+      echo "... aws completer enabled"
+      autoload bashcompinit && bashcompinit
+      autoload -Uz compinit && compinit
+      complete -C '~/.pyenv/shims/aws_completer' aws
     fi
 
     ;; # end Darwin
