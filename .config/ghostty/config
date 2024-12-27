@@ -43,6 +43,7 @@ font-family = Monaco
 font-size = 16
 selection-invert-fg-bg = false
 bold-is-bright = false
+font-thicken = false
 
 # macOS Specific
 macos-titlebar-style = tabs
@@ -60,7 +61,7 @@ macos-window-shadow = true
 quick-terminal-animation-duration = 0.08
 
 # Initial window width and height
-window-height = 25
+window-height = 24
 window-width = 80
 
 # window padding
