@@ -56,3 +56,6 @@ alias mp="multipass"
 # Kitty
 alias kitten="/Applications/kitty.app/Contents/MacOS/kitten"
 alias kitty="/Applications/kitty.app/Contents/MacOS/kitty"
+
+# Ghostty
+alias ghostty="/Applications/Ghostty.app/Contents/MacOS/ghostty"
