@@ -59,3 +59,4 @@ alias kitty="/Applications/kitty.app/Contents/MacOS/kitty"
 
 # Ghostty
 alias ghostty="/Applications/Ghostty.app/Contents/MacOS/ghostty"
+alias ghostty-docs="ghostty +show-config --default --docs | less"
