@@ -6,6 +6,8 @@
 # How to reload config:
 #   Linux: ctrl+shift+,
 #   macOS: cmd+shift+,
+# Generate a config
+#   https://ghostty.zerebos.com/settings/application
 
 # Default
 command = /bin/zsh
@@ -25,9 +27,11 @@ cursor-style = block
 cursor-style-blink = false
 cursor-opacity = 0.7
 cursor-invert-fg-bg = false
+# linux: alt-click, macOS: option-click
+cursor-click-to-move = true
 
 # Scrollback limit in bytes
-scrollback-limit = 90000000
+scrollback-limit = 10000000
 
 # Set working directory, default inherits previous process
 working-directory = home
@@ -73,7 +77,7 @@ mouse-hide-while-typing = true
 # focus-follows-mouse = false
 
 # Key Bindings
-keybind = global:cmd+/=toggle_quick_terminal
+keybind = global:alt+grave_accent=toggle_quick_terminal
 keybind = shift+ctrl+left_bracket=previous_tab
 keybind = shift+ctrl+right_bracket=next_tab
 
