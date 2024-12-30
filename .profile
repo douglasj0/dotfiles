@@ -40,7 +40,7 @@ case $(uname -m) in  # switch to x86 shell: arch -x86_64 zsh
     export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
     export HOMEBREW_REPOSITORY="/opt/homebrew";
     fpath[1,0]="/opt/homebrew/share/zsh/site-functions";
-    export PATH="${PATH}:/opt/homebrew/bin:/opt/homebrew/sbin"
+    export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}"
     [ -z "${MANPATH-}" ] || export MANPATH=":${MANPATH#:}";
     export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
     ;;
