@@ -1338,7 +1338,7 @@ folder, otherwise delete a word"
 ;; nerd-icons.el - A Library for Nerd Font icons
 ;; https://github.com/rainstormstudio/nerd-icons.el#installing-fonts
 ;; To finish, run: M-x nerd-icons-install-fonts
-;; # Successfully installed ‘nerd-icons’ fonts to ‘/Users/djackson/Library/Fonts
+;; # Successfully installed ‘nerd-icons’ fonts to ‘~/Library/Fonts
 (use-package nerd-icons
   :ensure t
   ;:defer t
