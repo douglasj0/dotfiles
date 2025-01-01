@@ -1,4 +1,4 @@
-;;; early init.el -*- lexical-binding: t; -*-
+;;; earlyr- init.el -*- lexical-binding: t; -*-
 ; eval: (local-set-key (kbd "C-c i") #'consult-outline); outline-regexp: ";;;";
 
 ; Author: Douglas Jackson
@@ -137,5 +137,5 @@
 (defun risky-local-variable-p (sym &optional _ignored) nil)
 
 ;; Fake the footer to avoid warnings
-;; (provide 'early-init)
+(provide 'early-init)
 ;;; early-init.el ends here

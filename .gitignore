@@ -25,7 +25,6 @@
 .emacs.d/eshell/
 .emacs.d/eshell/history
 .emacs.d/eshell/lastdir
-.emacs.d/init.el
 .emacs.d/mytmp/
 .emacs.d/nov-places
 .emacs.d/org-persist/
