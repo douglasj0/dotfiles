@@ -1,6 +1,7 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-;;;; * -= Init =-
+;;;; * --- Init ---
+;;;; * init
 ;; The init.el portion of the init.el/config.org from before
 
 ;; init.el
@@ -53,7 +54,7 @@
 ;; Load the config (will re-tangle on org file change)
 ;(org-babel-load-file (concat user-emacs-directory "config.org"))
 
-;;;; * -= Housekeeping =-
+;;;; * --- Housekeeping ---
 ;;;; * initialization
 ; whoami?
 (setq
@@ -472,7 +473,7 @@ last sentence."
 ;;
 ;; Please call if you have any questions.
 
-;;;; * -= Utilities =-
+;;;; * --- Utilities ---
 ;;;; * maximize-window
 ;; JDRiverRun
 ;; One capability I use every day that I never see mentioned is vertical/horizontal window maximization. That is, no matter where my selected window is placed in some complicated frame layout, make it occupy the full height(/width) of the frame. Here's a small gist with the code (to which I've also added a natural binding to tear-off-window, thanks!).
@@ -656,7 +657,7 @@ Default vertically, unless HORIZONTALLY is non-nil."
 ;; Enable dwim - Dired tries to guess a default target directory.
 (setq dired-dwim-target t)
 
-;;;; * -= OS =-
+;;;; * --- OS ---
 ;; From Doom Emacs, look into
 ;; (:if IS-MAC macos)  ; improve compatibility with macOS
 
@@ -875,7 +876,7 @@ Default vertically, unless HORIZONTALLY is non-nil."
   ;(set-default-font "Monospace-10")
 )
 
-;;;; * -= Completion =-
+;;;; * --- Completion ---
 ;;(company +childframe) ; the ultimate code completion backend
 ;;(vertico +icons)      ; the search engine of the future
 
@@ -1231,7 +1232,7 @@ folder, otherwise delete a word"
         which-key-show-remaining-keys t)
 )
 
-;;;; * -= Emacs UI =-
+;;;; * --- Emacs UI ---
 ;; Modern Emacs UI
 ;; https://www.youtube.com/watch?v=rwKTc4MNmt8
 ;; - x treemacs/neotree
@@ -1369,7 +1370,7 @@ folder, otherwise delete a word"
   (advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
 )
 
-;;;; * -= Version Control =-
+;;;; * --- Version Control ---
 ;; :tools - from doom emacs
 ;; ansible
 ;; docker
@@ -1555,7 +1556,7 @@ folder, otherwise delete a word"
 (use-package git-timemachine
   :defer t)
 
-;;;; * -= Languages =-
+;;;; * --- Languages ---
 ;; emacs-lisp        ; drown in parentheses
 ;; json              ; At least it ain't XML
 ;; latex             ; writing papers in Emacs has never been so fun
@@ -1680,7 +1681,7 @@ folder, otherwise delete a word"
     )
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
 
-;;;; * -= Terminals =-
+;;;; * --- Terminals ---
 ;;;; * eat
 ;; eat stands for "Emulate A Terminal"
 ;; https://codeberg.org/akib/emacs-eat
@@ -1690,7 +1691,7 @@ folder, otherwise delete a word"
   (eat-eshell-mode)
   (setq eshell-visual-commands '()))
 
-;;;; * -= Org =-
+;;;; * ---- Org ---
 ;;;; * keymaps org (C-c n)
 ;; Based on projectile's
 
@@ -2064,7 +2065,7 @@ SCHEDULED: %^t
 ;; Additionally, consult-notes could be useful
 ;; https://github.com/mclear-tools/consult-notes
 
-;;;; * -= AI =-
+;;;; * --- AI ---
 ;;;; * gptel
 ;; gptel: A simple LLM client for Emacs
 ;; https://github.com/karthink/gptel
@@ -2081,7 +2082,7 @@ SCHEDULED: %^t
                    :models '(llama3.2:3b-instruct-q8_0)))
 )
 
-;;;; * -= End =-
+;;;; * --- End ---
 ;; https://www.reddit.com/r/emacs/comments/a6tu8y/outlineminormode_for_emacs_maybe_useful/
 ;; This makes outline-minor-mode operate a bit more like org-mode <tab> & S-<tab>
 ;; but you no longer have indent on <tab> so I use M-x indent-region or whatever.
