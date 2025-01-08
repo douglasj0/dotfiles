@@ -292,8 +292,25 @@
 ;               auto-mode-alist))
 
 ;; electric-pair
+(defun my/electric-pair-conservative-inhibit (char)
+  (or
+   ;; I (u/sandinmyjoints) find it more often preferable not to pair
+   ;; when the same char is next.
+   (eq char (char-after))
+   ;; Don't pair up when we insert the second of "" or of ((.
+   (and (eq char (char-before))
+        (eq char (char-before (1- (point)))))
+   ;; I also find it often preferable not to pair next to a word.
+   (eq (char-syntax (following-char)) ?w)
+   ;; Don't pair at the end of a word, unless parens.
+   (and
+    (eq (char-syntax (char-before (1- (point)))) ?w)
+    (eq (preceding-char) char)
+    (not (eq (char-syntax (preceding-char)) 40) ;; 40 is open paren
+         ))))
 (setq-default electric-pair-inhibit-predicate
-              'electric-pair-conservative-inhibit)
+              'my/electric-pair-conservative-inhibit)
+(electric-pair-mode)
 
 ;; repl alias for lisp -- read-eval-print-loop
 ;(defun repl() (interactive) (ielm))
@@ -656,6 +673,18 @@ Default vertically, unless HORIZONTALLY is non-nil."
 ;;;; * dired
 ;; Enable dwim - Dired tries to guess a default target directory.
 (setq dired-dwim-target t)
+
+;;;; * helpful
+;; alternative to the built-in Emacs help provideing more contextual information.
+;; https://github.com/Wilfred/helpful
+(use-package helpful
+  :defer 10
+  :ensure t
+  :bind
+  (("C-h f" . helpful-function)
+   ("C-h x" . helpful-command)
+   ("C-h h" . helpful-key)
+   ("C-h v" . helpful-variable)))
 
 ;;;; * --- OS ---
 ;; From Doom Emacs, look into
@@ -1579,13 +1608,13 @@ folder, otherwise delete a word"
 ;; Cheatsheat
 ;; https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
 
-(use-package smartparens
-  :ensure t
-  :defer t
-  :hook
-  (prog-mode . smartparens-mode)
-  (org-mode . smartparens-mode)
-)
+;(use-package smartparens
+;  :ensure t
+;  :defer t
+;  :hook
+;  (prog-mode . smartparens-mode)
+;  (org-mode . smartparens-mode)
+;)
 
 ;;;; * sh-script
 ;; shell-script-mode is a major mode for shell script editing.
