@@ -1368,7 +1368,7 @@ folder, otherwise delete a word"
       (load-theme 'catppuccin :no-confirm) ; Emacs in own window
     (load-theme 'wheatgrass :no-confirm)   ; Emacs in tty
   )
-  ;; change flavor, devault is mocha
+  ;; change flavor, default is mocha
   ;(setq catppuccin-flavor 'frappe) ;; frappe / latte / macchiato / mocha
   ;(catppuccin-reload)
 )
@@ -1976,6 +1976,16 @@ SCHEDULED: %^t
 
 ;; Disable company-mode (word completions) in org using company conf var
 ;(setq company-global-modes '(not org-mode))
+
+;; Override org-mode heading sizes (too larger in some themes)
+;; https://stackoverflow.com/questions/21525436/orgmode-title-levels-height
+(custom-set-faces
+  '(org-level-1 ((t (:inherit outline-1 :height 1.0))))
+  '(org-level-2 ((t (:inherit outline-2 :height 1.0))))
+  '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
+  '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
+  '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
+)
 
 ;;; Enable other org-babel languages
 (org-babel-do-load-languages
