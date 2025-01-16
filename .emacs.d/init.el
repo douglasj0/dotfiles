@@ -1343,18 +1343,34 @@ folder, otherwise delete a word"
 ;; https://draculatheme.com/
 ;; https://github.com/dracula/dracula-theme
 ;; https://www.reddit.com/r/emacs/comments/he55jl/whats_the_funky_character_on_the_mode_line/
-(use-package dracula-theme
+;(use-package dracula-theme
+;  :ensure t
+;  ;:defer t  ;doesn't load when needed
+;  ;:init
+;  ;(setq dracula-enlarge-headings nil)
+;  :config
+;  ;; Don't change the font size for some headings and titles (default t)
+;  (setq dracula-enlarge-headings nil)
+;  (if (display-graphic-p)
+;      (load-theme 'dracula :no-confirm)	  ; Emacs in own window
+;    (load-theme 'wheatgrass :no-confirm)  ; Emacs in tty
+;  )
+;)
+
+;;; catppuccin-theme
+;; https://github.com/catppuccin/emacs
+(use-package catppuccin-theme
   :ensure t
-  ;:defer t  ;doesn't load when needed
-  ;:init
-  ;(setq dracula-enlarge-headings nil)
   :config
   ;; Don't change the font size for some headings and titles (default t)
-  (setq dracula-enlarge-headings nil)
+  ;(setq dracula-enlarge-headings nil)
   (if (display-graphic-p)
-      (load-theme 'dracula :no-confirm)	  ; Emacs in own window
-    (load-theme 'wheatgrass :no-confirm)  ; Emacs in tty
+      (load-theme 'catppuccin :no-confirm) ; Emacs in own window
+    (load-theme 'wheatgrass :no-confirm)   ; Emacs in tty
   )
+  ;; change flavor, devault is mocha
+  ;(setq catppuccin-flavor 'frappe) ;; frappe / latte / macchiato / mocha
+  ;(catppuccin-reload)
 )
 
 ;;;; * icons and glyphs
