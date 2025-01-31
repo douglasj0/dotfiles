@@ -40,7 +40,7 @@ working-directory = home
 window-inherit-working-directory = false
 
 # Fonts: ghostty +list-fonts
-font-family = Symbols Nerd Font Mono
+##font-family = Symbols Nerd Font Mono # messes with primary font
 font-family = Monaco
 font-size = 16
 selection-invert-fg-bg = false
