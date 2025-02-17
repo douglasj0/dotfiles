@@ -1965,14 +1965,14 @@ SCHEDULED: %^t
 
 ;;; Strike-through finished todos
 ;; sachachua.com/blog/2012/12/emacs-strike-through-headlines-for-done-tasks-in-org/
-(setq org-fontify-done-headline t)
-(custom-set-faces
- '(org-done ((t (:foreground "PaleGreen"
-                 :weight normal
-                 :strike-through t))))
- '(org-headline-done
-            ((((class color) (min-colors 16) (background dark))
-               (:foreground "LightSalmon" :strike-through t)))))
+;(setq org-fontify-done-headline t)
+;(custom-set-faces
+; '(org-done ((t (:foreground "PaleGreen"
+;                 :weight normal
+;                 :strike-through t))))
+; '(org-headline-done
+;            ((((class color) (min-colors 16) (background dark))
+;               (:foreground "LightSalmon" :strike-through t)))))
 
 ;; Disable company-mode (word completions) in org using company conf var
 ;(setq company-global-modes '(not org-mode))
