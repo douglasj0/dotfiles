@@ -1736,7 +1736,19 @@ folder, otherwise delete a word"
   (eat-eshell-mode)
   (setq eshell-visual-commands '()))
 
-;;;; * ---- Org ---
+;;;; * --- Tramp ---
+
+;; https://www.reddit.com/r/emacs/comments/uto1uv/magit_and_authentication/
+
+;(require 'tramp)
+;(require 'auth-source)
+
+;; Enable TRAMP's support for authentication information from `auth-source'
+;(setq tramp-default-method "ssh")
+;(setq auth-sources '(~/.authinfo.gpg))
+(setq auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc"))
+
+;;;; * --- Org ---
 ;;;; * keymaps org (C-c n)
 ;; Based on projectile's
 
@@ -2136,6 +2148,10 @@ SCHEDULED: %^t
                    :stream t
                    :models '(llama3.2:3b-instruct-q8_0)))
 )
+;;;; * --- Testing ---
+
+;; https://github.com/kopoli/robot-mode
+(use-package robot-mode)
 
 ;;;; * --- End ---
 ;; https://www.reddit.com/r/emacs/comments/a6tu8y/outlineminormode_for_emacs_maybe_useful/
