@@ -235,6 +235,29 @@ Darwin)  # Darwin Environment
     # Tell homebrew to not autoupdate every single time I run it (just once a week).
     export HOMEBREW_AUTO_UPDATE_SECS=604800
 
+    # Put emacs info back from .aliases and .functions
+    # Configure Emacs and Emacsclient
+    # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
+    alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
+    alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient" # fix magit?
+    EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"
+    alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs"  # start a windowed frame
+    alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
+    alias  ec="emacsclient -s $EMACS_SOCKET -n -a emacs"     # do not start a new frame
+
+    ediff() { emacs --eval "(ediff \"$1\" \"$2\")" }
+
+    # Emacs magit, function to open magit buffer from current git repo
+    magit() {
+      if git status > /dev/null 2>&1; then
+          #emacsclient -nw --eval "(call-interactively #'magit-status)"
+          emacsclient -s ${HOME}/.emacs.d/var/tmp/server -n -a emacs --eval "(call-interactivel    y #'magit-status)"
+      else
+          echo "Not in a git repo"
+          return 1
+      fi
+    }
+
     # Source infra functions
     if [ -d ${HOME}/.infra ]; then
       echo "... load infra functions"

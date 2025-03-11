@@ -103,11 +103,14 @@
 (setq ad-redefinition-action 'accept)
 ;;; Ignore byte-compile warning
 ;; ex. for Emacs 27: Warning: cl package required at runtime
-(setq byte-compile-warnings '(not nresolved
+(setq byte-compile-warnings '(not unresolved
                                   free-vars
                                   callargs
                                   redefine
                                   obsolete
+                                  lexical
+                                  noruntime
+                                  make-local
                                   noruntime
                                   cl-functions
                                   interactive-only

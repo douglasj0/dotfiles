@@ -43,7 +43,7 @@ alias yolo='sudo $(fc -nl -1)'
 # find all files recursively and sort by last mod, ignore hidden files
 alias lastmod='find . -type f -not -path "*/\.*" -exec ls -lrt {} +'
 
-# Emacs aliases
+# Emacs related aliases
 #alias emacspkgupdate="emacs -nw --eval '(progn (sit-for 2) (auto-package-update-now))"
 alias emacspkgupdate='emacs -nw -f auto-package-update-now'
 alias strip-code-block="sed -e '/^#+begin_/d' -e '/^#+end_/d'"

@@ -13,16 +13,6 @@ encode64() {
   echo "$1" | base64 ; echo
 }
 
-# Configure Emacs and Emacsclient
-# adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
-alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
-EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"
-alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs"  # start a windowed frame
-alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
-alias  ec="emacsclient -s $EMACS_SOCKET -n -a emacs"     # do not start a new frame
-
-ediff() { emacs --eval "(ediff \"$1\" \"$2\")" }
-
 #function q { w3m -dump "http://google.com/search?q=$*" | more; }
 traffic() { netstat -w1 -I"$@"; }
 qlook() { qlmanage -p "$@" >& /dev/null & }
