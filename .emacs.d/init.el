@@ -1522,7 +1522,9 @@ folder, otherwise delete a word"
 
 ;; Fixes for emacs 27
 ;; Magit Error: Warning (with-editor): Cannot determine a suitable Emacsclient
-(setq-default with-editor-emacsclient-executable "emacsclient")
+;(setq-default with-editor-emacsclient-executable "emacsclient") ;; 30.1 removed new error
+;(set-variable 'magit-emacsclient-executable "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient")
+(set-variable 'magit-emacsclient-executable "emacsclient")
 
 (use-package magit
   :ensure t
