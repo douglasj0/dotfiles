@@ -37,6 +37,7 @@
 .emacs.d/tree-sitter/
 .emacs.d/url
 .emacs.d/var/
+.emacs.d/eln-cache/
 
 # bin files to ignore
 sshpass

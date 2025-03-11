@@ -71,7 +71,7 @@
 
 ;; Load Customizations if they exist
 ;; https://lupan.pl/dotemacs/
-(setq custom-file "~/Sync/my_homedir_files/emacs.d/custom.el")
+(setq custom-file "~/org/emacs_d/custom.el")
 (if (file-exists-p custom-file)
     (load custom-file))
 
@@ -81,7 +81,7 @@
 ;; Found in auctex, use eval-after-load
 (eval-after-load 'info
    '(add-to-list 'Info-additional-directory-list
-                 "~/Sync/my_homedir_files/emacs.d/info"))
+                 "~/org/emacs_d/info"))
 
 (add-to-list 'load-path "~/.emacs.d/elisp/") ;; elisp packages not in pkg mgr
 
@@ -311,6 +311,11 @@
 (setq-default electric-pair-inhibit-predicate
               'my/electric-pair-conservative-inhibit)
 (electric-pair-mode)
+
+;; disable visual-bell /!\
+;; you really only need one of these
+(setq visible-bell nil)
+;(setq ring-bell-function 'ignore)
 
 ;; repl alias for lisp -- read-eval-print-loop
 ;(defun repl() (interactive) (ielm))
@@ -973,7 +978,7 @@ folder, otherwise delete a word"
 
   ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
   ;; (setq vertico-cycle t)
-  )
+)
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
@@ -1246,10 +1251,12 @@ folder, otherwise delete a word"
 ;;     Undo the last entered key (!) with u (or C-u)
 ;;     Call the default command bound to C-h, usually describe-prefix-bindings, with h (or C-h)
 ;;; which-key
+;;; included in emacs 30.1, don't need ensure
+;;; https://www.reddit.com/r/emacs/comments/1dj4298/whichkey_now_included_in_emacs_30/
 
 (use-package which-key
-  :ensure t
-  :defer t
+;  :ensure t
+;  :defer t
   :init (which-key-mode)
   :config
   ;(setq which-key-allow-imprecise-window-fit nil)
@@ -1303,7 +1310,6 @@ folder, otherwise delete a word"
       apropos-do-all t
       ;mouse-yank-at-point t
       require-final-newline t
-      visible-bell t
       delete-old-versions t
       load-prefer-newer t
       ediff-window-setup-function 'ediff-setup-windows-plain
@@ -1401,19 +1407,19 @@ folder, otherwise delete a word"
 ;; NOTE: Run (all-the-icons-install-fonts) one time after installing
 ;;; doom modline
 
-(use-package doom-modeline
-  :ensure t
-  ;:defer t
-  :hook (after-init . doom-modeline-mode) ;; removed for envrc hook
-  :init (doom-modeline-mode 1)
-  :config
-  ;; Fix? for Height below 25 not working anymore #187
-  ;; https://github.com/seagle0128/doom-modeline/issues/187
-  (defun my-doom-modeline--font-height ()
-    "Calculate the actual char height of the mode-line."
-    (+ (frame-char-height) 1))
-  (advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
-)
+;(use-package doom-modeline
+;  :ensure t
+;  ;:defer t
+;  :hook (after-init . doom-modeline-mode) ;; removed for envrc hook
+;  :init (doom-modeline-mode 1)
+;  :config
+;  ;; Fix? for Height below 25 not working anymore #187
+;  ;; https://github.com/seagle0128/doom-modeline/issues/187
+;  (defun my-doom-modeline--font-height ()
+;    "Calculate the actual char height of the mode-line."
+;    (+ (frame-char-height) 1))
+;  (advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
+;)
 
 ;;;; * --- Version Control ---
 ;; :tools - from doom emacs
@@ -2122,9 +2128,9 @@ SCHEDULED: %^t
 
 (use-package consult-denote
   :ensure t
-;  :bind
-;  (("C-c n d f" . consult-denote-find)
-;   ("C-c n d g" . consult-denote-grep))
+  :bind
+  (("C-c n d f" . consult-denote-find)
+   ("C-c n d g" . consult-denote-grep))
   :config
   (consult-denote-mode 1)
 )
@@ -2132,22 +2138,6 @@ SCHEDULED: %^t
 ;; Additionally, consult-notes could be useful
 ;; https://github.com/mclear-tools/consult-notes
 
-;;;; * --- AI ---
-;;;; * gptel
-;; gptel: A simple LLM client for Emacs
-;; https://github.com/karthink/gptel
-;;
-;; Usage: gptel-send C-c RET
-(use-package gptel
-  :ensure t
-  :config
-  (setq
-   gptel-model 'llama3.2:3b-instruct-q8_0
-   gptel-backend (gptel-make-ollama "Ollama"
-                   :host "localhost:11434"
-                   :stream t
-                   :models '(llama3.2:3b-instruct-q8_0)))
-)
 ;;;; * --- Testing ---
 
 ;; https://github.com/kopoli/robot-mode
