@@ -139,6 +139,13 @@
 ;; allow remembering risky variables, needed for init.org
 (defun risky-local-variable-p (sym &optional _ignored) nil)
 
+;; Temp fix for Async-native-compile-log compiling org-loaddefs.el.gz ever emacs invocation:
+; Compiling ../Contents/Resources/lisp/org/org-loaddefs.el.gz...
+; uncompressing org-loaddefs.el.gz...
+; uncompressing org-loaddefs.el.gz...done
+; Compilation finished.
+(setq native-comp-jit-compilation-deny-list '("org-loaddefs"))
+
 ;; Fake the footer to avoid warnings
 (provide 'early-init)
 ;;; early-init.el ends here
