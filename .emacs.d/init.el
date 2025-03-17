@@ -2142,8 +2142,60 @@ SCHEDULED: %^t
 
 ;;;; * --- Testing ---
 
+;;; Major-mode for Robot Framework files
 ;; https://github.com/kopoli/robot-mode
-(use-package robot-mode)
+;(use-package robot-mode
+;  :ensure t)
+
+;;; aws mode
+;; https://github.com/snowiow/aws.el
+;(use-package aws-mode
+;  :ensure t
+;  :bind ;; some functions which make sense to bind to something
+;  ("C-c a a" . aws)
+;  ("C-c a l" . aws-login)
+;  ("C-c a n" . aws-organizations-get-account-name)
+;  ("C-c a i" . aws-organizations-get-account-id)
+;  :load-path "~/.emacs.d/packages/awscli"
+;  :custom
+;  (aws-vault t) ;; when t use aws-vault cmd to get into aws session
+;  (aws-output "json") ;; optional: yaml, json, text (default: yaml)
+;  (aws-organizations-account "root")) ;; profile of organizations account. organizations commands are automatically executed against this account, when specified
+
+;;; kubel
+;; https://github.com/abrochard/kubel
+;(use-package kubel
+;  :ensure t
+;  :after (vterm)
+;  :config (kubel-vterm-setup))
+
+;;; Aidermacs: AI Pair Programming in Emacs (297 stars)
+;; https://github.com/MatthewZMD/aidermacs
+;(use-package aidermacs
+;  :ensure t
+;  :bind (("C-c a" . aidermacs-transient-menu))
+;  :config
+;  ; Set API_KEY in .bashrc, that will automatically picked up by aider or in elisp
+;  (setenv "ANTHROPIC_API_KEY" "sk-...")
+;  ; defun my-get-openrouter-api-key yourself elsewhere for security reasons
+;  (setenv "OPENROUTER_API_KEY" (my-get-openrouter-api-key))
+;  :custom
+;  ; See the Configuration section below
+;  (aidermacs-use-architect-mode t)
+;  (aidermacs-default-model "sonnet"))
+
+; -- similar ai --
+;;; ellama - interact with large language models from Emacs (772 stars)
+;; https://github.com/s-kostyaev/ellama
+;(use-package ellama
+;  :ensure t
+;  :bind ("C-c e" . ellama-transient-main-menu)
+;  ;; send last message in chat buffer with C-c C-c
+;  :hook (org-ctrl-c-ctrl-c-final . ellama-chat-send-last-message)
+;  :init (setopt ellama-auto-scroll t)
+;  :config
+;  ;; show ellama context in header line in all buffers
+;  (ellama-context-header-line-global-mode +1))
 
 ;;;; * --- End ---
 ;; https://www.reddit.com/r/emacs/comments/a6tu8y/outlineminormode_for_emacs_maybe_useful/
