@@ -1716,15 +1716,34 @@ folder, otherwise delete a word"
         (treesit-install-language-grammar lang)
         (message "`%s' treesit language grammar installed." lang)))))
 
-;;;; * typst-mode
+;;;; * typst-ts-mode/preview
+
+;;; https://www.reddit.com/r/emacs/comments/196oga1/live_typst_preview_in_emacs/
+;;; https://github.com/havarddj/typst-preview.el
+(use-package websocket
+  :ensure t)
+
+(use-package eglot) ; needed for tinymist lsp
+
+(use-package typst-preview
+  ;:load-path "elisp/typst-preview.el"
+  :config
+  (setq typst-preview-browser "default")
+  (define-key typst-preview-mode-map (kbd "C-c C-j") 'typst-preview-send-position))
+
 (use-package typst-ts-mode
   :ensure t
-  :config
-  (add-to-list 'auto-mode-alist '("\\.typ" . typst-ts-mode))
   :custom
   (typst-ts-mode-watch-options "--open")
   (typst-ts-mode-enable-raw-blocks-highlight t)
-  (typst-ts-mode-highlight-raw-blocks-at-startup t))
+  (typst-ts-mode-highlight-raw-blocks-at-startup t)
+  :config
+  ;; browsers supported: default, xwidget, safari, google chrome, eaf-browser
+  (setq typst-preview-browser "xwidget") ;; default is "default"
+  (add-to-list 'auto-mode-alist '("\\.typ" . typst-ts-mode))
+  (add-to-list 'eglot-server-programs '(typst-ts-mode) . ("tinymist")))
+
+;;;; * go-mode
 
 ;; go example
 ;; https://github.com/mpenet/emax/blob/master/init.el
