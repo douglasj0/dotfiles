@@ -1653,7 +1653,8 @@ folder, otherwise delete a word"
   :init
   (setq treesit-language-source-alist
      ;; Note the version number/tags updated 3/18/25
-     '((bash . ("https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3"))
+     '((awk . ("https://github.com/Beaglefoot/tree-sitter-awk" "v0.7.2"))
+       (bash . ("https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3"))
        (c . ("https://github.com/tree-sitter/tree-sitter-c" "v0.23.5"))
        (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp" "v0.23.4"))
        (css . ("https://github.com/tree-sitter/tree-sitter-css" "v0.23.2"))
@@ -1661,6 +1662,7 @@ folder, otherwise delete a word"
        (elisp . ("https://github.com/Wilfred/tree-sitter-elisp" "1.5.0"))
        ;(go . ("https://github.com/tree-sitter/tree-sitter-go" "v0.23.4"))
        ;(gomod . ("https://github.com/camdencheek/tree-sitter-go-mod" "v1.1.0"))
+       ;(hcl . ("https://github.com/tree-sitter-grammars/tree-sitter-hcl" "v1.1.0")) ; ???
        (html . ("https://github.com/tree-sitter/tree-sitter-html" "v0.23.2"))
        ;(javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1" "src"))
        (json . ("https://github.com/tree-sitter/tree-sitter-json" "v0.24.8"))
@@ -1682,7 +1684,8 @@ folder, otherwise delete a word"
   :config
   ;; Use treesit-based major-modes where grammars are available.
   (setq major-mode-remap-alist
-   '((bash-mode   . bash-ts-mode)
+   '((awk-mode    . awk-ts-mode)
+     (bash-mode   . bash-ts-mode)
      (c-mode      . c-ts-mode)
      (cpp-mode    . cpp-ts-mode)
      (css-mode    . css-ts-mode)
@@ -1690,6 +1693,7 @@ folder, otherwise delete a word"
      (elisp-mode  . elisp-ts-mode)
      ;(go-mode     . go-ts-mode)
      ;(gomod-mode  . gomod-ts-mode)
+     ;(hcl-mode   . hcl-ts-mode) ; didn't work?
      (html-mode   . html-ts-mode)
      ;(javascript-mode . js-ts-mode)
      (json-mode   . json-ts-mode)
@@ -1776,12 +1780,22 @@ folder, otherwise delete a word"
   :hook
   (after-save . executable-make-buffer-file-executable-if-script-p))
 
-;;;; * sed-mode
+;;;; * sed, awk, perl
 ;; Mode for editing sed files
 ;; Look for Russ Cox solving advent-of-code using sed
 ;; /usr/bin/sed -f
 (use-package sed-mode
   :ensure t
+)
+
+(use-package awk-ts-mode
+  :ensure t
+  :mode (("\\.awk\\'" . awk-ts-mode))
+)
+
+(use-package perl-mode
+  :ensure t
+  :mode ("\\.pl\\'" . perl-mode)
 )
 
 ;;;; * markdown-mode
