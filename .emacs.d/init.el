@@ -1640,16 +1640,106 @@ folder, otherwise delete a word"
 ;  (org-mode . smartparens-mode)
 ;)
 
+;;;; * treesitter
+
+; Once you’ve found the languages you like, you’ll need to install them. Call the command M-x treesit-install-language-grammar for each language and that’s usually all there is to it.
+;
+; Or evaluate this elisp form to do so:
+; (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+
+(use-package treesit
+  :defer f
+  :init
+  ;; Use treesit-based major-modes where grammars are available.
+  (add-to-list 'major-mode-remap-alist '(bash-mode   . bash-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(c-mode      . c-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(cpp-mode    . cpp-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(css-mode    . css-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(go-mode     . go-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(gomod-mode  . gomod-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(html-mode   . html-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(javascript-mode . js-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(json-mode   . json-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(lua-mode    . lua-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(make-mode   . make-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(markdown-mode . markdown-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(ruby-mode   . ruby-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(rust-mode   . rust-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(toml-mode   . toml-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(tsx-mode   . tsx-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(typst-mode  . typst-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(yaml-mode   . yaml-ts-mode))
+  ;; Specify which tree-sitter language grammar defintions to use.
+  (setq treesit-language-source-alist
+     ;; Note the version number/tags updated 3/18/25
+     '(
+       (bash . ("https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3"))
+       (c . ("https://github.com/tree-sitter/tree-sitter-c" "v0.23.5"))
+       (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp" "v0.23.4"))
+       (css . ("https://github.com/tree-sitter/tree-sitter-css" "v0.23.2"))
+       (go . ("https://github.com/tree-sitter/tree-sitter-go" "v0.23.4"))
+       (gomod . ("https://github.com/camdencheek/tree-sitter-go-mod" "v1.1.0"))
+       (html . ("https://github.com/tree-sitter/tree-sitter-html" "v0.23.2"))
+       (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1" "src"))
+       (json . ("https://github.com/tree-sitter/tree-sitter-json" "v0.24.8"))
+       (lua . ("https://github.com/MunifTanjim/tree-sitter-lua" "v0.2.0"))
+       (make . ("https://github.com/alemuller/tree-sitter-make")) ; no tag
+       (markdown . ("https://github.com/ikatyang/tree-sitter-markdown" "v0.7.1"))
+       (python . ("https://github.com/tree-sitter/tree-sitter-python" "v0.23.6"))
+       (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
+       (rust . ("https://github.com/tree-sitter/tree-sitter-rust" "v0.21.2"))
+       (toml . ("https://github.com/tree-sitter/tree-sitter-toml" "v0.5.1"))
+       (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src"))
+       (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src"))
+       (typst . ("https://github.com/uben0/tree-sitter-typst" "v0.11.0" "src"))
+       (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0"))))
+  :config
+  ;; Install language grammars if not already present.
+  (let ((languages (mapcar 'car treesit-language-source-alist)))
+    (dolist (lang languages)
+      (unless (treesit-language-available-p lang)
+        (display-warning 'init.el (format "Installing language grammar for `%s' ..." lang) :warning)
+        (sleep-for 0.5)
+        (treesit-install-language-grammar lang)
+        (message "`%s' treesit language grammar installed." lang)))))
+
+;;;; * typst-mode
+(use-package typst-ts-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.typ" . typst-ts-mode))
+  :custom
+  (typst-ts-mode-watch-options "--open")
+  (typst-ts-mode-enable-raw-blocks-highlight t)
+  (typst-ts-mode-highlight-raw-blocks-at-startup t))
+
+;; go example
+;; https://github.com/mpenet/emax/blob/master/init.el
+;(use-package go-ts-mode
+;  :hook
+;  (go-ts-mode . go-format-on-save-mode)
+;  :init
+;  (add-to-list 'treesit-language-source-alist '(go "https://github.com/tree-sitter/tree-sitter-go"))
+;  (add-to-list 'treesit-language-source-alist '(gomod "https://github.com/camdencheek/tree-sitter-go-mod"))
+;  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
+;  (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
+;  :config
+;  (reformatter-define go-format
+;    :program "goimports"
+;    :args '("/dev/stdin")))
+
 ;;;; * sh-script
 ;; shell-script-mode is a major mode for shell script editing.
 ; https://www.emacswiki.org/emacs/ShMode
-(use-package sh-script
-  :mode (("zshecl" . sh-mode)
-         ("\\.zsh\\'" . sh-mode)
-         ("\\.sh\\'" . sh-mode))
+;; zsh currently uses bash-ts-mode
+(use-package bash-ts-mode
+  :mode (("zshecl"    . bash-ts-mode)
+         ("\\.zsh\\'" . bash-ts-mode)
+         ("\\.sh\\'"  . bash-ts-mode))
   :custom
-  ;; zsh
-  (system-uses-terminfo nil))
+  (system-uses-terminfo nil)) ;; zsh
 
 (use-package executable
   :hook
@@ -1666,11 +1756,11 @@ folder, otherwise delete a word"
 ;;;; * markdown-mode
 ;; # Install pandoc for preview
 ;; $ brew install pandoc
-(use-package markdown-mode
+(use-package markdown-ts-mode
   :ensure t
   :mode ( ;("README\\.md'"   . gfm-mode) ;; github markdown mode?
-         ("\\.md\\'"       . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
+         ("\\.md\\'"       . markdown-ts-mode)
+         ("\\.markdown\\'" . markdown-ts-mode))
   :init (setq markdown-command "pandoc")
 )
 
@@ -1683,33 +1773,35 @@ folder, otherwise delete a word"
 ;; toml-mode https://github.com/dryman/toml-mode.el
 ;;
 ;; TODO: enable lsp for each type
-(use-package json-mode
+(use-package json-ts-mode
   :ensure t
   :defer t
-  :mode ("\\.json\\'" . json-mode)
-)
-
-(use-package yaml-mode
-  :ensure t
-  :defer t
-  :mode (("\\.yml\\'"  . yaml-mode)
-         ("\\.yaml\\'" . yaml-mode))
+  :mode (("\\.json\\" . json-ts-mode))
   :config
-  (add-hook 'yaml-mode-hook
+  (setq indent-tabs-mode nil
+        js-indent-level 4))
+
+(use-package yaml-ts-mode
+  :ensure t
+  :defer t
+  :mode (("\\.yml\\'"  . yaml-ts-mode)
+         ("\\.yaml\\'" . yaml-ts-mode))
+  :config
+  (add-hook 'yaml-ts-mode-hook
       #'(lambda ()
-        (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+        (define-key yaml-ts-mode-map "\C-m" 'newline-and-indent)))
 )
 
-(use-package toml-mode
+(use-package toml-ts-mode
   :ensure t
   :defer t
-  :mode ("\\.toml\\'" . toml-mode)
+  :mode ("\\.toml\\'" . toml-ts-mode)
 )
 
-(use-package lua-mode
+(use-package lua-ts-mode
   :ensure t
   :defer t
-  :mode ("\\.lua\\'"  . lua-mode)
+  :mode ("\\.lua\\'"  . lua-ts-mode)
 )
 
 ;;;; * terraform and hcl
