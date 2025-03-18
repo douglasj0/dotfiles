@@ -1776,7 +1776,7 @@ folder, otherwise delete a word"
 (use-package json-ts-mode
   :ensure t
   :defer t
-  :mode (("\\.json\\" . json-ts-mode))
+  :mode (("\\.json\\'" . json-ts-mode))
   :config
   (setq indent-tabs-mode nil
         js-indent-level 4))
