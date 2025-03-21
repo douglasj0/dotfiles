@@ -1667,7 +1667,7 @@ folder, otherwise delete a word"
        ;(javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1" "src"))
        (json . ("https://github.com/tree-sitter/tree-sitter-json" "v0.24.8"))
        (lua . ("https://github.com/MunifTanjim/tree-sitter-lua" "v0.2.0"))
-       (make . ("https://github.com/alemuller/tree-sitter-make" "master")) ; no tag
+       ;(make . ("https://github.com/alemuller/tree-sitter-make" "master")) ; no tag
        (markdown . ("https://github.com/ikatyang/tree-sitter-markdown" "v0.7.1"))
        (python . ("https://github.com/tree-sitter/tree-sitter-python" "v0.23.6"))
        ;(regex . ("https://github.com/tree-sitter/tree-sitter-regex" "v0.24.3"))
@@ -1698,7 +1698,7 @@ folder, otherwise delete a word"
      ;(javascript-mode . js-ts-mode)
      (json-mode   . json-ts-mode)
      (lua-mode    . lua-ts-mode)
-     (make-mode   . make-ts-mode)
+     ;(make-mode   . make-ts-mode)
      (markdown-mode . markdown-ts-mode)
      (python-mode . python-ts-mode)
      ;(regex-mode  . regex-ts-mode)

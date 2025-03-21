@@ -1,7 +1,5 @@
 set syntax=on
-syntax enable
 set hlsearch
-colorscheme elflord
 set tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab term=builtin_ansi
 set nocompatible
 set number
