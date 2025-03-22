@@ -871,22 +871,19 @@ Default vertically, unless HORIZONTALLY is non-nil."
   ;;end tell
 )
 
-
-;A GNU Emacs library to ensure environment variables inside Emacs look the same as in the user's shell
-;https://github.com/purcell/exec-path-from-shell
-;Needed to find aspell and probably others
+;;Ensure environment variables inside Emacs look the same as in the user's shell
+;;https://github.com/purcell/exec-path-from-shell
 (use-package exec-path-from-shell
   :ensure t
-  :defer t
-  ;:if (memq window-system '(mac ns x))
-  :if (memq (window-system) '(mac ns))
+  ;:if (memq (window-system) '(mac ns x)) ; load on macOS and X
+  :if (display-graphic-p) ; load on graphical emacs session
   :config
-  ;(setq exec-path-from-shell-arguments nil) ; was '("-l"), breaks aspell?
+  (setq exec-path-from-shell-arguments nil) ; non-interactive; was '("-l"), breaks aspell?
+  ;(setq exec-path-from-shell-check-startup-files nil) ; disable env location warning
   ;(setq exec-path-from-shell-debug 1)	; enable debugging
   ;(setq exec-path-from-shell--debug 1) ; print msg if debug enabled
-  ;(setq exec-path-from-shell-variables '("PATH" "MANPATH")) ; or use dolist instead
-  (dolist (var '("PATH"
-                 "MANPATH"))
+  ;
+  (dolist (var '("PATH" "MANPATH" "LANG" "SHELL"))
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
@@ -910,6 +907,23 @@ Default vertically, unless HORIZONTALLY is non-nil."
   ;; List fonts with M-x descript-font
   ;(set-default-font "Monospace-10")
 )
+
+;; Testing on Linux too
+;;Ensure environment variables inside Emacs look the same as in the user's shell
+;;https://github.com/purcell/exec-path-from-shell
+(use-package exec-path-from-shell
+  :ensure t
+  ;:if (memq (window-system) '(mac ns x)) ; load on macOS and X
+  :if (display-graphic-p) ; load on graphical emacs session
+  :config
+  (setq exec-path-from-shell-arguments nil) ; non-interactive; was '("-l"), breaks aspell?
+  ;(setq exec-path-from-shell-check-startup-files nil) ; disable env location warning
+  ;(setq exec-path-from-shell-debug 1)	; enable debugging
+  ;(setq exec-path-from-shell--debug 1) ; print msg if debug enabled
+  ;
+  (dolist (var '("PATH" "MANPATH" "LANG" "SHELL"))
+    (add-to-list 'exec-path-from-shell-variables var))
+  (exec-path-from-shell-initialize))
 
 ;;;; * --- Completion ---
 ;;(company +childframe) ; the ultimate code completion backend
@@ -2276,6 +2290,42 @@ SCHEDULED: %^t
 
 ;; Additionally, consult-notes could be useful
 ;; https://github.com/mclear-tools/consult-notes
+
+;;;; * howm wiki
+
+;; notes from system crafters video
+;; https://www.youtube.com/watch?v=eSmTN5jynvg
+;; https://systemcrafters.net/live-streams/december-20-2024/
+;;
+;; Homepage: https://kaorahi.github.io/howm/
+;; Unofficial manual: https://github.com/Emacs101/howm-manual/blob/main/Howm_tutorial_eng.pdf
+
+(use-package howm
+  :ensure t
+  :init
+  ;(require 'howm-org)
+  ;; https://news.ycombinator.com/item?id=41438107
+  ;; Use ripgrep for fast searching.
+  (setq howm-view-use-grep t)
+  (setq howm-view-grep-command "rg") ; picked up from exec-path-from-shell
+  (setq howm-view-grep-option "-nH --no-heading --color never")
+  (setq howm-view-grep-extended-option nil)
+  (setq howm-view-grep-fixed-option "-F")
+  (setq howm-view-grep-expr-option nil)
+  (setq howm-view-grep-file-stdin-option nil)
+  ;;
+  (setq howm-directory "~/Howm")
+  (setq howm-home-directory howm-directory)
+  ;; What format to use for the files
+  (setq howm-file-name-format "%Y-%m-%d-%H%M%S.org")
+  (setq howm-view-title-header "*")
+  (setq howm-dtime-format "<%Y-%m-%d %a %H:%M>")
+  ;; Avoid conflicts with Org-mode by changing Howm's prefix "C-c ,"
+  ;; This binding is only needed if you want to use Howm in Org files
+  (setq howm-prefix (kbd "C-c ;"))
+  :bind*
+  ;; Conveniently open the Howm menu with "C-c ; ;".
+  ("C-c ; ;" . howm-menu))
 
 ;;;; * --- Testing ---
 
