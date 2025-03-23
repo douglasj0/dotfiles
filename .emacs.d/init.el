@@ -869,23 +869,43 @@ Default vertically, unless HORIZONTALLY is non-nil."
   ;;		get dark mode
   ;;	  end tell
   ;;end tell
+
+
+;; Restrict exec-path-from-shell to macOS
+;; https://www.reddit.com/r/emacs/comments/f8xwau/hack_replace_execpathfromshell/
+(cond ((display-graphic-p)
+       ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
+       ;; environment, so envvars will be wrong. That includes the PATH
+       ;; Emacs picks up. `exec-path-from-shell' fixes this. This is slow
+       ;; and benefits greatly from compilation.
+       ;; orig vars: "PATH" "MANPATH" "GOPATH" "GOROOT" "PYTHONPATH" "LC_TYPE" "LC_ALL" "LANG" "SSH_AGENT_PID" "SSH_AUTH_SOCK" "SHELL" "JAVA_HOME"
+       (setq exec-path
+           (or (eval-when-compile
+               (when (require 'exec-path-from-shell nil t)
+                   (setq exec-path-from-shell-check-startup-files nil)
+                   (nconc exec-path-from-shell-variables '("PATH" "MANPATH" "LANG" "SHELL"))
+                   (exec-path-from-shell-initialize)
+                   exec-path))
+               exec-path))))
 )
 
 ;;Ensure environment variables inside Emacs look the same as in the user's shell
 ;;https://github.com/purcell/exec-path-from-shell
-(use-package exec-path-from-shell
-  :ensure t
-  ;:if (memq (window-system) '(mac ns x)) ; load on macOS and X
-  :if (display-graphic-p) ; load on graphical emacs session
-  :config
-  (setq exec-path-from-shell-arguments nil) ; non-interactive; was '("-l"), breaks aspell?
-  ;(setq exec-path-from-shell-check-startup-files nil) ; disable env location warning
-  ;(setq exec-path-from-shell-debug 1)	; enable debugging
-  ;(setq exec-path-from-shell--debug 1) ; print msg if debug enabled
-  ;
-  (dolist (var '("PATH" "MANPATH" "LANG" "SHELL"))
-    (add-to-list 'exec-path-from-shell-variables var))
-  (exec-path-from-shell-initialize))
+;;NOTE: this isn't in macos use-package, so checked on linux too
+;(use-package exec-path-from-shell
+;  :ensure t
+;  :if (memq (window-system) '(mac ns)) ; load on macOS
+;  ;:if (memq (window-system) '(mac ns x)) ; load on macOS and X
+;  ;:if (display-graphic-p) ; load on any graphical emacs session
+;  :config
+;  (setq exec-path-from-shell-arguments nil) ; non-interactive; was '("-l"), breaks aspell?
+;  ;(setq exec-path-from-shell-check-startup-files nil) ; disable env location warning
+;  ;(setq exec-path-from-shell-debug 1)	; enable debugging
+;  ;(setq exec-path-from-shell--debug 1) ; print msg if debug enabled
+;  ;
+;  (dolist (var '("PATH" "MANPATH" "LANG" "SHELL"))
+;    (add-to-list 'exec-path-from-shell-variables var))
+;  (exec-path-from-shell-initialize))
 
 ;;;; * linux
 ;;; === Linux specific settings
@@ -907,23 +927,6 @@ Default vertically, unless HORIZONTALLY is non-nil."
   ;; List fonts with M-x descript-font
   ;(set-default-font "Monospace-10")
 )
-
-;; Testing on Linux too
-;;Ensure environment variables inside Emacs look the same as in the user's shell
-;;https://github.com/purcell/exec-path-from-shell
-(use-package exec-path-from-shell
-  :ensure t
-  ;:if (memq (window-system) '(mac ns x)) ; load on macOS and X
-  :if (display-graphic-p) ; load on graphical emacs session
-  :config
-  (setq exec-path-from-shell-arguments nil) ; non-interactive; was '("-l"), breaks aspell?
-  ;(setq exec-path-from-shell-check-startup-files nil) ; disable env location warning
-  ;(setq exec-path-from-shell-debug 1)	; enable debugging
-  ;(setq exec-path-from-shell--debug 1) ; print msg if debug enabled
-  ;
-  (dolist (var '("PATH" "MANPATH" "LANG" "SHELL"))
-    (add-to-list 'exec-path-from-shell-variables var))
-  (exec-path-from-shell-initialize))
 
 ;;;; * --- Completion ---
 ;;(company +childframe) ; the ultimate code completion backend
