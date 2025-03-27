@@ -717,6 +717,7 @@ Default vertically, unless HORIZONTALLY is non-nil."
 (use-package dired-x
   :bind ("C-x C-j"   . dired-jump)
 	("C-x 4 C-j" . dired-jump-other-window)
+        ("s->" . dired-omit-mode) ;; toggle using Option-Shift-.  same as macOS Finder
   :config
      ;; on macOS, ls doesn't support --dired option linux does
      (when (string= system-type "darwin")
