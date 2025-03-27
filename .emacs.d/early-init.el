@@ -1,4 +1,4 @@
-;;; earlyr- init.el -*- lexical-binding: t; -*-
+;;; early init.el -*- lexical-binding: t; -*-
 ; eval: (local-set-key (kbd "C-c i") #'consult-outline); outline-regexp: ";;;";
 
 ; Author: Douglas Jackson

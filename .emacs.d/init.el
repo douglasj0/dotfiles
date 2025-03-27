@@ -1,5 +1,19 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
+;;;; TODO
+; - spelling / grammer / syntax
+;   - flyspell / flymake
+;   - tried jinx spellcheck, but it hung emacs
+; - lang:  markdown rust ansible
+; - doom MacOS fixes
+; - git-gutter vs diff-hl/vc-gutter
+; - fix/revisit venv setup
+; - use-package defer is implied in:
+;   :commands, :bind, :bind*, :bind-keymap, :bind-keymap*, :mode, or :interpreter
+; - look into tangling the org file to init.el
+;   https://www.reddit.com/r/emacs/comments/372nxd/how_to_move_init_to_orgbabel/
+; - Test combining sparse configs under use-package with use package emacs
+
 ;;;; * --- Init ---
 ;;;; * init
 ;; The init.el portion of the init.el/config.org from before
@@ -676,9 +690,64 @@ Default vertically, unless HORIZONTALLY is non-nil."
                           user-emacs-directory))
 )
 
-;;;; * dired
+;;;; * dired / dired+
 ;; Enable dwim - Dired tries to guess a default target directory.
 (setq dired-dwim-target t)
+
+;; ls-lisp
+;; OSX/BSD ls doesn't sort directories first, ls-lisp can
+(use-package ls-lisp
+  :custom
+  ;(ls-lisp-emulation 'MacOS)
+  (ls-lisp-ignore-case t)
+  (ls-lisp-verbosity nil)
+  (ls-lisp-dirs-first t)
+  (ls-lisp-use-insert-directory-program nil)
+)
+
+;; dired+
+;; https://www.gnu.org/software/emacs/manual/dired-x.html
+;; https://www.emacswiki.org/emacs/DiredExtra#Dired_X
+;; http://xahlee.info/emacs/emacs/emacs_diredplus_mode.html
+;; provides extra functionality for Dired Mode.
+;; Hide file detail toggle `(`
+;; Make clicking on files in Dired buffers open in the current window:
+;; (This works thanks to mouse-1-click-follows-link.)
+;(define-key dired-mode-map [mouse-2] #'dired-mouse-find-file)
+(use-package dired-x
+  :bind ("C-x C-j"   . dired-jump)
+	("C-x 4 C-j" . dired-jump-other-window)
+  :config
+     ;; on macOS, ls doesn't support --dired option linux does
+     (when (string= system-type "darwin")
+       (setq dired-use-ls-dired nil))
+     (setq-default dired-omit-files-p t)
+     (setq dired-listing-switches "-alhv")
+     ;(setq dired-use-ls-dired nil)
+     ;(setq dired-listing-switches "-agho --group-directories-first") ; errors
+     ;(define-key dired-mode-map (kbd "/") #'dired-narrow-fuzzy) ; requires dired-hacks
+     (define-key dired-mode-map (kbd "e") #'read-only-mode)
+
+     ;; omit-mode
+     (setq dired-omit-files "^\\.\\|^#.#$\\|.~$") ; omit dot and backup files
+     (define-key dired-mode-map (kbd "h") #'dired-omit-mode) ; overriding h:describe-mode
+     (add-hook 'dired-mode-hook (lambda () (dired-omit-mode 1))) ; start in omit-mode
+
+     ;; Auto-refresh dired on file change
+     (add-hook 'dired-mode-hook 'auto-revert-mode)
+
+     ;; disable line wrapping in dired mode
+     (add-hook 'dired-mode-hook (lambda () (setq truncate-lines t)))
+
+     ;; enable side-by-side dired buffer targets
+     ;; Split your window, split-window-vertically & go to another dired directory.
+     ;; When you will press C to copy, the other dir in the split pane will be
+     ;; default destination.
+     (setq dired-dwim-target t) ;; suggest copying/moving to other dired buffer in split view
+
+     ;; Dired functions (find-alternate 'a' reuses dired buffer)
+     (put 'dired-find-alternate-file 'disabled nil)
+)
 
 ;;;; * helpful
 ;; alternative to the built-in Emacs help provideing more contextual information.
@@ -1419,26 +1488,6 @@ folder, otherwise delete a word"
   (nerd-icons-font-family "Symbols Nerd Font Mono")
 )
 
-;;;; * doom-modeline
-;; A fancy and fast mode-line inspired by minimalism design.
-;; https://seagle0128.github.io/doom-modeline/
-;; NOTE: Run (all-the-icons-install-fonts) one time after installing
-;;; doom modline
-
-;(use-package doom-modeline
-;  :ensure t
-;  ;:defer t
-;  :hook (after-init . doom-modeline-mode) ;; removed for envrc hook
-;  :init (doom-modeline-mode 1)
-;  :config
-;  ;; Fix? for Height below 25 not working anymore #187
-;  ;; https://github.com/seagle0128/doom-modeline/issues/187
-;  (defun my-doom-modeline--font-height ()
-;    "Calculate the actual char height of the mode-line."
-;    (+ (frame-char-height) 1))
-;  (advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
-;)
-
 ;;;; * --- Version Control ---
 ;; :tools - from doom emacs
 ;; ansible
@@ -1888,7 +1937,146 @@ folder, otherwise delete a word"
     )
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
 
+;;;; * --- Programming ---
+;;;; * direnv and envrc
+
+;; envrc.el - buffer-local direnv integration for Emacs
+;; https://github.com/purcell/envrc
+;; The hook has to be loaded last to prepend itself
+;; The global mode will only have an effect if direnv is installed and available in the default Emacs exec-path.
+;;
+;; Install direnv
+;; macos: brew install direnv
+
+;(use-package envrc
+;  :ensure t
+;  :hook (after-init . envrc-global-mode)
+;  :bind ("C-c e" . 'envrc-command-map))
+
+;;;; * multiple-cursors-hydra
+
+;; multiple-cursors - https://github.com/magnars/multiple-cursors.el
+;; Multiple Cursors hydra
+;; https://github.com/abo-abo/hydra/wiki/multiple-cursors
+
+;;; make sure we've installed hydra before trying to use it
+;(use-package hydra
+;  :ensure t)
+
+;;; multiple cursors
+;(use-package multiple-cursors
+;  :ensure t
+;  :defer t)
+
+;; mc/num-cursors is not autoloaded
+;;(require 'multiple-cursors)
+
+;(global-set-key
+;     (kbd "C-x r a")
+;     (defhydra hydra-multiple-cursors (:hint nil)
+;"
+;     ^Up^            ^Down^        ^Miscellaneous^
+;----------------------------------------------
+;[_p_]     Previous  [_n_]     Next      [_l_] Edit lines
+;[_P_]     Skip      [_N_]     Skip      [_a_] Mark all
+;[_M-p_]   Unmark    [_M-n_]   Unmark
+;[_C-p_]   Prev word [_C-n_]   Next word [_q_] Quit
+;"
+;  ("l" mc/edit-lines "lines" :exit t)
+;  ("a" mc/mark-all-like-this :exit t)
+;  ("n" mc/mark-next-like-this)
+;  ("N" mc/skip-to-next-like-this)
+;  ("M-n" mc/unmark-next-like-this)
+;  ("C-p" mc/mark-prev-word-like-this)
+;  ("C-n" mc/mark-next-word-like-this)
+;  ("p" mc/mark-previous-like-this)
+;  ("P" mc/skip-to-previous-like-this)
+;  ("M-p" mc/unmark-previous-like-this)
+;  ("q" nil)
+;  ))
+
 ;;;; * --- Terminals ---
+;; eshell            ; the elisp shell that works everywhere
+;; vterm             ; the best terminal emulation in Emacs
+
+;;;; * keymaps terminal (C-c t)
+;; Based on projectile's
+
+(defvar term-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "t") #'eat)
+    (define-key map (kbd "m") #'term)
+    (define-key map (kbd "a") #'ansi-term)
+    (define-key map (kbd "s") #'shell)
+    (define-key map (kbd "e") #'eshell)
+    (define-key map (kbd "z") #'eshell-toggle)
+    map)
+  "Keymap for org-mode commands after `org-keymap-prefix'.")
+(fset 'term-command-map term-command-map)
+(global-set-key (kbd "C-c t") '("terminals" . term-command-map))
+
+;;;; * shell
+(setq explicit-shell-file-name "zsh")
+(setq shell-file-name "zsh")
+(setq explicit-zsh-args '("--login" "--interactive"))
+(defun zsh-shell-mode-setup ()
+  (setq-local comint-process-echoes t))
+(add-hook 'shell-mode-hook #'zsh-shell-mode-setup)
+
+;;;; * eshell
+
+;; Guide to mastering eshell
+;; https://www.masteringemacs.org/article/complete-guide-mastering-eshell
+
+;; Little quality of life improvement if you work with multiple eshell buffers:
+(defun eshell-buffer-name ()
+  (rename-buffer (concat "*eshell*<" (eshell/pwd) ">") t))
+(add-hook 'eshell-directory-change-hook #'eshell-buffer-name)
+(add-hook 'eshell-prompt-load-hook #'eshell-buffer-name)
+
+(defun efs/configure-eshell ()
+  ;; Save command history when commands are entered
+  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+  ;; Truncate buffer for performance
+  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+  (setq eshell-history-size         1000
+        eshell-buffer-maximum-lines 1000
+        eshell-hist-ignoredups t
+        eshell-scroll-to-bottom-on-input t))
+
+(use-package eshell-git-prompt
+  :ensure t
+  :defer t
+  :config
+  (eshell-git-prompt-use-theme 'git-radar)
+)
+
+(use-package eshell
+  :hook (eshell-first-time-mode . efs/configure-eshell)
+  :config
+  (with-eval-after-load 'esh-opt
+    (setq eshell-destroy-buffer-when-process-dies t)
+    (setq eshell-visual-commands '("top" "htop" "zsh" "vi" "vim")))
+)
+
+;; eshell-toggle
+;; https://github.com/4DA/eshell-toggle
+(use-package eshell-toggle
+  :ensure t
+  :custom
+  (eshell-toggle-size-fraction 3)
+  (eshell-toggle-find-project-root-package t) ;; for projectile
+  ;;(eshell-toggle-find-project-root-package 'projectile) ;; for projectile
+  ;; (eshell-toggle-use-projectile-root 'project) ;; for in-built project.el
+  (eshell-toggle-run-command nil)
+  ;(eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
+  (eshell-toggle-init-function #'eshell-toggle-init-eshell)
+  ;:bind
+  ;("s-`" . eshell-toggle))
+)
+
 ;;;; * eat
 ;; eat stands for "Emulate A Terminal"
 ;; https://codeberg.org/akib/emacs-eat
@@ -2331,13 +2519,13 @@ SCHEDULED: %^t
   ("C-c ; ;" . howm-menu))
 
 ;;;; * --- Testing ---
-
-;;; Major-mode for Robot Framework files
+;;;; * robot-mode
+;;  Major-mode for Robot Framework files
 ;; https://github.com/kopoli/robot-mode
 ;(use-package robot-mode
 ;  :ensure t)
 
-;;; aws mode
+;;;; * aws mode
 ;; https://github.com/snowiow/aws.el
 ;(use-package aws-mode
 ;  :ensure t
@@ -2352,14 +2540,16 @@ SCHEDULED: %^t
 ;  (aws-output "json") ;; optional: yaml, json, text (default: yaml)
 ;  (aws-organizations-account "root")) ;; profile of organizations account. organizations commands are automatically executed against this account, when specified
 
-;;; kubel
+;;;; * kubel
+;; Emacs extension for controlling Kubernetes with limited permissions
 ;; https://github.com/abrochard/kubel
 ;(use-package kubel
 ;  :ensure t
 ;  :after (vterm)
 ;  :config (kubel-vterm-setup))
 
-;;; Aidermacs: AI Pair Programming in Emacs (297 stars)
+;;;; * AI pair programming
+;; Aidermacs: AI Pair Programming in Emacs (297 stars)
 ;; https://github.com/MatthewZMD/aidermacs
 ;(use-package aidermacs
 ;  :ensure t
@@ -2386,6 +2576,70 @@ SCHEDULED: %^t
 ;  :config
 ;  ;; show ellama context in header line in all buffers
 ;  (ellama-context-header-line-global-mode +1))
+
+;;;; * dired-sidebar
+
+;; https://github.com/jojojames/dired-sidebar
+;; replacement for treemacs?
+
+;(use-package dired-sidebar
+;  :ensure t
+;  :commands (dired-sidebar-toggle-sidebar)
+;  :bind (("C-c d" . dired-sidebar-toggle-sidebar)) ; was C-x C-n
+;  :init
+;  (add-hook 'dired-sidebar-mode-hook
+;            (lambda ()
+;              (unless (file-remote-p default-directory)
+;                (auto-revert-mode))))
+;  :config
+;  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+;  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+;
+;  (setq dired-sidebar-subtree-line-prefix "__")
+;  ;(setq dired-sidebar-theme 'vscode)
+;  (setq dired-sidebar-use-term-integration t)
+;  ;(setq dired-sidebar-use-custom-font t)
+;)
+
+;;;; * auctex
+
+;; Useful video
+;; https://bwestbro.com/blogs/latex.html
+;; https://www.youtube.com/watch?v=4XJ4IF9BUyQ
+
+;(use-package auctex
+;  :ensure t
+;  :defer t
+;  :hook ((LaTeX-mode . flyspell-mode)
+;         (LaTeX-mode . display-fill-column-indicator-mode)
+;         (LaTeX-mode . hs-minor-mode)
+;         (LaTeX-mode .
+;                     (lambda ()
+;                       (push (list 'output-pdf "Zathura")
+;                             TeX-view-program-selection)
+;                       (display-line-numbers-mode)
+;                       (TeX-add-symbols '("includegraphics" t))
+;                       (LaTeX-add-environments
+;                        '("frame" LaTeX-env-frame))
+;                       (advice-add #'TeX-completing-read-multiple :around
+;                                   #'vertico--advice)
+;                       (advice-add #'TeX-command-master :before
+;                                   (lambda (^rest r) (save-buffer))))))
+;  :bind (:map LaTeX-mode-map
+;              ("C-c '" . brw/edit-table-remote))
+;  :config
+;  (setq-default TeX-master nil)
+;  (set-face-attribute 'font-latex-string-face nil
+;        	      :foreground "Brown")
+;  (set-face-attribute 'font-latex-sedate-face nil
+;        	      :foreground "rosy brown")
+;
+;  (defun my/bibtex-generate-autokey (&rest r)
+;     (let* ((names (bibtex-autokey-get-names))
+;            (year  (bibtex-autokey-get-year))
+;            (title (bibtex-autokey-get-title)))
+;       (capitalize (format "%s%s" names year))))
+;  (advice-add #'bibtex-geneate-autokey :around #'my/bibtex-generate-autokey))
 
 ;;;; * --- End ---
 ;; https://www.reddit.com/r/emacs/comments/a6tu8y/outlineminormode_for_emacs_maybe_useful/
