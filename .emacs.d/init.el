@@ -2567,7 +2567,8 @@ SCHEDULED: %^t
   ;; make gemini available to select
   ;; :key can be a function that returns the API key.
   ;(gptel-make-gemini "Gemini" :key <key>" :stream t)
-  ;(gptel-make-gemini "Gemini" :key (gptel-api-key-from-auth-source "generativelanguage.googleapis.com") :stream t)
+  ;(setq auth-sources '("~/.authinfo")) ;; already set
+  (gptel-make-gemini "Gemini" :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com") :stream t)
   ;; Set ollama as default
   (setq
    gptel-model 'phi3.5:latest ; Pick your default model
