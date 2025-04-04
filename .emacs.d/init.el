@@ -820,42 +820,28 @@ Default vertically, unless HORIZONTALLY is non-nil."
     (text-scale-set 0))
   (bind-key "M-g 0" 'my/text-scale-reset)
 
-  ;;; set font size to 15, overriding default 12
+  ;;; Font:  set font size to 15, overriding default 12
   ;; M-x describe-font:
   ;; Monaco:pixelsize=12:weight=normal:slant=normal:width=normal:spacing=100:scalable=true
   ;; M-: (face-attribute 'default :font)
   ;; #<font-object "-*-Monaco-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1">
   ;;(set-face-attribute 'default (selected-frame) :height 150)
   ;;(set-face-attribute 'default nil :height 150)
-  (set-frame-font "Monaco 15" nil t)
-  ;;(set-frame-font "Menlo 15" nil t) ; fit more lines per frame
-
-  ;; FantasqueSansMono-Normal
-  ;; https://github.com/belluzj/fantasque-sans
-  ;(set-frame-font "Fantasque Sans Mono 18" nil t)
-
-  ;;; this works the same as set-frame-font above?
-  ;;(set-face-attribute 'default nil
-  ;;  :font "Monaco"
-  ;;  :height 150
-  ;;  :weight 'regular)
+  ;;(set-frame-font "Monaco 15" nil t)
+  (set-face-attribute 'default nil :font "Monaco" :height 150 :weight 'regular)
   ;;(set-face-attribute 'italic nil :slant 'italic :underline nil)
-
-  ;; Testing jetbrains mono font, not sure I like it
-  ;; https://www.jetbrains.com/lp/mono/
-  ;; "JetBrains Mono-13:spacing=100"
-  ;;(set-face-attribute 'default nil :font "JetBrains Mono-15" :height 150)
-  ;(set-frame-font "JetBrains Mono 15" nil t)
+  ;;(set-frame-font "Menlo 15" nil t) ; fit more lines per frame
+  ;;(set-face-attribute 'default nil :font "Menlo" :height 150 :weight 'regular)
 
   ;; Osx-trash
   ;; Make Emacs' delete-by-moving-to-trash do what you expect it to do on OS X.
-  ;; https://github.com/lunaryorn/osx-trash.el
-  ;(use-package osx-trash
-  ;   :ensure t
-  ;   :config
-  ;   (setq delete-by-moving-to-trash t)
-  ;   (osx-trash-setup)
-  ;)
+  ;; https://github.com/emacsorphanage/osx-trash
+  (use-package osx-trash
+     :ensure t
+     :config
+     (setq delete-by-moving-to-trash t)
+     (osx-trash-setup)
+  )
 
   ;; Disable railwaycat's tab bar
   ;; https://github.com/railwaycat/homebrew-emacsmacport/issues/123
@@ -1419,18 +1405,6 @@ folder, otherwise delete a word"
   (treemacs-mode . treemacs-project-follow-mode))
 
 ;;;; * themes
-;; disable all themes
-;; Disable all themes before loading a theme
-;;; disable themes
-
-(defadvice load-theme (before disable-themes-first activate)
-  (fk/disable-all-themes))
-
-(defun fk/disable-all-themes ()
-  "Disable all active themes."
-  (interactive)
-  (dolist (theme custom-enabled-themes)
-    (disable-theme theme)))
 
 ;;; dracula-theme
 ;; dracula-theme with telephone line status bar
@@ -1455,17 +1429,17 @@ folder, otherwise delete a word"
 ;; https://github.com/catppuccin/emacs
 (use-package catppuccin-theme
   :ensure t
+  :if (display-graphic-p)
   :config
-  ;; Don't change the font size for some headings and titles (default t)
-  ;(setq dracula-enlarge-headings nil)
-  (if (display-graphic-p)
-      (load-theme 'catppuccin :no-confirm) ; Emacs in own window
-    (load-theme 'wheatgrass :no-confirm)   ; Emacs in tty
-  )
+  (load-theme 'catppuccin :no-confirm) ; Emacs in own window
   ;; change flavor, default is mocha
   ;(setq catppuccin-flavor 'frappe) ;; frappe / latte / macchiato / mocha
   ;(catppuccin-reload)
 )
+
+;; fall back to wheatgrass theme in terminal
+(when (not (display-graphic-p))
+   (load-theme 'wheatgrass :no-confirm))  ; Emacs in tty
 
 ;;;; * icons and glyphs
 ;; All-the-icons
