@@ -144,7 +144,7 @@
 ; uncompressing org-loaddefs.el.gz...
 ; uncompressing org-loaddefs.el.gz...done
 ; Compilation finished.
-(setq native-comp-jit-compilation-deny-list '("org-loaddefs"))
+(setq native-comp-jit-compilation-deny-list '("org-loaddefs" "cl-loaddefs"))
 
 ;; Fake the footer to avoid warnings
 (provide 'early-init)

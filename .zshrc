@@ -240,10 +240,18 @@ Darwin)  # Darwin Environment
     # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
     alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
     alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient" # fix magit?
-    EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"
-    alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs"  # start a windowed frame
-    alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
-    alias  ec="emacsclient -s $EMACS_SOCKET -n -a emacs"     # do not start a new frame
+    #EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"  # -s $EMACS_SOCKET
+    # -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
+    alias ecw="emacsclient -n -c -a emacs"  # start a windowed frame
+    alias ect="emacsclient -t -a emacs -nw" # start a terminal frame
+    alias  ec="emacsclient -n -a emacs"     # do not start a new frame
+    # Specialized emacs buffers
+    alias ecb="emacsclient -c -a '' --eval '(ibuffer)'"
+    alias ecd="emacsclient -c -a '' --eval '(dired nil)'"
+    alias ecm="emacsclient -c -a '' --eval '(mu4e)'"
+    alias ecn="emacsclient -c -a '' --eval '(elfeed)'"
+    alias ece="emacsclient -c -a '' --eval '(eshell)'"
+
 
     ediff() { emacs --eval "(ediff \"$1\" \"$2\")" }
 

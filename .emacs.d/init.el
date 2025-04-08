@@ -102,7 +102,7 @@
 ;; Start server if not currently running and in gui
 (when window-system
      (load "server")
-     (setq server-socket-dir "~/.emacs.d/var/tmp")
+     ;(setq server-socket-dir "~/.emacs.d/var/tmp") # else uses /tmp/emacs{uid}
      (unless (server-running-p) (server-start)))
 
 ;;;; * enable disabled functions
