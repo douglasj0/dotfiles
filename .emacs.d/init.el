@@ -31,8 +31,8 @@
 ;; Use M-x Package-refresh-contents to reload the list of packages after initial run
 (require 'package)
 (setq package-archives
-  '(("gnu"    . "https://elpa.gnu.org/packages/") ; default package archive, secure
-    ("gnu1"   .  "http://elpa.gnu.org/packages/") ; default package archive
+  '(("gnu-s"  . "https://elpa.gnu.org/packages/") ; default package archive, secure
+    ;("gnu"    . "http://elpa.gnu.org/packages/") ; default package archive
     ("melpa"  . "https://melpa.org/packages/")    ; milkypostman's pkg archive
     ("nongnu" . "https://elpa.nongnu.org/nongnu/"))) ; eat terminal and others
 (package-initialize)
@@ -510,6 +510,19 @@ last sentence."
 ;; Please call if you have any questions.
 
 ;;;; * --- Utilities ---
+;;;; * esup - profiler
+
+;(use-package esup
+;  :ensure t
+;  ;; To use MELPA Stable use ":pin melpa-stable",
+;  :pin melpa
+;  :config
+;  (setq esup-depth 0)
+;)
+
+;(setq use-package-compute-statistics t)
+;; ^^^ run 'M-x use-package-report' afterwards to see results
+
 ;;;; * maximize-window
 ;; JDRiverRun
 ;; One capability I use every day that I never see mentioned is vertical/horizontal window maximization. That is, no matter where my selected window is placed in some complicated frame layout, make it occupy the full height(/width) of the frame. Here's a small gist with the code (to which I've also added a natural binding to tear-off-window, thanks!).
@@ -1393,22 +1406,16 @@ folder, otherwise delete a word"
 ;;;; * themes
 
 ;;; dracula-theme
-;; dracula-theme with telephone line status bar
-;; https://draculatheme.com/
 ;; https://github.com/dracula/dracula-theme
-;; https://www.reddit.com/r/emacs/comments/he55jl/whats_the_funky_character_on_the_mode_line/
 ;(use-package dracula-theme
 ;  :ensure t
-;  ;:defer t  ;doesn't load when needed
+;  :if (display-graphic-p)
 ;  ;:init
 ;  ;(setq dracula-enlarge-headings nil)
 ;  :config
 ;  ;; Don't change the font size for some headings and titles (default t)
 ;  (setq dracula-enlarge-headings nil)
-;  (if (display-graphic-p)
-;      (load-theme 'dracula :no-confirm)	  ; Emacs in own window
-;    (load-theme 'wheatgrass :no-confirm)  ; Emacs in tty
-;  )
+;  (load-theme 'dracula :no-confirm)
 ;)
 
 ;;; catppuccin-theme
@@ -1417,7 +1424,9 @@ folder, otherwise delete a word"
   :ensure t
   :if (display-graphic-p)
   :config
-  (load-theme 'catppuccin :no-confirm) ; Emacs in own window
+  (setq catppuccin-highlight-matches t)
+  ;(load-theme 'catppuccin :no-confirm) ; Emacs in own window
+  (load-theme 'catppuccin t) ;; is this the same?
   ;; change flavor, default is mocha
   ;(setq catppuccin-flavor 'frappe) ;; frappe / latte / macchiato / mocha
   ;(catppuccin-reload)
@@ -1425,7 +1434,7 @@ folder, otherwise delete a word"
 
 ;; fall back to wheatgrass theme in terminal
 (when (not (display-graphic-p))
-   (load-theme 'wheatgrass :no-confirm))  ; Emacs in tty
+   (load-theme 'wheatgrass t))  ; Emacs in tty
 
 ;;;; * icons and glyphs
 ;; All-the-icons
@@ -1587,7 +1596,7 @@ folder, otherwise delete a word"
 ;; diff-hl: https://github.com/dgutov/diff-hl
 (use-package diff-hl
   :ensure t
-  ;:defer t
+  :defer t
   :config
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -1752,28 +1761,28 @@ folder, otherwise delete a word"
 
 ;;; https://www.reddit.com/r/emacs/comments/196oga1/live_typst_preview_in_emacs/
 ;;; https://github.com/havarddj/typst-preview.el
-(use-package websocket
-  :ensure t)
-
-(use-package eglot) ; needed for tinymist lsp
-
-(use-package typst-preview
-  ;:load-path "elisp/typst-preview.el"
-  :config
-  (setq typst-preview-browser "default")
-  (define-key typst-preview-mode-map (kbd "C-c C-j") 'typst-preview-send-position))
-
-(use-package typst-ts-mode
-  :ensure t
-  :custom
-  (typst-ts-mode-watch-options "--open")
-  (typst-ts-mode-enable-raw-blocks-highlight t)
-  (typst-ts-mode-highlight-raw-blocks-at-startup t)
-  :config
-  ;; browsers supported: default, xwidget, safari, google chrome, eaf-browser
-  (setq typst-preview-browser "xwidget") ;; default is "default"
-  (add-to-list 'auto-mode-alist '("\\.typ" . typst-ts-mode))
-  (add-to-list 'eglot-server-programs '(typst-ts-mode) . ("tinymist")))
+;(use-package websocket
+;  :ensure t)
+;
+;(use-package eglot) ; needed for tinymist lsp
+;
+;(use-package typst-preview
+;  ;:load-path "elisp/typst-preview.el"
+;  :config
+;  (setq typst-preview-browser "default")
+;  (define-key typst-preview-mode-map (kbd "C-c C-j") 'typst-preview-send-position))
+;
+;(use-package typst-ts-mode
+;  :ensure t
+;  :custom
+;  (typst-ts-mode-watch-options "--open")
+;  (typst-ts-mode-enable-raw-blocks-highlight t)
+;  (typst-ts-mode-highlight-raw-blocks-at-startup t)
+;  :config
+;  ;; browsers supported: default, xwidget, safari, google chrome, eaf-browser
+;  (setq typst-preview-browser "xwidget") ;; default is "default"
+;  (add-to-list 'auto-mode-alist '("\\.typ" . typst-ts-mode))
+;  (add-to-list 'eglot-server-programs '(typst-ts-mode) . ("tinymist")))
 
 ;;;; * go-mode
 
@@ -2024,25 +2033,26 @@ folder, otherwise delete a word"
 
 ;; eshell-toggle
 ;; https://github.com/4DA/eshell-toggle
-(use-package eshell-toggle
-  :ensure t
-  :custom
-  (eshell-toggle-size-fraction 3)
-  (eshell-toggle-find-project-root-package t) ;; for projectile
-  ;;(eshell-toggle-find-project-root-package 'projectile) ;; for projectile
-  ;; (eshell-toggle-use-projectile-root 'project) ;; for in-built project.el
-  (eshell-toggle-run-command nil)
-  ;(eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
-  (eshell-toggle-init-function #'eshell-toggle-init-eshell)
-  ;:bind
-  ;("s-`" . eshell-toggle))
-)
+;(use-package eshell-toggle
+;  :ensure t
+;  :custom
+;  (eshell-toggle-size-fraction 3)
+;  (eshell-toggle-find-project-root-package t) ;; for projectile
+;  ;;(eshell-toggle-find-project-root-package 'projectile) ;; for projectile
+;  ;; (eshell-toggle-use-projectile-root 'project) ;; for in-built project.el
+;  (eshell-toggle-run-command nil)
+;  ;(eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
+;  (eshell-toggle-init-function #'eshell-toggle-init-eshell)
+;  ;:bind
+;  ;("s-`" . eshell-toggle))
+;)
 
 ;;;; * eat
 ;; eat stands for "Emulate A Terminal"
 ;; https://codeberg.org/akib/emacs-eat
 (use-package eat
   :ensure t
+  :defer t
   :config
   (eat-eshell-mode)
   (setq eshell-visual-commands '()))
@@ -2311,58 +2321,61 @@ SCHEDULED: %^t
 )
 
 ;;; Enable other org-babel languages
-(org-babel-do-load-languages
-  (quote org-babel-load-languages)
-  (quote ((emacs-lisp . t)
-          (C . t)         ;C
-          ;(R . t)         ;R
-          (awk . t)       ;Awk
-          ;(calc . t)      ; Emacs Calc
-          ;(clojure . t)   ;Clojure
-          ;(comint . t)    ;
-          ;(core . t)      l
-          ;(css . t)       ;CSS
-          ;(ditaa . f)     ;ditaa
-          ;(dot . t)       ;Graphviz
-          (emacs-lisp . t) ;Emacs Lisp
-          ;(eshell . t)    ;
-          ;(eval . t)      ;
-          ;(exp . t)       ;
-          ;(forth . t)     ;
-          ;(fortran . t)   ;Fortran
-          (gnuplot . t)   ;requires gnuplot installed
-          ;(groovy . t)    ;
-          ;(haskell . t)   ;Haskell
-          (java . t)      ;Java
-          (js . t)        ;Javascript
-          ;(julia . t)     ;
-          ;(latex . t)     ;LaTeX
-          ;(lilypond . t)  ;Lilypond
-          ;(lisp . t)      ;Lisp
-          ;(lob . t)       ;lob
-          ;(lua . t)       ;Lua
-          ;(makefile . t)  ;
-          ;(matlab . t)    ;MATLAB
-          ;(maxima . t)    ;Maxima
-          ;(ocaml . t)     ;Objective Caml
-          ;(octave . t)    ;octave
-          (org . t)       ;Org mode
-          (perl . t)      ;Perl
-          ;(plantuml . t)  ;Plantuml
-          ;(processing . t) ;Processing.js
-          (python . t)    ;Python
-          ;(ref . t)       ;
-          ;(ruby . t)      ;Ruby
-          ;(sass . t)      ;Sass
-          ;(scheme . t)    ;Scheme
-          ;(screen . t)    ;GNU Screen
-          (sed . t)       ;Sed
-          (shell . t)     ;shell
-          (sql . t)       ; SQL
-          ;(sqlite .t)     ;SQLite
-          ;(table . )      ;
-          ;(tangle . t)    ;
-)))
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   (seq-filter
+    (lambda (pair)
+      (locate-library (concat "ob-" (symbol-name (car pair)))))
+    '((emacs-lisp . t) ;Emacs Lisp
+      (C . t)         ;C
+      ;(R . t)         ;R
+      (awk . t)       ;Awk
+      ;(calc . t)      ; Emacs Calc
+      ;(clojure . t)   ;Clojure
+      ;(comint . t)    ;
+      ;(core . t)      l
+      ;(css . t)       ;CSS
+      ;(ditaa . f)     ;ditaa
+      ;(dot . t)       ;Graphviz
+      ;(eshell . t)    ;
+      ;(eval . t)      ;
+      ;(exp . t)       ;
+      ;(forth . t)     ;
+      ;(fortran . t)   ;Fortran
+      ;(gnuplot . t)   ;requires gnuplot installed
+      ;(groovy . t)    ;
+      ;(haskell . t)   ;Haskell
+      ;(java . t)      ;Java
+      (js . t)        ;Javascript
+      ;(julia . t)     ;
+      ;(latex . t)     ;LaTeX
+      ;(lilypond . t)  ;Lilypond
+      ;(lisp . t)      ;Lisp
+      ;(lob . t)       ;lob
+      ;(lua . t)       ;Lua
+      ;(makefile . t)  ;
+      ;(matlab . t)    ;MATLAB
+      ;(maxima . t)    ;Maxima
+      ;(ocaml . t)     ;Objective Caml
+      ;(octave . t)    ;octave
+      (org . t)       ;Org mode
+      (perl . t)      ;Perl
+      ;(plantuml . t)  ;Plantuml
+      ;(processing . t) ;Processing.js
+      (python . t)    ;Python
+      ;(ref . t)       ;
+      ;(ruby . t)      ;Ruby
+      ;(sass . t)      ;Sass
+      ;(scheme . t)    ;Scheme
+      ;(screen . t)    ;GNU Screen
+      (sed . t)       ;Sed
+      (shell . t)     ;shell
+      ;(sql . t)       ; SQL
+      ;(sqlite .t)     ;SQLite
+      ;(table . )      ;
+      ;(tangle . t)    ;
+))))
 
 ;;;; * denote
 
