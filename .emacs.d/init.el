@@ -100,9 +100,11 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/") ;; elisp packages not in pkg mgr
 
 ;; Start server if not currently running and in gui
+;; Force default socket-dir "/tmp/emacs{uid}"
 (when window-system
      (load "server")
-     ;(setq server-socket-dir "~/.emacs.d/var/tmp") # else uses /tmp/emacs{uid}
+     ;(setq server-socket-dir "~/.emacs.d/var/tmp") # use my own dir
+     (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
      (unless (server-running-p) (server-start)))
 
 ;;;; * enable disabled functions
@@ -784,6 +786,13 @@ Default vertically, unless HORIZONTALLY is non-nil."
 ;;;; * --- OS ---
 ;; From Doom Emacs, look into
 ;; (:if IS-MAC macos)  ; improve compatibility with macOS
+
+;;;; * windows
+
+;(use-package emacs
+;  :if (eq system-type 'windows-nt)
+;  ::config
+;)
 
 ;;;; * macOS
 ;;; === macOS specific settings
