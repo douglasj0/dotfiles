@@ -2321,41 +2321,35 @@ SCHEDULED: %^t
 )
 
 ;;; Enable other org-babel languages
+;; https://orgmode.org/worg/org-contrib/babel/languages/index.html
 (with-eval-after-load 'org
   (org-babel-do-load-languages
    'org-babel-load-languages
    (seq-filter
     (lambda (pair)
       (locate-library (concat "ob-" (symbol-name (car pair)))))
-    '((emacs-lisp . t) ;Emacs Lisp
-      (C . t)         ;C
-      ;(R . t)         ;R
-      (awk . t)       ;Awk
-      ;(calc . t)      ; Emacs Calc
+    '((awk . t)       ;Awk
+      (C . t)         ;C, C++, D
+      (calc . t)      ; Emacs Calc
       ;(clojure . t)   ;Clojure
-      ;(comint . t)    ;
-      ;(core . t)      l
-      ;(css . t)       ;CSS
       ;(ditaa . f)     ;ditaa
       ;(dot . t)       ;Graphviz
-      ;(eshell . t)    ;
-      ;(eval . t)      ;
-      ;(exp . t)       ;
-      ;(forth . t)     ;
+      (emacs-lisp . t) ;Emacs Lisp, elisp
+      (eshell . t)    ;eshell babel functions
+      ;(forth . t)     ;Gforth
       ;(fortran . t)   ;Fortran
-      ;(gnuplot . t)   ;requires gnuplot installed
+      ;(gnuplot . t)   ;Gnuplot, requires gnuplot
       ;(groovy . t)    ;
       ;(haskell . t)   ;Haskell
       ;(java . t)      ;Java
-      (js . t)        ;Javascript
+      ;(js . t)        ;Javascript, requires node
       ;(julia . t)     ;
       ;(latex . t)     ;LaTeX
       ;(lilypond . t)  ;Lilypond
       ;(lisp . t)      ;Lisp
-      ;(lob . t)       ;lob
       ;(lua . t)       ;Lua
       ;(makefile . t)  ;
-      ;(matlab . t)    ;MATLAB
+      ;(matlab . t)    ;Matlab and Octave
       ;(maxima . t)    ;Maxima
       ;(ocaml . t)     ;Objective Caml
       ;(octave . t)    ;octave
@@ -2364,17 +2358,14 @@ SCHEDULED: %^t
       ;(plantuml . t)  ;Plantuml
       ;(processing . t) ;Processing.js
       (python . t)    ;Python
-      ;(ref . t)       ;
+      ;(R . t)         ;R
       ;(ruby . t)      ;Ruby
       ;(sass . t)      ;Sass
       ;(scheme . t)    ;Scheme
       ;(screen . t)    ;GNU Screen
-      (sed . t)       ;Sed
       (shell . t)     ;shell
       ;(sql . t)       ; SQL
       ;(sqlite .t)     ;SQLite
-      ;(table . )      ;
-      ;(tangle . t)    ;
 ))))
 
 ;;;; * denote
