@@ -694,6 +694,12 @@ Default vertically, unless HORIZONTALLY is non-nil."
 ;; Enable dwim - Dired tries to guess a default target directory.
 (setq dired-dwim-target t)
 
+;; Move deleted files to the System's trash can
+;; set trash-directory otherwise uses freedesktop.org-style
+;(setq trash-directory "~/.Trash") ;; macOS trash
+;(setq trash-directory "~/.local/share/Trash") ;; linux trash
+(setq delete-by-moving-to-trash t)
+
 ;; ls-lisp
 ;; OSX/BSD ls doesn't sort directories first, ls-lisp can
 (use-package ls-lisp
@@ -833,21 +839,6 @@ Default vertically, unless HORIZONTALLY is non-nil."
   ;;(set-frame-font "Menlo 15" nil t) ; fit more lines per frame
   ;;(set-face-attribute 'default nil :font "Menlo" :height 150 :weight 'regular)
 
-  ;; Osx-trash
-  ;; Make Emacs' delete-by-moving-to-trash do what you expect it to do on OS X.
-  ;; https://github.com/emacsorphanage/osx-trash
-  (use-package osx-trash
-     :ensure t
-     :config
-     (setq delete-by-moving-to-trash t)
-     (osx-trash-setup)
-  )
-
-  ;; Disable railwaycat's tab bar
-  ;; https://github.com/railwaycat/homebrew-emacsmacport/issues/123
-  (defvar mac-frame-tabbing)
-  (setq mac-frame-tabbing nil)
-
   ;; Don't open up new frames for files dropped on icon, use active frame
   (defvar ns-pop-up-frames)
   (setq ns-pop-up-frames nil)
@@ -857,11 +848,6 @@ Default vertically, unless HORIZONTALLY is non-nil."
   ;; http://stackoverflow.com/questions/3805658/how-to-configure-emacs-drag-and-drop-to-open-instead-of-append-on-osx
   (if (fboundp 'ns-find-file)
       (global-set-key [ns-drag-file] 'ns-find-file))
-
-  ;; Move deleted files to the System's trash can
-  ;; set trash-directory otherwise uses freedesktop.org-style
-  (setq trash-directory "~/.Trash")
-  (setq delete-by-moving-to-trash t)
 
   ;; Macbook Pro has no insert key.
   ;; http://lists.gnu.org/archive/html/help-gnu-emacs/2006-07/msg00220.html
