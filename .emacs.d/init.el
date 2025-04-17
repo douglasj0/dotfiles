@@ -2113,8 +2113,9 @@ folder, otherwise delete a word"
     (define-key map (kbd "n") #'denote)
     (define-key map (kbd "o") #'denote-open-or-create)
     (define-key map (kbd "r") #'denote-rename-file)
-    (define-key map (kbd "i") #'denote-link) ; "insert" mnemonic
+    (define-key map (kbd "l") #'denote-link) ; or  i for "insert" mnemonic
     (define-key map (kbd "b") #'denote-backlinks)
+    (define-key map (kbd "d") #'denote-dired)
     (define-key map (kbd "f") #'consult-denote-find)
     (define-key map (kbd "g") #'consult-denote-grep)
     map)
@@ -2143,6 +2144,11 @@ folder, otherwise delete a word"
 (use-package calendar
   :custom
   (calendar-week-start-day 0))
+
+;; Start with visiblility set to closed
+;; https://orgmode.org/manual/Initial-visibility.html
+;; https://www.reddit.com/r/emacs/comments/u81lfx/setq_orgstartupfolded_does_absolutely_nothing/
+(setq org-startup-folded t)
 
 ;; Prevent inadvertently edits an the invisible part of the buffer (default: smart)
 (setq-default org-catch-invisible-edits 'smart)
@@ -2419,14 +2425,20 @@ SCHEDULED: %^t
 ;   ("C-c n d o" . denote-open-or-create)
 ;   ("C-c n d r" . denote-rename-file)
 ;   ("C-c n d i" . denote-link) ; "insert" mnemonic
-;   ("C-c n d b" . denote-backlinks))
-  ;:custom
+;   ("C-c n d b" . denote-backlinks)
+;   ("C-c n d d" . denote-dired)
+;   ("C-c n d g" . denote-grep))
+  :init
+  (setq denote-file-extension "org")
+  :custom
+  (denote-sort-keywords t)
+  (denote-link-description-function #'ews-denote-link-description-title-case)
   ;(denote-directory "~/denote-home")
   ;;; No longer needed in denote 3+ to add [d]
   ;(denote-rename-buffer-function 'dw/denote-rename-buffer-with-prefixed-title)
   :config
-  (denote-rename-buffer-mode)
-  (require 'denote-org-extras)
+  (denote-rename-buffer-mode 1)
+  ;(require 'denote-org-extras) ; moved to denote-org pkg
 
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
