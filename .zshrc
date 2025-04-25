@@ -164,7 +164,8 @@ fi
 # -- Emacs shell setup --
 if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
   echo ".. inside Emacs"
-  export TERM=vt100
+  #export TERM=vt100
+  export TERM=xterm-256color  # for eat, etc.
 
   #export EDITOR=emacsclient
   export VISUAL=emacsclient
@@ -294,6 +295,11 @@ Darwin)  # Darwin Environment
       autoload -Uz compinit && compinit
       complete -C '~/.pyenv/shims/aws_completer' aws
     fi
+
+    # Emacs eat integration (9.4)
+    EAT_SHELL_INTEGRATION_DIR="$HOME/.emacs.d/var/integration/zsh"
+    [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
+      source "$EAT_SHELL_INTEGRATION_DIR"
 
     ;; # end Darwin
 

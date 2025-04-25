@@ -18,4 +18,7 @@ alias reindex="sudo mdutil -E /"  # erase spotlight indexes and rebuild
 alias vs="/Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron"
 
 # keepassxc
-alias keepassxc-cli='/Applications/KeePassXC.app/Contents/MacOS/keepassxc-cli'
+alias keepassxc-cli="/Applications/KeePassXC.app/Contents/MacOS/keepassxc-cli"
+
+# utmctl
+alias utmctl="/Applications/UTM.app/Contents/MacOS/utmctl"

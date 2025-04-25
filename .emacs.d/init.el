@@ -1,3 +1,4 @@
+
 ;;; init.el -*- lexical-binding: t; -*-
 
 ;;;; TODO
@@ -14,8 +15,9 @@
 ;   https://www.reddit.com/r/emacs/comments/372nxd/how_to_move_init_to_orgbabel/
 ; - Test combining sparse configs under use-package with use package emacs
 
-;;;; * --- Init ---
-;;;; * init
+;;;; * --- Housekeeping ---
+;;;; * initialization
+
 ;; The init.el portion of the init.el/config.org from before
 
 ;; init.el
@@ -37,20 +39,6 @@
     ("nongnu" . "https://elpa.nongnu.org/nongnu/"))) ; eat terminal and others
 (package-initialize)
 
-;; Bootstrap use-package
-;; Install use-package if it's not already installed.
-;; use-package is used to configure the rest of the packages.
-;; diminish info : https://github.com/emacsmirror/diminish
-(unless (or (package-installed-p 'use-package)
-            (package-installed-p 'diminish))
-  (package-refresh-contents)
-  (package-install 'use-package)
-  ;(package-install 'diminish)
-)
-
-;; enable use-package profiling (M-x use-package-report)
-(setq use-package-compute-statistics t)
-
 ;; Allow loading from the package cache
 ;(defvar package-quickstart)
 (setq package-quickstart t)
@@ -59,17 +47,6 @@
 (setq package-quickstart-file (expand-file-name "var/package-quickstart.el"
                           user-emacs-directory))
 
-;; From use-package README
-(eval-when-compile
-  (require 'use-package))
-;(require 'diminish)                ;; if you use :diminish
-(require 'bind-key)
-
-;; Load the config (will re-tangle on org file change)
-;(org-babel-load-file (concat user-emacs-directory "config.org"))
-
-;;;; * --- Housekeeping ---
-;;;; * initialization
 ; whoami?
 (setq
  user-full-name "Douglas Jackson"
@@ -107,8 +84,7 @@
      (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
      (unless (server-running-p) (server-start)))
 
-;;;; * enable disabled functions
-;;; enable or disable functions
+;;;; * enable or disabled functions
 
 ;; Upcase and downcase regions, default also works on inactive region, use dwim
 ;(put 'upcase-region 'disabled nil)  ; C-x C-u
@@ -147,7 +123,6 @@
 (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
 
 ;;;; * global key bindings
-;;; global key bindings
 
 ;; Show a summery of all registers with content
 (global-set-key (kbd "C-x r v") 'list-registers)
@@ -167,7 +142,6 @@
 ;(setq aw-keys '(?a ?b ?c ?d ?e ?f ?g ?h ?i)) ;; letters instead of numbers
 
 ;;;; * global settings
-;;; global settings
 
 ;; Compilation buffer scrolls to follow output.
 ;; set to first-error to stop when the first error appers and set point
@@ -356,8 +330,8 @@
   bookmark-save-flag 1)                   ;; autosave each change)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;; * functions
-;;; function definations
+;;;; * function definations
+
 ;; ---------------------------------------------------------------------------
 ;; https://www.reddit.com/r/emacs/comments/un4wf8/weekly_tips_tricks_c_thread/
 ;; toggle between two most recent buffers in a window
@@ -455,7 +429,6 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
 (bind-key "C-c f s" #'switch-to-scratch-buffer)
 
 ;;;; * daily-log
-;;; -- daily log -
 
 (defun daily-log ()
   "Automatically opens my daily log file and positions cursor at end of
@@ -514,16 +487,16 @@ last sentence."
 ;;;; * --- Utilities ---
 ;;;; * esup - profiler
 
-;(use-package esup
-;  :ensure t
-;  ;; To use MELPA Stable use ":pin melpa-stable",
-;  :pin melpa
-;  :config
-;  (setq esup-depth 0)
-;)
+(use-package esup
+  :ensure t
+  ;; To use MELPA Stable use ":pin melpa-stable",
+  :pin melpa
+  :config
+  (setq esup-depth 0)
+)
 
-;(setq use-package-compute-statistics t)
-;; ^^^ run 'M-x use-package-report' afterwards to see results
+;; enable use-package profiling (M-x use-package-report)
+(setq use-package-compute-statistics t)
 
 ;;;; * maximize-window
 ;; JDRiverRun
@@ -775,8 +748,8 @@ Default vertically, unless HORIZONTALLY is non-nil."
 ;; alternative to the built-in Emacs help provideing more contextual information.
 ;; https://github.com/Wilfred/helpful
 (use-package helpful
-  :defer 10
   :ensure t
+  :defer t
   :bind
   (("C-h f" . helpful-function)
    ("C-h x" . helpful-command)
@@ -795,6 +768,7 @@ Default vertically, unless HORIZONTALLY is non-nil."
 ;)
 
 ;;;; * macOS
+
 ;;; === macOS specific settings
 (use-package emacs
   :if (eq system-type 'darwin)
@@ -1988,7 +1962,6 @@ folder, otherwise delete a word"
     (define-key map (kbd "a") #'ansi-term)
     (define-key map (kbd "s") #'shell)
     (define-key map (kbd "e") #'eshell)
-    (define-key map (kbd "z") #'eshell-toggle)
     map)
   "Keymap for org-mode commands after `org-keymap-prefix'.")
 (fset 'term-command-map term-command-map)
@@ -2059,14 +2032,40 @@ folder, otherwise delete a word"
 ;;;; * eat
 ;; eat stands for "Emulate A Terminal"
 ;; https://codeberg.org/akib/emacs-eat
+
+(defun d/eat-read-write ()
+  (interactive)
+  (if eat--semi-char-mode (eat-emacs-mode) (eat-semi-char-mode)) )
+
 (use-package eat
   :ensure t
   :defer t
+  :bind
+   (:map eat-mode-map
+         ("C-x C-q" . d/eat-read-write))
+   (:map eat-semi-char-mode-map
+         ("M-o" . nil)
+         ("M-s" . nil))
   :config
+  ;; eat terminal emulation in eshell
   (eat-eshell-mode)
   (setq eshell-visual-commands '()))
 
-;;;; * --- Tramp ---
+;; Set background/fringe colors
+;; https://www.reddit.com/r/emacs/comments/17qn0pg/eat_background_color/
+(add-hook
+  'eat-mode-hook
+  (lambda ()
+    (face-remap-add-relative
+     'default
+     :foreground "#ffffff"
+     :background "#000000")
+    (face-remap-add-relative
+      'fringe
+     :foreground "#ffffff"
+     :background "#000000")))
+
+;;;; * Tramp
 
 ;; https://www.reddit.com/r/emacs/comments/uto1uv/magit_and_authentication/
 
@@ -2503,6 +2502,13 @@ SCHEDULED: %^t
   :bind*
   ;; Conveniently open the Howm menu with "C-c ; ;".
   ("C-c ; ;" . howm-menu))
+
+;;;; * mu4e
+
+;; Load init-mu4e if it exists
+(setq mu4e-config "~/.emacs.d/init-mu4e.el")
+(if (file-exists-p mu4e-config)
+    (load mu4e-config))
 
 ;;;; * --- Testing ---
 ;;;; * robot-mode
