@@ -1441,6 +1441,30 @@ folder, otherwise delete a word"
   (nerd-icons-font-family "Symbols Nerd Font Mono")
 )
 
+;;;; * tab-bar
+
+;; https://www.gonsie.com/blorg/tab-bar.html
+;; https://github.com/LionyxML/emacs-solo/blob/main/init.el
+
+(global-set-key (kbd "s-{") 'tab-bar-switch-to-prev-tab)
+(global-set-key (kbd "s-}") 'tab-bar-switch-to-next-tab)
+(global-set-key (kbd "s-t") 'tab-bar-new-tab)
+(global-set-key (kbd "s-w") 'tab-bar-close-tab)
+
+(setq tab-bar-show 1)                      ;; hide bar if <= 1 tabs open
+(setq tab-bar-close-button-show nil)       ;; hide tab close / X button
+;(setq tab-bar-new-button nil)
+(setq tab-bar-new-tab-choice "*scratch*")  ;; buffer to show in new tabs
+(setq tab-bar-tab-hints t)                 ;; show tab numbers
+(setq tab-bar-select-tab-modifiers '(super)) ;; key to select tab by number
+(setq tab-bar-format '(tab-bar-format-tabs tab-bar-separator))
+                                           ;; elements to include in bar
+(setq tab-bar-close-last-tab-choice 'tab-bar-mode-disable)
+(setq tab-bar-close-tab-select 'recent)
+(setq tab-bar-new-tab-to 'right)
+;(setq tab-bar-separator " ")
+(tab-bar-mode 1)                           ;; enable tab bar after startup
+
 ;;;; * --- Version Control ---
 ;; :tools - from doom emacs
 ;; ansible
@@ -2065,7 +2089,7 @@ folder, otherwise delete a word"
      :foreground "#ffffff"
      :background "#000000")))
 
-;;;; * Tramp
+;;;; * TRAMP
 
 ;; https://www.reddit.com/r/emacs/comments/uto1uv/magit_and_authentication/
 
@@ -2076,6 +2100,39 @@ folder, otherwise delete a word"
 ;(setq tramp-default-method "ssh")
 ;(setq auth-sources '(~/.authinfo.gpg))
 (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc"))
+
+;;; Optimizations from https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./
+;;; --
+;; prevent TRAMP from creating a bunch of extra files and use scp directly when moving files.
+(setq remote-file-name-inhibit-locks t
+      tramp-use-scp-direct-remote-copying t
+      remote-file-name-inhibit-auto-save-visited t)
+
+;; TRAMP uses 2 ways to copy files, OOB and Inline (base64 over ssh)
+;; inline is usuallyh faster all the way up until about 2MB
+;; also, rsync can update faster, but can also break remote shells, use scp
+(setq tramp-copy-size-limit (* 1024 1024) ;; 1MB
+      tramp-verbose 2)
+
+;; Use Direct Async (faster then before in Tramp 2.7+)
+;; now magit and git-gutter work better
+(connection-local-set-profile-variables
+ 'remote-direct-async-process
+ '((tramp-direct-async-process . t)))
+
+;; change 'server' to remote host
+;(connection-local-set-profiles
+; '(:application tramp :machine "server")
+; 'remote-direct-async-process)
+
+(setq magit-tramp-pipe-stty-settings 'pty)
+
+;; Fix remote compile
+;; tramp will use ssh connection sharing, but compile command disables, turn back on
+(with-eval-after-load 'tramp
+  (with-eval-after-load 'compile
+    (remove-hook 'compilation-mode-hook #'tramp-compile-disable-ssh-controlmaster-options)))
+;; --
 
 ;;;; * --- Org ---
 ;;;; * keymaps org (C-c n)
@@ -2334,6 +2391,9 @@ SCHEDULED: %^t
   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
 )
 
+;;; NOTE
+;; org-insert-structure-template: C-c C-,
+;; org-priority: C-c ,
 ;;; Enable other org-babel languages
 ;; https://orgmode.org/worg/org-contrib/babel/languages/index.html
 (with-eval-after-load 'org

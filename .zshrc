@@ -16,6 +16,9 @@
 #[[ $- == *i* ]] || return
 #[[ -o interactive ]] || exit 0  # zsh
 
+# Bail out of rest of setup if we're coming in from TRAMP
+[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+
 # use hard limits, except for a smaller stack and no core dumps
 unlimit
 limit stack 8192
@@ -170,17 +173,19 @@ if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
   #export EDITOR=emacsclient
   export VISUAL=emacsclient
   export PAGER=cat
+  export PS1="$ "
+  export GIT_EDITOR=emacs
 
   alias amagit="emacsclient -ne '(magit-status)'"
   function man() { emacsclient -ne "(man \"$1\")"; }
 
   # Emacs vterm clear
-  if [[ "${INSIDE_EMACS}" =~ 'vterm' ]]; then
-    alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
-    # Emacs vterm name buffer - doesn't work?
-    autoload -U add-zsh-hook
-    add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
-  fi
+  #if [[ "${INSIDE_EMACS}" =~ 'vterm' ]]; then
+  #  alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
+  #  # Emacs vterm name buffer - doesn't work?
+  #  autoload -U add-zsh-hook
+  #  add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
+  #fi
 else
   export TERM=xterm-256color
 fi
@@ -298,8 +303,7 @@ Darwin)  # Darwin Environment
 
     # Emacs eat integration (9.4)
     EAT_SHELL_INTEGRATION_DIR="$HOME/.emacs.d/var/integration/zsh"
-    [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
-      source "$EAT_SHELL_INTEGRATION_DIR"
+    [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && source "$EAT_SHELL_INTEGRATION_DIR"
 
     ;; # end Darwin
 

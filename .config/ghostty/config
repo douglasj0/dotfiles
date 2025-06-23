@@ -37,6 +37,7 @@ scrollback-limit = 10000000
 
 # Set working directory, default inherits previous process
 working-directory = home
+# new tabs inherit the PWD
 window-inherit-working-directory = false
 
 # Fonts: ghostty +list-fonts
