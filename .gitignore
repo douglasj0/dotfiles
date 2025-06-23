@@ -60,6 +60,8 @@ awless
 .config/USE_LSD
 .config/USE_EZA
 .config/NO_ZSH_PYENV
+.config/getmail
+.config/zed
 
 # ignore patterns for exult
 Exult.app
