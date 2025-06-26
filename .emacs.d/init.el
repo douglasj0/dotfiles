@@ -613,9 +613,13 @@ Default vertically, unless HORIZONTALLY is non-nil."
                             (name . "^\\.newsrc-dribble"))))))
 
     ;; Order the groups so the order is : [Default], [agenda], [emacs]
-    (defadvice ibuffer-generate-filter-groups (after reverse-ibuffer-groups ()
-                                                     activate)
-      (setq ad-return-value (nreverse ad-return-value)))
+    ;(defadvice ibuffer-generate-filter-groups (after reverse-ibuffer-groups () activate)
+    ;  (setq ad-return-value (nreverse ad-return-value)))
+    ;; Updated for Emacs 30.1+
+    (defun my-reverse-ibuffer-groups (returned-value)
+      "Reverse the order of ibuffer filter groups."
+      (nreverse returned-value))
+    (advice-add 'ibuffer-generate-filter-groups :filter-return #'my-reverse-ibuffer-groups)
 
     ;; Hide the following buffers
     ;;(setq ibuffer-never-show-predicates
