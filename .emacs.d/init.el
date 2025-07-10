@@ -31,12 +31,19 @@
 
 ;; Set up package
 ;; Use M-x Package-refresh-contents to reload the list of packages after initial run
+;(require 'package) ; no longer required, package.el included in emacs 30+
+;(setq package-archives
+;  '(("gnu-s"  . "https://elpa.gnu.org/packages/") ; default package archive, secure
+;    ;("gnu"    . "http://elpa.gnu.org/packages/") ; default package archive
+;    ("melpa"  . "https://melpa.org/packages/")    ; milkypostman's pkg archive
+;    ("nongnu" . "https://elpa.nongnu.org/nongnu/"))) ; eat terminal and others
+;(package-initialize)
+
+;; Set up package
+;; package-archive original values include elpa.gnu and elpa.notgnu
+;; Use M-x package-refresh-contents to reload the list of packages after initial run
 (require 'package)
-(setq package-archives
-  '(("gnu-s"  . "https://elpa.gnu.org/packages/") ; default package archive, secure
-    ;("gnu"    . "http://elpa.gnu.org/packages/") ; default package archive
-    ("melpa"  . "https://melpa.org/packages/")    ; milkypostman's pkg archive
-    ("nongnu" . "https://elpa.nongnu.org/nongnu/"))) ; eat terminal and others
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
 ;; Allow loading from the package cache
@@ -2442,8 +2449,8 @@ SCHEDULED: %^t
       ;(scheme . t)    ;Scheme
       ;(screen . t)    ;GNU Screen
       (shell . t)     ;shell
-      ;(sql . t)       ; SQL
-      ;(sqlite .t)     ;SQLite
+      ;(sql . t)       ;SQL
+      ;(sqlite . t)    ;SQLite
 ))))
 
 ;;;; * denote
