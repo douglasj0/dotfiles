@@ -336,6 +336,53 @@ rt-activate() {
 #export VIRTUAL_ENV_DISABLE_PROMPT=1
 #export PYENV_VIRTUALENV_DISABLE_PROMPT=0
 
+
+# -- Emacs shell setup --
+# https://github.com/akermu/emacs-libvterm
+if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
+  echo ".. inside Emacs"
+  export TERM=vt100
+
+  #export EDITOR=emacsclient
+  export VISUAL=emacsclient
+  export PAGER=cat
+
+  alias amagit="emacsclient -ne '(magit-status)'"
+  function man() { emacsclient -ne "(man \"$1\")"; }
+
+  # Emacs vterm clear
+  if [[ "${INSIDE_EMACS}" =~ 'vterm' ]]; then
+    alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
+  fi
+else
+  export TERM=xterm-256color
+fi
+
+
+# Set ripgrep config file
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
+
+
+# pyenv init
+if [[ -f $HOME/.config/NO_BASH_PYENV ]]; then
+  echo "Skipping .bashrc init pyenv"
+else
+  if [[ -d $HOME/.pyenv ]]; then
+    if [[ -z ${PYENV_SHELL} ]]; then
+      echo ". initializing pyenv"
+      export PYENV_ROOT="${HOME}/.pyenv"
+      export PATH="$PYENV_ROOT/bin:$PATH"
+      eval "$(pyenv init -)"
+      eval "$(pyenv virtualenv-init -)"
+    else
+      echo ".. pyenv already initialized, skipping"
+    fi
+  else
+    echo ".. pyenv directory not found, exiting"
+  fi
+fi
+
+
 ###################
 #   OS Specific   #
 ###################
@@ -343,24 +390,7 @@ case "$(uname)" in
 Darwin)  # Darwin Environment
 if [[ ! -z $PS1 ]]; then echo ".darwin bashrc loaded"; fi  # Interactive
 
-if [[ $INSIDE_EMACS ]]; then
-  echo "..Inside Emacs"
-  TERM='vt100'
-  #alias ls='ls --color=none'
-  #alias grep='grep'
-else
-  TERM=xterm-256color
-fi
-
-# https://github.com/akermu/emacs-libvterm
-#if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
-#    function clear(){
-#        printf  "\e]51;Evterm-clear-scrollback\e\\";
-#        tput clear;
-#    }
-#fi
-
-# Mac OS Catalina, new shell is zsh
+# Mac OS Catalina on, new shell is zsh
 # to disable notice
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
@@ -442,6 +472,8 @@ if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 1>/dev
   eval "$(pyenv virtualenv-init -)"
 fi
 
+# Updated pyenv from zshrc
+
 # jenv darwin
 if which jenv > /dev/null; then export PATH="$HOME/.jenv/bin:$PATH"; eval "$(jenv init -)"; fi
 ;; # end Darwin
@@ -518,8 +550,8 @@ googlesay(){ curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" |mp
 #export PATH="$PYENV_ROOT/bin:$PATH"
 #eval "$(pyenv init -)"
 #eval "$(pyenv virtualenv-init -)"
-if file ~/.pyenv/bin/pyenv > /dev/null; then PYENV_ROOT="$HOME/.pyenv"; PATH="$PYENV_ROOT/bin:$PATH"; eval "$(pyenv init -)"; fi
-if file ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+#if file ~/.pyenv/bin/pyenv > /dev/null; then PYENV_ROOT="$HOME/.pyenv"; PATH="$PYENV_ROOT/bin:$PATH"; eval "$(pyenv init -)"; fi
+#if file ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 ;; # end Linux
 
 *)
