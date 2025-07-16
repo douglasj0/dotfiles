@@ -557,8 +557,11 @@ googlesay(){ curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" |mp
 #if file ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
 
-# On laptop, emacscclient cannot find emacs socket
-export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs$(id -u)/server
+# On laptop, emacsclient cannot find emacs socket
+# emacs <= 26
+export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server
+# emacs 27+ (but didn't work for me with emacs 30.1)
+# export EMACS_SOCKET=$XDG_RUNTIME_DIR/emacs/server
 
 # Pull emacs info back from .aliases and .functions
 # Configure Emacs and Emacsclient

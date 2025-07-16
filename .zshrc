@@ -324,9 +324,11 @@ Linux)  # Based off of Ubuntu
     [[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
     export ALTERNATE_EDITOR="mg"
 
-    # On laptop, emacscclient cannot find emacs socket
-    export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs$(id -u)/server
-    #alias emacsclient="/usr/bin/emacsclient -s $EMACS_SERVER_SOCKET"
+    # On laptop, emacsclient cannot find emacs socket
+    # emacs <= 26
+    export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server
+    # emacs 27+ (but didn't work for me with emacs 30.1)
+    # export EMACS_SOCKET=$XDG_RUNTIME_DIR/emacs/server
 
     # Pull emacs info back from .aliases and .functions
     # Configure Emacs and Emacsclient
