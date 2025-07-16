@@ -241,7 +241,7 @@ Darwin)  # Darwin Environment
     # Tell homebrew to not autoupdate every single time I run it (just once a week).
     export HOMEBREW_AUTO_UPDATE_SECS=604800
 
-    # Put emacs info back from .aliases and .functions
+    # Pull emacs info back from .aliases and .functions
     # Configure Emacs and Emacsclient
     # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
     alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
@@ -323,6 +323,27 @@ Linux)  # Based off of Ubuntu
     # export EDITOR="emacsclient -t"
     [[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
     export ALTERNATE_EDITOR="mg"
+
+    # On laptop, emacscclient cannot find emacs socket
+    export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs$(id -u)/server
+    #alias emacsclient="/usr/bin/emacsclient -s $EMACS_SERVER_SOCKET"
+
+    # Pull emacs info back from .aliases and .functions
+    # Configure Emacs and Emacsclient
+    # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
+    #alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
+    #alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient" # fix magit?
+    #EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"  # -s $EMACS_SOCKET
+    # -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
+    alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs"  # start a windowed frame
+    alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
+    alias  ec="emacsclient -s $EMACS_SOCKET -n -a emacs"     # do not start a new frame
+    # Specialized emacs buffers
+    alias ecb="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(ibuffer)'"
+    alias ecd="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(dired nil)'"
+    alias ecm="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(mu4e)'"
+    alias ecn="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(elfeed)'"
+    alias ece="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(eshell)'"
 
     ;; # end Linux
 

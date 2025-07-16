@@ -419,10 +419,13 @@ alias airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/C
 # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
 ###
 #alias emacs="Emacs"
-EMACS_SOCKET="${HOME}/.emacs.d/tmp/server"
-alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs" # start a windowed frame
-alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
-alias ec="emacsclient -s $EMACS_SOCKET -n -a emacs" # do not start a new frame
+#EMACS_SOCKET="${HOME}/.emacs.d/tmp/server"
+#alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs" # start a windowed frame
+#alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
+#alias ec="emacsclient -s $EMACS_SOCKET -n -a emacs" # do not start a new frame
+
+
+
 
 export EDITOR="${HOME}/bin/edit"
 export ALTERNATE_EDITOR="mg"
@@ -552,6 +555,28 @@ googlesay(){ curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" |mp
 #eval "$(pyenv virtualenv-init -)"
 #if file ~/.pyenv/bin/pyenv > /dev/null; then PYENV_ROOT="$HOME/.pyenv"; PATH="$PYENV_ROOT/bin:$PATH"; eval "$(pyenv init -)"; fi
 #if file ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+
+
+# On laptop, emacscclient cannot find emacs socket
+export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs$(id -u)/server
+
+# Pull emacs info back from .aliases and .functions
+# Configure Emacs and Emacsclient
+# adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
+#alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
+#alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient" # fix magit?
+#EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"  # -s $EMACS_SOCKET
+# -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
+alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs"  # start a windowed frame
+alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
+alias  ec="emacsclient -s $EMACS_SOCKET -n -a emacs"     # do not start a new frame
+# Specialized emacs buffers
+alias ecb="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(ibuffer)'"
+alias ecd="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(dired nil)'"
+alias ecm="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(mu4e)'"
+alias ecn="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(elfeed)'"
+alias ece="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(eshell)'"
+
 ;; # end Linux
 
 *)

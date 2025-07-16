@@ -33,8 +33,8 @@ alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
 # Get server cpu info ##
 alias cpuinfo='lscpu'
 
-# Configure Emacs and Emacsclient
+# Configure Emacs and Emacsclient - moved to .bashrc / .zshrc
 # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
-alias ecw="emacsclient -n -c -a emacs" # start a windowed frame
-alias ect="emacsclient -t -a emacs -nw" # start a terminal frame
-alias ec="emacsclient -n -a emacs" # do not start a new frame
+#alias ecw="emacsclient -n -c -a emacs" # start a windowed frame
+#alias ect="emacsclient -t -a emacs -nw" # start a terminal frame
+#alias ec="emacsclient -n -a emacs" # do not start a new frame
