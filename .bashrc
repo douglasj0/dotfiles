@@ -393,78 +393,33 @@ if [[ ! -z $PS1 ]]; then echo ".darwin bashrc loaded"; fi  # Interactive
 # Mac OS Catalina on, new shell is zsh
 # to disable notice
 export BASH_SILENCE_DEPRECATION_WARNING=1
-
 export CLICOLOR=1
-
-alias ldd="otool -L"
-alias vmstat="vm_stat"
-alias truss="dtruss"
-alias flushdns="dscacheutil -flushcache"
-alias restart-vpn="sudo /System/Library/StartupItems/CiscoVPN/CiscoVPN restart"
-alias lsrebuild="/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain system -domain user"  #rebuild launchservices database
-alias mousebattery="ioreg -n "AppleBluetoothHIDMouse" | grep -i "batterypercent" | sed 's/[^[:digit:]]//g'"
-alias spotlight-disable="sudo launchctl unload /System/Library/LaunchDaemons/com.apple.metadata.mds.plist"
-alias spotlight-enable="sudo launchctl load /System/Library/LaunchDaemons/com.apple.metadata.mds.plist"
-alias randompw="jot -r -c 160 . z | rs -g 0 10"
-alias ddim="sudo pmset -a halfdim 0"	# turns off Mac display dimming
-alias dsclean='find . -name .DS_Store -delete \{\} \;'
-alias reindex="sudo mdutil -E /"  # erase spotlight indexes and rebuild
-alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
-alias ovftool='/Applications/VMware\ Fusion.app/Contents/Library/VMware\ OVF\ Tool/ovftool'
-alias airportcycle='networksetup -setairportpower airport off; networksetup -setairportpower airport on'
-alias airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
-
-###
-# Configure Emacs and Emacsclient
-# adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
-###
-#alias emacs="Emacs"
-#EMACS_SOCKET="${HOME}/.emacs.d/tmp/server"
-#alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs" # start a windowed frame
-#alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
-#alias ec="emacsclient -s $EMACS_SOCKET -n -a emacs" # do not start a new frame
-
-
-
 
 export EDITOR="${HOME}/bin/edit"
 export ALTERNATE_EDITOR="mg"
 export GROOVY_HOME=/usr/local/opt/groovy/libexec
 
-function ediff {
-    emacs --eval "(ediff \"$1\" \"$2\")"
-}
-
-#function q { w3m -dump "http://google.com/search?q=$*" | more; }
-function traffic { netstat -w1 -I"$@"; }
-function qlook { qlmanage -p "$@" >& /dev/null & }
-
-if [[ -f ~/Library/LaunchAgents/gnu.emacs.daemon.plist ]]; then
-    alias emacs_load="launchctl load -w ~/Library/LaunchAgents/gnu.emacs.daemon.plist"
-    alias emacs_unload="launchctl unload -w ~/Library/LaunchAgents/gnu.emacs.daemon.plist"
-    alias emacs_status="launchctl list | grep emacs"
-fi
-
-if [[ -f ~/Library/mysql/com.mysql.mysqld.plist ]]; then
-    alias start_mysql="sudo launchctl load ~/Library/mysql/com.mysql.mysqld.plist"
-    alias stop_mysql="sudo launchctl unload ~/Library/mysql/com.mysql.mysqld.plist"
-fi
+#function ediff {
+#    emacs --eval "(ediff \"$1\" \"$2\")"
+#}
+#
+#if [[ -f ~/Library/LaunchAgents/gnu.emacs.daemon.plist ]]; then
+#    alias emacs_load="launchctl load -w ~/Library/LaunchAgents/gnu.emacs.daemon.plist"
+#    alias emacs_unload="launchctl unload -w ~/Library/LaunchAgents/gnu.emacs.daemon.plist"
+#    alias emacs_status="launchctl list | grep emacs"
+#fi
+#
+#if [[ -f ~/Library/mysql/com.mysql.mysqld.plist ]]; then
+#    alias start_mysql="sudo launchctl load ~/Library/mysql/com.mysql.mysqld.plist"
+#    alias stop_mysql="sudo launchctl unload ~/Library/mysql/com.mysql.mysqld.plist"
+#fi
 
 # Enable Homebrew for M1 Mac if installed
 if command -v /opt/homebrew/bin/brew 1>/dev/null 2>&1; then
   eval $(/opt/homebrew/bin/brew shellenv)
 fi
 
-# pyenv darwin/homebrew
-#if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
-#if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
-
 # pyenv local git install
-#git clone https://github.com/yyuu/pyenv.git ~/.pyenv
-##git clone https://github.com/yyuu/pyenv-virtualenvwrapper.git ~/.pyenv/plugins/pyenv-virtualenvwrapper
-#git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
-#if file ~/.pyenv/bin/pyenv > /dev/null; then PYENV_ROOT="$HOME/.pyenv"; PATH="$PYENV_ROOT/bin:$PATH"; eval "$(pyenv init -)"; fi
-#if file ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 if [ ! -z "${PYENV_ROOT}" ]; then
   echo "..pyenv initalize"
   eval "$(pyenv init -)"
@@ -475,10 +430,8 @@ if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 1>/dev
   eval "$(pyenv virtualenv-init -)"
 fi
 
-# Updated pyenv from zshrc
-
 # jenv darwin
-if which jenv > /dev/null; then export PATH="$HOME/.jenv/bin:$PATH"; eval "$(jenv init -)"; fi
+#if which jenv > /dev/null; then export PATH="$HOME/.jenv/bin:$PATH"; eval "$(jenv init -)"; fi
 ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
@@ -493,69 +446,8 @@ TERM=xterm-color
 # Configure Emacs and Emacsclient
 # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
 ###
-alias ecw="emacsclient -n -c -a emacs" # start a windowed frame
-alias ect="emacsclient -t -a emacs -nw" # start a terminal frame
-alias ec="emacsclient -n -a emacs" # do not start a new frame
-# export EDITOR="emacsclient -t"
 [[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
 export ALTERNATE_EDITOR="mg"
-
-## pass options to free ##
-alias meminfo='free -m -l -t'
-
-## get top process eating memory
-alias psmem='ps auxf | sort -nr -k 4'
-alias psmem10='ps auxf | sort -nr -k 4 | head -10'
-
-## get top process eating cpu ##
-alias pscpu='ps auxf | sort -nr -k 3'
-alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
-
-## Get server cpu info ##
-alias cpuinfo='lscpu'
-
-# Status (from Rackspace)
-function stats() { uptime; awk '/^MemTotal:/{total = $2/1024^2} /^(MemFree|Buffers|Cached):/{sum += $2} END {printf " Memory: %.2fG/%.2fG\n", sum/1024^2, total}' /proc/meminfo; ps -eo pcpu | awk '/[0-9]/ {sum += $1} END {printf " CPU: %s%%\n", sum}'; }
-
-alias fullline='perl -p00e "s/\r?\n //gi"'
-alias ls='ls --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias grep='grep --color=auto'
-alias truss="strace"
-alias about='cat /etc/redhat-release && cat /proc/version && uname -a'
-
-# Debian
-alias agc='df -h; apt-get autoclean ; apt-get clean ; apt-get autoremove ; df -h'
-alias agi='apt-get install '
-alias acs='apt-cache search '
-alias agdu='apt-get update ; apt-get dist-upgrade'
-lsmac() { /sbin/ifconfig -a | /bin/sed '/eth\|wl/!d;s/ Link.*HWaddr//' ; }
-
-# Convert linux/redhat dmesg entry time stamps to human readable
-dmesg_with_human_timestamps () {
-    $(type -P dmesg) "$@" | perl -w -e 'use strict;
-        my ($uptime) = do { local @ARGV="/proc/uptime";<>}; ($uptime) = ($uptime =~ /^(\d+)\./);
-        foreach my $line (<>) {
-            printf( ($line=~/^\[\s*(\d+)\.\d+\](.+)/) ? ( "[%s]%s\n", scalar localtime(time - $uptime + $1), $2 ) : $line )
-        }'
-}
-alias dmesg=dmesg_with_human_timestamps
-
-# OS X like pbcopy/pbpaste.
-alias pbcopy='xclip -selection clipboard'
-alias pbpaste='xclip -selection clipboard -o'
-
-googlesay(){ curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" |mpg123 -; };
-
-# pyenv linux
-#export PYENV_ROOT="$HOME/.pyenv"
-#export PATH="$PYENV_ROOT/bin:$PATH"
-#eval "$(pyenv init -)"
-#eval "$(pyenv virtualenv-init -)"
-#if file ~/.pyenv/bin/pyenv > /dev/null; then PYENV_ROOT="$HOME/.pyenv"; PATH="$PYENV_ROOT/bin:$PATH"; eval "$(pyenv init -)"; fi
-#if file ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
-
 
 # On laptop, emacsclient cannot find emacs socket
 # emacs <= 26
