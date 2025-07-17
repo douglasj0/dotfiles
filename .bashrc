@@ -59,91 +59,15 @@ shopt -s checkhash	# check hash table for command before executing it
 shopt -s checkwinsize   # check term row/column size after each command before prompt
 
 
-###############
-#  Functions  #
-###############
-function p3 { source ~/.virtualenvs/p3/bin/activate; }
-function my_ps { ps $@ -u $USER -o pid,%cpu,%mem,bsdtime,command; }
-function psg { ps -aef | grep $* | grep -v grep; }  # sysv ps
-function psb { ps aux | grep $* | grep -v grep; }  # bsd ps
-function lhd { last $* | head; }
-function calc { awk "BEGIN{ print $* }"; }
-function rmd { pandoc $1 | lynx -stdin ; }
+# Load general aliases
+if [ -f $HOME/.aliases ]; then
+    . $HOME/.aliases
+fi
 
-# remove entry from ~/.ssh/known_hosts
-function delhost { ssh-keygen -R $@; }
-#function delprevhost { ssh-keygen -R !$; }
-
-# get mac addr
-function mac { ping -c 2 $1 > /dev/null 2>&1; arp $1 | awk '{print $3}' | tail -1; }
-
-rot13 () {	# For some reason, rot13 pops up everywhere
-    if [ $# -eq 0 ]; then
-	tr '[a-m][n-z][A-M][N-Z]' '[n-z][a-m][N-Z][A-M]'
-    else
-	echo $* | tr '[a-m][n-z][A-M][N-Z]' '[n-z][a-m][N-Z][A-M]'
-    fi
-}
-
-# Top 10 most used commands in history (TODO update for MacOS)
-top10 () { history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -nr | head -10; }
-
-# History unique grep search / to re-use a line found !123:p / !123
-hugs () { history | grep -i -- "$1" | sort -k2 -u | grep -v 'hugs' | sort -n; }
-
-## Extract common archive formats
-extract () {
-    if [ -f $1 ] ; then
-        case $1 in
-            *.tar.bz2)   tar xvjf $1    ;;
-            *.tar.gz)    tar xvzf $1    ;;
-            *.bz2)       bunzip2 $1     ;;
-            *.rar)       unrar x $1     ;;
-            *.gz)        gunzip $1      ;;
-            *.tar)       tar xvf $1     ;;
-            *.tbz2)      tar xvjf $1    ;;
-            *.tgz)       tar xvzf $1    ;;
-            *.zip)       unzip $1       ;;
-            *.Z)         uncompress $1  ;;
-            *.7z)        7z x $1        ;;
-            *)           echo "don't know how to extract '$1'..." ;;
-        esac
-    else
-        echo "'$1' is not a valid file!"
-    fi
-}
-
-# Repeat last command with sudo
-yolo() {
-    if [[ $# == 0 ]]; then
-        sudo $(history -p '!!')
-    else
-        sudo "$@"
-    fi
-}
-
-# ssh key functions
-ssh-add-all() { LIST=$(ls $HOME/.ssh/id_* | grep -v '.pub'); ssh-add $LIST; } # add all ssh keys
-ssh-del-all() { ssh-add -D; }                              # delete all ssh keys
-ssh-add-work () { ssh-add ${HOME}/.ssh/id_rsa_work; }      # add work key
-ssh-del-work () { ssh-add -d ${HOME}/.ssh/id_rsa_work; }   # delete work key
-ssh-add-home () { ssh-add ${HOME}/.ssh/id_rsa_home; }      # add home github key
-ssh-del-home () { ssh-add -d ${HOME}/.ssh/id_rsa_home; }   # delete home github key
-
-#grepp: grep by paragraph, http://www.commandlinefu.com/commands/view/4547/
-grepp() {
-    [ $# -eq 1 ] && perl -00ne "print if /$1/i" || perl -00ne "print if /$1/i" < "$2"
-}
-
-# Push ssh authorized_keys to remote host
-pushkey() {
-  if [ -z $1 ]; then
-     echo "no host specified"
-  else
-    KEYCODE=`cat $HOME/.ssh/authorized_keys`
-    ssh -q $1 "mkdir -p ~/.ssh && chmod 0700 ~/.ssh && touch ~/.ssh/authorized_keys && echo "$KEYCODE" >> ~/.ssh/authorized_keys && chmod 644 ~/.ssh/authorized_keys"
-  fi
-}
+# Load general functions
+if [ -f $HOME/.functions ]; then
+    . $HOME/.functions
+fi
 
 # magit, function to open magit buffer from current git repo
 magit() {
@@ -155,66 +79,6 @@ magit() {
       return 1
   fi
 }
-
-
-#############
-#  Aliases  #
-#############
-alias j='jobs'
-alias h='history'
-alias la='ls -a'
-alias lf='ls -F'
-alias ll='ls -l'
-alias l.='ls -d .*'             # List only file beginning with "."
-alias ll.='ls -ld .*'           # Long list only file beginning with "."
-alias l='ls -laF'
-alias lm='ls -laF | more'
-alias lk='ls -lSr'              # sort by size in K, smallest to largest
-alias lh='ls -lhSr'             # sort by size in human readable, smallest to largest
-alias lr='ls -lR'               # recursice ls
-alias lt='ls -ltr'              # sort by date
-alias lla='ls -la'
-alias lll='ls -actl | more'     # pipe through 'more'
-alias ldir="ls -l | egrep '^d'" # show only directories
-alias lfile="ls -l | egrep -v '^d'" # show files only"
-alias digs="dig +short"
-alias killmercer='sudo $(history -p !!)'
-alias just='sudo'
-alias gtfo='exit'
-#alias ssh-add-home="ssh-add ~/.ssh/home/id_rsa"
-#
-alias u='cd ..'
-alias uu='cd ../..'
-alias uuu='cd ../../..'
-alias uuuu='cd ../../../..'
-alias splitpath='echo -e ${PATH//:/\\n}'
-alias histg='history | grep '
-alias +='pushd .'
-alias _='popd'
-alias dirf='find . -type d | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/'
-# Deletes the last thing typed from history so it doesn't get written to .bash_history on exit
-alias scratch='history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))'
-alias keepalive='while true; do date; sleep 120; done'
-if [ `which watch` ]; then alias nap="watch -n 120 echo ${HOSTNAME}"; fi
-# Re-attach to a screen session with updated ssh authentication
-alias screenssh='ln -sf $SSH_AUTH_SOCK $HOME/.ssh-auth-sock; env SSH_AUTH_SOCK=$HOME/.ssh-auth-sock screen'
-alias git_repo_name='git remote show -n origin | grep Fetch | cut -d: -f2-'
-alias ping4='ping -c4'
-alias weather='curl wttr.in/chicago'
-alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
-alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
-
-# Proksel's aliases
-alias aspen='tree -h -f -C'
-alias atomize='open . -a Atom'
-alias killmercer='sudo $(history -p !!)'
-alias public_ip='curl ipecho.net/plain; echo'
-alias terraform_graph='terraform graph | dot -Tpng > graph.png'
-
-# git aliases
-alias gg="git grep"
-alias git-unfuck="git reset --hard HEAD"
-alias gitGraph='git log --graph --oneline --all --decorate --color'
 
 
 ################
@@ -390,87 +254,98 @@ case "$(uname)" in
 Darwin)  # Darwin Environment
 if [[ ! -z $PS1 ]]; then echo ".darwin bashrc loaded"; fi  # Interactive
 
-# Mac OS Catalina on, new shell is zsh
-# to disable notice
-export BASH_SILENCE_DEPRECATION_WARNING=1
-export CLICOLOR=1
+    # Mac OS Catalina on, new shell is zsh
+    # to disable notice
+    export BASH_SILENCE_DEPRECATION_WARNING=1
+    export CLICOLOR=1
 
-export EDITOR="${HOME}/bin/edit"
-export ALTERNATE_EDITOR="mg"
-export GROOVY_HOME=/usr/local/opt/groovy/libexec
+    export EDITOR="${HOME}/bin/edit"
+    export ALTERNATE_EDITOR="mg"
+    export GROOVY_HOME=/usr/local/opt/groovy/libexec
 
-#function ediff {
-#    emacs --eval "(ediff \"$1\" \"$2\")"
-#}
-#
-#if [[ -f ~/Library/LaunchAgents/gnu.emacs.daemon.plist ]]; then
-#    alias emacs_load="launchctl load -w ~/Library/LaunchAgents/gnu.emacs.daemon.plist"
-#    alias emacs_unload="launchctl unload -w ~/Library/LaunchAgents/gnu.emacs.daemon.plist"
-#    alias emacs_status="launchctl list | grep emacs"
-#fi
-#
-#if [[ -f ~/Library/mysql/com.mysql.mysqld.plist ]]; then
-#    alias start_mysql="sudo launchctl load ~/Library/mysql/com.mysql.mysqld.plist"
-#    alias stop_mysql="sudo launchctl unload ~/Library/mysql/com.mysql.mysqld.plist"
-#fi
+    #function ediff {
+    #    emacs --eval "(ediff \"$1\" \"$2\")"
+    #}
+    #
+    #if [[ -f ~/Library/LaunchAgents/gnu.emacs.daemon.plist ]]; then
+    #    alias emacs_load="launchctl load -w ~/Library/LaunchAgents/gnu.emacs.daemon.plist"
+    #    alias emacs_unload="launchctl unload -w ~/Library/LaunchAgents/gnu.emacs.daemon.plist"
+    #    alias emacs_status="launchctl list | grep emacs"
+    #fi
+    #
+    #if [[ -f ~/Library/mysql/com.mysql.mysqld.plist ]]; then
+    #    alias start_mysql="sudo launchctl load ~/Library/mysql/com.mysql.mysqld.plist"
+    #    alias stop_mysql="sudo launchctl unload ~/Library/mysql/com.mysql.mysqld.plist"
+    #fi
 
-# Enable Homebrew for M1 Mac if installed
-if command -v /opt/homebrew/bin/brew 1>/dev/null 2>&1; then
-  eval $(/opt/homebrew/bin/brew shellenv)
-fi
+    # Enable Homebrew for M1 Mac if installed
+    if command -v /opt/homebrew/bin/brew 1>/dev/null 2>&1; then
+      eval $(/opt/homebrew/bin/brew shellenv)
+    fi
 
-# pyenv local git install
-if [ ! -z "${PYENV_ROOT}" ]; then
-  echo "..pyenv initalize"
-  eval "$(pyenv init -)"
-fi
+    # pyenv local git install
+    if [ ! -z "${PYENV_ROOT}" ]; then
+      echo "..pyenv initalize"
+      eval "$(pyenv init -)"
+    fi
 
-if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 1>/dev/null 2>&1; then
-  echo "..pyenv-virtualenv initalize"
-  eval "$(pyenv virtualenv-init -)"
-fi
+    if command -v ~/.pyenv/plugins/pyenv-virtualenv/bin/pyenv-virtualenv-init 1>/dev/null 2>&1; then
+      echo "..pyenv-virtualenv initalize"
+      eval "$(pyenv virtualenv-init -)"
+    fi
 
-# jenv darwin
-#if which jenv > /dev/null; then export PATH="$HOME/.jenv/bin:$PATH"; eval "$(jenv init -)"; fi
+    # jenv darwin
+    #if which jenv > /dev/null; then export PATH="$HOME/.jenv/bin:$PATH"; eval "$(jenv init -)"; fi
 ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
 if [[ ! -z $PS1 ]]; then echo ".linux bashrc loaded"; fi	# interactive
 
-## Open like command for Linux:  xdg-open or see
-function open { xdg-open "$1" &> /dev/null & }
+    ## Open like command for Linux:  xdg-open or see
+    function open { xdg-open "$1" &> /dev/null & }
 
-TERM=xterm-color
+    TERM=xterm-color
 
-###
-# Configure Emacs and Emacsclient
-# adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
-###
-[[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
-export ALTERNATE_EDITOR="mg"
+    # Load Linux aliases
+    if [[ -f $HOME/.aliases.linux ]]; then
+        . $HOME/.aliases.linux
+    fi
 
-# On laptop, emacsclient cannot find emacs socket
-# emacs <= 26
-export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server
-# emacs 27+ (but didn't work for me with emacs 30.1)
-# export EMACS_SOCKET=$XDG_RUNTIME_DIR/emacs/server
+    # Load Linux functions
+    if [[ -f $HOME/.functions.linux ]]; then
+        . $HOME/.functions.linux
+    fi
 
-# Pull emacs info back from .aliases and .functions
-# Configure Emacs and Emacsclient
-# adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
-#alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
-#alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient" # fix magit?
-#EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"  # -s $EMACS_SOCKET
-# -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
-alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs"  # start a windowed frame
-alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
-alias  ec="emacsclient -s $EMACS_SOCKET -n -a emacs"     # do not start a new frame
-# Specialized emacs buffers
-alias ecb="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(ibuffer)'"
-alias ecd="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(dired nil)'"
-alias ecm="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(mu4e)'"
-alias ecn="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(elfeed)'"
-alias ece="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(eshell)'"
+
+    ###
+    # Configure Emacs and Emacsclient
+    # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
+    ###
+    [[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
+    export ALTERNATE_EDITOR="mg"
+
+    # On laptop, emacsclient cannot find emacs socket
+    # emacs <= 26
+    export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server
+    # emacs 27+ (but didn't work for me with emacs 30.1)
+    # export EMACS_SOCKET=$XDG_RUNTIME_DIR/emacs/server
+
+    # Pull emacs info back from .aliases and .functions
+    # Configure Emacs and Emacsclient
+    # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
+    #alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
+    #alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient" # fix magit?
+    #EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"  # -s $EMACS_SOCKET
+    # -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
+    alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs"  # start a windowed frame
+    alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
+    alias  ec="emacsclient -s $EMACS_SOCKET -n -a emacs"     # do not start a new frame
+    # Specialized emacs buffers
+    alias ecb="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(ibuffer)'"
+    alias ecd="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(dired nil)'"
+    alias ecm="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(mu4e)'"
+    alias ecn="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(elfeed)'"
+    alias ece="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(eshell)'"
 
 ;; # end Linux
 
