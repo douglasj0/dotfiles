@@ -1,0 +1,96 @@
+# Notes:
+# Docs:
+#   ghostty +show-config --default --docs | less
+# search github for example configs
+#   https://github.com/search?q=path%3Aghostty%2Fconfig&type=code
+# How to reload config:
+#   Linux: ctrl+shift+,
+#   macOS: cmd+shift+,
+# Generate a config
+#   https://ghostty.zerebos.com/settings/application
+
+# Default
+command = /bin/zsh
+click-repeat-interval = 500
+auto-update-channel = stable
+
+# Theme: ghostty +list-themes
+window-theme = auto
+# catppuccin theme: frappe / latte / macchiato / mocha
+#theme = catppuccin-macchiato
+#theme = dracula
+background-opacity = 0.94
+background-blur-radius = 40
+
+# Cursor
+# shell integration sets the cursor to a bar at a prompt
+shell-integration-features = no-cursor,sudo,title
+cursor-style = block
+cursor-style-blink = false
+cursor-opacity = 0.7
+cursor-invert-fg-bg = false
+# linux: alt-click, macOS: option-click
+cursor-click-to-move = true
+
+# Scrollback limit in bytes
+scrollback-limit = 10000000
+
+# Set working directory, default inherits previous process
+working-directory = home
+# new tabs inherit the PWD
+window-inherit-working-directory = false
+
+# Fonts: ghostty +list-fonts
+##font-family = Symbols Nerd Font Mono # messes with primary font
+font-family = Monaco
+font-size = 16
+selection-invert-fg-bg = false
+bold-is-bright = false
+font-thicken = false
+
+# macOS Specific
+macos-titlebar-style = tabs
+macos-titlebar-proxy-icon = hidden
+macos-option-as-alt = true
+clipboard-read = allow
+clipboard-write = allow
+clipboard-trim-trailing-spaces = true
+clipboard-paste-protection = false
+macos-non-native-fullscreen = visible-menu
+macos-window-shadow = true
+
+# Quick Terminal animation duration (in seconds)
+# Set to 0 to disable animation, can be changed at runtime.
+quick-terminal-animation-duration = 0.08
+
+# Initial window width and height
+window-height = 24
+window-width = 80
+
+# window padding
+window-padding-x = 4,2
+window-padding-y = 6,0
+window-padding-balance = true
+
+# quit app after closing last window
+quit-after-last-window-closed = false
+
+# Mouse
+mouse-hide-while-typing = true
+# mouse-scroll-multiplier = 1
+# focus-follows-mouse = false
+
+# Key Bindings
+keybind = global:alt+grave_accent=toggle_quick_terminal
+keybind = shift+ctrl+left_bracket=previous_tab
+keybind = shift+ctrl+right_bracket=next_tab
+
+# Splits
+keybind = ctrl+o>\=new_split:right
+keybind = ctrl+o>-=new_split:down
+
+keybind = ctrl+shift+up=goto_split:top
+keybind = ctrl+shift+down=goto_split:bottom
+
+keybind = ctrl+shift+left=goto_split:left
+keybind = ctrl+shift+right=goto_split:right

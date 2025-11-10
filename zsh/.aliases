@@ -1,0 +1,65 @@
+# -*- mode: sh -*-
+# General shell aliases
+#alias la='ls -a'
+alias la='ls -lathr'
+alias lf='ls -F'
+alias ll='ls -la'
+alias pu='pushd'
+alias po='popd'
+alias t1='TERM=vt100; export TERM; stty rows 24; DISPLAY=kludge:0.0; export DISPLAY'
+
+alias keepalive='while true; do date; sleep 120; done'
+
+alias ping4='ping -c4'
+alias weather='curl wttr.in/chicago'
+alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
+
+# Proksel's aliases
+alias aspen='tree -h -f -C'
+#alias atomize='open . -a Atom'
+#alias killmercer='sudo $(history -p !!)'
+alias public_ip='curl ipecho.net/plain; echo'
+#alias terraform_graph='terraform graph | dot -Tpng > graph.png'
+
+# git aliases
+alias gg="git grep"
+alias git-unfuck="git reset --hard HEAD"
+alias git-graph='git log --graph --oneline --all --decorate --color'
+alias git-repo-name='git remote show -n origin | grep Fetch | cut -d: -f2-'
+alias git-repo-tag='git checkout master; git pull --rebase; git tag | sort -V | tail -1'
+
+# helpful git rebase for PR function from Jody
+git-repo-remaster() {
+  BRANCH=$(git status | awk '{print $3}' | head -n 1)
+  git checkout master
+  git pull --prune
+  git checkout ${BRANCH}
+  git rebase $1 master
+}
+
+# Recreate yolo sudo last command
+alias yolo='sudo $(fc -nl -1)'
+
+# find all files recursively and sort by last mod, ignore hidden files
+alias lastmod='find . -type f -not -path "*/\.*" -exec ls -lrt {} +'
+
+# Emacs related aliases
+#alias emacspkgupdate="emacs -nw --eval '(progn (sit-for 2) (auto-package-update-now))"
+alias emacspkgupdate='emacs -nw -f auto-package-update-now'
+alias strip-code-block="sed -e '/^#+begin_/d' -e '/^#+end_/d'"
+alias emacs-find-backups="fd --glob '*~' -tf -u -E .emacs.d/backups/"
+alias emacs-delete-backups="fd --glob '*~' -tf -u -E .emacs.d/backups/ -X rm"
+
+# Multipass
+alias mp="multipass"
+
+# Kitty
+alias kitten="/Applications/kitty.app/Contents/MacOS/kitten"
+alias kitty="/Applications/kitty.app/Contents/MacOS/kitty"
+
+# Ghostty
+alias ghostty="/Applications/Ghostty.app/Contents/MacOS/ghostty"
+alias ghostty-docs="ghostty +show-config --default --docs | less"
+
+# Ripgrep
+alias rg-org="rg -torg $*"

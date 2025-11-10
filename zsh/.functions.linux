@@ -1,0 +1,24 @@
+# -*- mode: sh -*-
+# Linux specific aliases
+
+# Status (from Rackspace)
+stats() { uptime; awk '/^MemTotal:/{total = $2/1024^2} /^(MemFree|Buffers|Cached):/{sum += $2} END {printf " Memory: %.2fG/%.2fG\n", sum/1024^2, total}' /proc/meminfo; ps -eo pcpu | awk '/[0-9]/ {sum += $1} END {printf " CPU: %s%%\n", sum}'; }
+
+# List MAC address
+lsmac() { /sbin/ifconfig -a | /bin/sed '/eth\|wl/!d;s/ Link.*HWaddr//' ; }
+
+# Convert linux/redhat dmesg entry time stamps to human readable
+dmesg_with_human_timestamps () {
+    $(type -P dmesg) "$@" | perl -w -e 'use strict;
+        my ($uptime) = do { local @ARGV="/proc/uptime";<>}; ($uptime) = ($uptime =~ /^(\d+)\./);
+        foreach my $line (<>) {
+            printf( ($line=~/^\[\s*(\d+)\.\d+\](.+)/) ? ( "[%s]%s\n", scalar localtime(time - $uptime + $1), $2 ) : $line )
+        }'
+}
+alias dmesght=dmesg_with_human_timestamps
+
+# use google translate to speak text
+googlesay(){ curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" | mpg123 -; };
+
+## Open like command for Linux:  xdg-open or see
+open() { xdg-open "$1" &> /dev/null & }

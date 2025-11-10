@@ -1,0 +1,8 @@
+\.git
+LICENSE
+README.md
+\.personal-emacs.d
+\.MacOSX
+\.launchd.conf
+.*~
+.*\.(swp|bak|tmp)

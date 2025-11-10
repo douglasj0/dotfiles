@@ -1,0 +1,44 @@
+# general
+.DS_Store
+._*
+*~
+*.o
+*.a
+*.env
+*.envrc
+
+# Vim swap files
+*.swp
+
+# emacs ignore certain files and directories
+*.elc
+emacs/.emacs.d/recentf
+
+# bin files to ignore
+sshpass
+awless
+
+# ignore other scm programs
+.svn
+.hg
+
+# other
+tmux/.config/tmux/plugins/
+kitty/.config/kitty/current-theme.conf
+.config/btop/
+.config/filezilla/
+.config/gpt4all.io/
+.config/gtk-2.0/
+.config/htop/htoprc
+.config/iterm2/
+.config/NO_ZSH_PYENV
+.config/getmail
+.config/zed
+
+# ignore patterns for exult
+Exult.app
+*.lo
+*.la
+Makefile.in
+.deps
+.libs

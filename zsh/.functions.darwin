@@ -1,0 +1,42 @@
+# -*- mode: sh -*-
+# Darwin specific functions
+
+# decode base64 from stdin, copy results to clipboard and stdout
+# NOTE: it's using process substitution and is not posix compliant
+decode64() {
+  echo "$1" | base64 -d | tee >(pbcopy)
+}
+dbldecode64() {
+  echo "$1" | base64 -d | base64 -d | tee >(pbcopy)
+}
+encode64() {
+  echo "$1" | base64 ; echo
+}
+
+#function q { w3m -dump "http://google.com/search?q=$*" | more; }
+traffic() { netstat -w1 -I"$@"; }
+qlook() { qlmanage -p "$@" >& /dev/null & }
+
+# venv notification is being removed from pyenv-virtualenv, use this to add back
+#export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+#export BASE_PROMPT=$PS1
+#updatePrompt() {
+#    if [[ $PYENV_VIRTUAL_ENV ]]; then
+#        export PS1="($PYENV_VERSION) "$BASE_PROMPT
+#    else
+#        export PS1=$BASE_PROMPT
+#    fi
+#}
+#export PROMPT_COMMAND='updatePrompt'
+#precmd() { eval '$PROMPT_COMMAND' } # this line is necessary for zsh
+
+# By default, macOS flags & quarantines unsigned files downloaded from the internet
+# https://shop.ryansummer.com/p/onecommand/
+#mprep() {
+#    for file in "$@"; do
+#        sudo xattr -cr "$file"
+#        sudo xattr -r -d com.apple.quarantine "$file"
+#        sudo codesign --force --deep --sign - "$file"
+#        sudo chmod +x "$file"
+#    done
+#} 

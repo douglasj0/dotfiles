@@ -1,0 +1,38 @@
+cd 
+ls
+zsh 
+exit
+ls
+exit
+ls
+cd .dotfiles/ 
+ls
+exit
+ls
+top 
+exit
+ls
+exit
+ls
+htop
+top 
+ls
+cvdb ccd
+clear
+ls
+/opt/homebrew/bin/htop 
+exit
+ls
+ls Maildir/
+clear
+exit
+cd .dotfiles/
+git status
+git diff
+echo $GIT_EDITOR
+echo $SHELL 
+setenv GIT_EDITOR emacs
+echo $GIT_EDITOR
+exit
+echo $GIT_EDITOR
+exit
