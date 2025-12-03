@@ -1,20 +1,20 @@
 # -*- mode: sh; -*-
 #
 # my rc file for zsh
-# all this runs in interactive shells only
 
 # '.zshrc' is sourced in interactive shells. It should contain commands to set
 # up aliases, functions, options, key bindings, etc.
 
+#zmodload zsh/zprof
 # where to look for function definitions
 # fpath=(~/func)
-
+# all this runs in interactive shells only
 # Setup zprofiling (leave disabled when not using
-#zmodload zsh/zprof
 
 ## If not running interactively, don't do anything and return early
 #[[ $- == *i* ]] || return
 #[[ -o interactive ]] || exit 0  # zsh
+
 
 # Bail out of rest of setup if we're coming in from TRAMP
 [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
@@ -177,6 +177,17 @@ if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
 
   alias amagit="emacsclient -ne '(magit-status)'"
   function man() { emacsclient -ne "(man \"$1\")"; }
+
+  # emacs eat: https://codeberg.org/akib/emacs-eat
+  if [ -n "$EAT_SHELL_INTEGRATION_DIR" ]; then
+      if [ -r "$EAT_SHELL_INTEGRATION_DIR/bash" ]; then
+          # shellcheck source=/dev/null
+          source "$EAT_SHELL_INTEGRATION_DIR/bash"
+      fi
+
+      # eat alias to open a file inside emacs
+      alias eopen='_eat_msg open'
+  fi
 
   # Emacs vterm clear
   #if [[ "${INSIDE_EMACS}" =~ 'vterm' ]]; then
