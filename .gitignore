@@ -25,15 +25,14 @@ awless
 # other
 tmux/.config/tmux/plugins/
 kitty/.config/kitty/current-theme.conf
-.config/btop/
-.config/filezilla/
-.config/gpt4all.io/
-.config/gtk-2.0/
-.config/htop/htoprc
-.config/iterm2/
-.config/NO_ZSH_PYENV
-.config/getmail
-.config/zed
+
+# emacs
+emacs/.emacs.d/var/bookmarks
+emacs/.emacs.d/var/history
+emacs/.emacs.d/var/package-quickstart.el
+emacs/.emacs.d/var/places
+emacs/.emacs.d/var/projectile-bookmarks.eld
+emacs/.emacs.d/var/transient/
 
 # ignore patterns for exult
 Exult.app
