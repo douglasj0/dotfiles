@@ -1,4 +1,4 @@
-;;; init.el -*- lexical-binding: t; -*-
+;;; init.el --- Emacs init -*- lexical-binding: t; -*-
 
 ;;;; TODO
 ; - spelling / grammer / syntax
@@ -1727,7 +1727,8 @@ folder, otherwise delete a word"
 ;  (org-mode . smartparens-mode)
 ;)
 
-;;;; * treesitter
+;;;; * tree-sitter
+; some examples in https://github.com/renzmann/treesit-auto
 
 ; Once you’ve found the languages you like, you’ll need to install them. Call the command M-x treesit-install-language-grammar for each language and that’s usually all there is to it.
 ;
@@ -1746,24 +1747,25 @@ folder, otherwise delete a word"
        (css . ("https://github.com/tree-sitter/tree-sitter-css" "v0.23.2"))
        (dockerfile . ("https://github.com/camdencheek/tree-sitter-dockerfile" "v0.2.0"))
        (elisp . ("https://github.com/Wilfred/tree-sitter-elisp" "1.5.0"))
-       ;(go . ("https://github.com/tree-sitter/tree-sitter-go" "v0.23.4"))
+       (go . ("https://github.com/tree-sitter/tree-sitter-go" "v0.23.4"))
        ;(gomod . ("https://github.com/camdencheek/tree-sitter-go-mod" "v1.1.0"))
        ;(hcl . ("https://github.com/tree-sitter-grammars/tree-sitter-hcl" "v1.1.0")) ; ???
        (html . ("https://github.com/tree-sitter/tree-sitter-html" "v0.23.2"))
-       ;(javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1" "src"))
+       (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1" "src"))
        (json . ("https://github.com/tree-sitter/tree-sitter-json" "v0.24.8"))
-       (lua . ("https://github.com/MunifTanjim/tree-sitter-lua" "v0.2.0"))
+       (lua . ("https://github.com/tree-sitter-grammars/tree-sitter-lua" "v0.3.0"))
        ;(make . ("https://github.com/alemuller/tree-sitter-make" "master")) ; no tag
-       (markdown . ("https://github.com/ikatyang/tree-sitter-markdown" "v0.7.1"))
+       ;(markdown . ("https://github.com/ikatyang/tree-sitter-markdown" "v0.7.1")) ;; problem
+       ;(markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown" "v0.5.0" "src"))
        (python . ("https://github.com/tree-sitter/tree-sitter-python" "v0.23.6"))
        ;(regex . ("https://github.com/tree-sitter/tree-sitter-regex" "v0.24.3"))
        ;(ruby . ("https://github.com/tree-sitter/tree-sitter-ruby" "v0.23.1"))
        ;(rust . ("https://github.com/tree-sitter/tree-sitter-rust" "v0.21.2"))
        ;(sql . ("https://github.com/m-novikov/tree-sitter-sql"))
        (toml . ("https://github.com/tree-sitter/tree-sitter-toml" "v0.5.1"))
-       ;tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src"))
+       ;(tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src"))
        (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src"))
-       (typst . ("https://github.com/uben0/tree-sitter-typst" "v0.11.0" "src"))
+       ;(typst . ("https://github.com/uben0/tree-sitter-typst" "v0.11.0" "src"))
        (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0"))
        ;(zig . ("https://github.com/GrayJack/tree-sitter-zig" "master"))
   ))
@@ -1777,15 +1779,15 @@ folder, otherwise delete a word"
      (css-mode    . css-ts-mode)
      (dockerfile-mode . dockerfile-ts-mode)
      (elisp-mode  . elisp-ts-mode)
-     ;(go-mode     . go-ts-mode)
+     (go-mode     . go-ts-mode)
      ;(gomod-mode  . gomod-ts-mode)
      ;(hcl-mode   . hcl-ts-mode) ; didn't work?
      (html-mode   . html-ts-mode)
-     ;(javascript-mode . js-ts-mode)
+     (javascript-mode . js-ts-mode)
      (json-mode   . json-ts-mode)
      (lua-mode    . lua-ts-mode)
      ;(make-mode   . make-ts-mode)
-     (markdown-mode . markdown-ts-mode)
+     ;(markdown-mode . markdown-ts-mode)
      (python-mode . python-ts-mode)
      ;(regex-mode  . regex-ts-mode)
      ;(ruby-mode   . ruby-ts-mode)
@@ -1794,7 +1796,7 @@ folder, otherwise delete a word"
      (toml-mode   . toml-ts-mode)
      ;(tsx-mode    . tsx-ts-mode)
      (typescript-mode . typescript-ts-mode)
-     (typst-mode  . typst-ts-mode)
+     ;(typst-mode  . typst-ts-mode)
      (yaml-mode   . yaml-ts-mode)
      ;(zig-mode    . zig-ts-mode)
    ))
@@ -1833,6 +1835,35 @@ folder, otherwise delete a word"
 ;  (setq typst-preview-browser "xwidget") ;; default is "default"
 ;  (add-to-list 'auto-mode-alist '("\\.typ" . typst-ts-mode))
 ;  (add-to-list 'eglot-server-programs '(typst-ts-mode) . ("tinymist")))
+
+;;;; * markdown-ts-mode
+;; # Install pandoc for preview
+;; $ brew install pandoc
+;(use-package markdown-ts-mode
+;  :ensure t
+;  :mode ( ;("README\\.md'"   . gfm-mode) ;; github markdown mode?
+;         ("\\.md\\'"       . markdown-ts-mode)
+;         ("\\.markdown\\'" . markdown-ts-mode))
+;  :init (setq markdown-command "pandoc")
+;)
+
+;;;; * markdown-mode
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode) ; Autoloads markdown-mode and gfm-mode
+  :mode (("README\\.md\\'" . gfm-mode) ; Use gfm-mode for README.md files
+         ("\\.md\\'" . markdown-mode) ; Use markdown-mode for .md files
+         ("\\.markdown\\'" . markdown-mode)) ; Use markdown-mode for .markdown files
+  :init
+  ;; Optional: Configure a specific Markdown processor (e.g., pandoc)
+  ;; (setq markdown-command "pandoc")
+  ;; Optional: Hide markup by default
+  ;; (setq-default markdown-hide-markup t)
+  :config
+  ;; Optional: Further configuration specific to markdown-mode
+  ;; For example, enable math support
+  ;; (setq markdown-enable-math t)
+)
 
 ;;;; * go-mode
 
@@ -1882,17 +1913,6 @@ folder, otherwise delete a word"
 (use-package perl-mode
   :ensure t
   :mode ("\\.pl\\'" . perl-mode)
-)
-
-;;;; * markdown-mode
-;; # Install pandoc for preview
-;; $ brew install pandoc
-(use-package markdown-ts-mode
-  :ensure t
-  :mode ( ;("README\\.md'"   . gfm-mode) ;; github markdown mode?
-         ("\\.md\\'"       . markdown-ts-mode)
-         ("\\.markdown\\'" . markdown-ts-mode))
-  :init (setq markdown-command "pandoc")
 )
 
 ;;;; * json, yaml, toml, lua
