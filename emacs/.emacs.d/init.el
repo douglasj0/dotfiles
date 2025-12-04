@@ -2152,6 +2152,36 @@ folder, otherwise delete a word"
      :foreground "#ffffff"
      :background "#000000")))
 
+;;; eat config from reddit with shell edit alias
+;; https://www.reddit.com/r/emacs/comments/1gdp0fk/i_just_installed_the_eat_terminal_package_to_give/
+;(use-package eat
+;   :ensure t
+;   :preface
+;   (defun my--eat-open (file)
+;       "Helper function to open files from eat terminal."
+;       (interactive)
+;       (if (file-exists-p file)
+;               (find-file-other-window file t)
+;           (warn "File doesn't exist")))
+;   :init
+;   ;(add-to-list 'project-switch-commands '(eat-project "Eat terminal") t)
+;   ;(add-to-list 'project-switch-commands '(eat-project-other-window "Eat terminal other window") t)
+;   ;(add-to-list 'project-kill-buffer-conditions '(major-mode . eat-mode))
+;   :config
+;   (add-to-list 'eat-message-handler-alist (cons "open" 'my--eat-open))
+;   (setq process-adaptive-read-buffering nil) ; makes EAT a lot quicker!
+;   (setq eat-term-name "xterm-256color") ; https://codeberg.org/akib/emacs-eat/issues/119"
+;   (setq eat-kill-buffer-on-exit t)
+;   (setq eat-shell-prompt-annotation-failure-margin-indicator "")
+;   (setq eat-shell-prompt-annotation-running-margin-indicator "")
+;   (setq eat-shell-prompt-annotation-success-margin-indicator ""))
+;
+;(with-eval-after-load 'eat
+;   (global-set-key (kbd "C-c o t") 'eat)
+;   (global-set-key (kbd "C-c o T") 'eat-other-window)
+;   (define-key project-prefix-map (kbd "t") 'eat-project)
+;   (define-key project-prefix-map (kbd "T") 'eat-project-other-window))
+
 ;;;; * TRAMP
 
 ;; https://www.reddit.com/r/emacs/comments/uto1uv/magit_and_authentication/
