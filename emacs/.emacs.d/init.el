@@ -2527,9 +2527,10 @@ SCHEDULED: %^t
 
 ;; Set denote-directory via system-name to keep home/work separate
 ;;(if (string-match "\\`lothlorien,*" (system-name))
-(if (string-match "\\`lothlorien.*\\|\\`Mac" (system-name))
-    (setq denote-directory "~/denote-home/")
-  (setq denote-directory "~/denote/"))
+;(if (string-match "\\`lothlorien.*\\|\\`Mac" (system-name))
+;    (setq denote-directory "~/denote-home/")
+  (setq denote-directory "~/denote/")
+;)
 
 ;; override org front-matter to add startup overview
 (defvar denote-org-front-matter
