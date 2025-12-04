@@ -13,6 +13,7 @@
 # emacs ignore certain files and directories
 *.elc
 emacs/.emacs.d/recentf
+emacs/.emacs.d/eshell/history
 
 # bin files to ignore
 sshpass
