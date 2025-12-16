@@ -95,6 +95,7 @@
   ;; Enable line-numbers-mode for all programming languages
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
+
   ;; enable delete selection mode, so pasting overwrites selection
   (delete-selection-mode 1)
 
@@ -479,6 +480,21 @@
 (let ((org-conf (expand-file-name "org-denote.el" user-emacs-directory)))
   (when (file-exists-p org-conf)
     (load-file org-conf)))
+
+
+;;; * daily-log
+(defun daily-log ()
+  "Automatically opens my daily log file and positions cursor at end of
+last sentence."
+  (interactive)
+  ;(diary)
+  (find-file "~/org/DailyLogs/+current") ;symlink to current log
+  (goto-char (point-max))  ;go to the maximum accessible value of point
+  (search-backward "* Notes") ;search to Notes section first to bypass notes
+  (if (re-search-backward "[.!?]") ;search for punctuation from end of file
+      (forward-char 1))
+  )
+(global-set-key (kbd "<f9>") 'daily-log)
 
 
 ;;; * Keybindings -----

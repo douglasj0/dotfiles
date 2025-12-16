@@ -13,6 +13,7 @@ alias randompw="jot -r -c 160 . z | rs -g 0 10"
 alias ddim="sudo pmset -a halfdim 0"  # turns off Mac display dimming
 alias ds_store_clean='find . -name .DS_Store -delete \{\} \;'
 alias reindex="sudo mdutil -E /"  # erase spotlight indexes and rebuild
+alias nameservers="scutil --dns | grep 'nameserver\[[0-9]*\]'"
 
 # visual studio alias
 alias vs="/Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron"
