@@ -3,6 +3,8 @@
 ;; Commentary:
 ;;
 
+;; Problems:
+
 
 ;;; * Package repo setup and quickstart-----
 (require 'package) ; needed for package-archive variable
@@ -48,14 +50,6 @@
   (show-paren-mode 1)
   (global-display-line-numbers-mode 1)
   (fringe-mode '(8 . 8))
-
-  (setq-default mode-line-format '(" - "
-        (:eval (propertize (buffer-name)) 'face 'font-lock-constant-face)
-        "%6l:%c (%o) "
-        (:eval (unless (not vc-mode) (concat " | # " (substring-no-properties vc-mode 5))))
-        mode-line-format-right-align
-        (:eval (concat "  " (symbol-name major-mode)))
-        "  " mode-line-misc-info))
 
   (setq user-full-name "Douglas Jackson" ; whoami
         user-mail-address "hpotter@hogworts.edu")
@@ -378,14 +372,14 @@
   :commands (centered-cursor-mode)
   :diminish centered-cursor-mode)
 
-(use-package golden-ratio
-  :ensure t
-  :diminish golden-ratio-mode
-  :hook (after-init . golden-ratio-mode)
-  :config
-  (golden-ratio-toggle-widescreen)
-  (dolist (command '(evil-window-down evil-window-up evil-window-left evil-window-right))
-    (add-to-list 'golden-ratio-extra-commands command)))
+;(use-package golden-ratio
+;  :ensure t
+;  :diminish golden-ratio-mode
+;  :hook (after-init . golden-ratio-mode)
+;  :config
+;  (golden-ratio-toggle-widescreen)
+;  (dolist (command '(evil-window-down evil-window-up evil-window-left evil-window-right))
+;    (add-to-list 'golden-ratio-extra-commands command)))
 
 ;; nerd-icons.el - A Library for Nerd Font icons
 ;; https://github.com/rainstormstudio/nerd-icons.el#installing-fonts
@@ -412,11 +406,11 @@
   (vertico-mode)
   (vertico-multiform-mode)
   :custom
-  (vertico-multiform-commands ; customize display per-command
-   '(;(execute-extended-command flat) ; I prefer the vert list
-     (consult-line reverse)
-     (consult-recent-file reverse)
-     (find-file reverse)))
+  ;(vertico-multiform-commands ; customize display per-command
+  ; '(;(execute-extended-command flat) ; I prefer the vert list
+  ;   (consult-line reverse)
+  ;   (consult-recent-file reverse)
+  ;   (find-file reverse)))
   (vertico-resize t)
   (vertico-count 15))
 
@@ -440,8 +434,9 @@
 (use-package consult
   :ensure t
   :bind
-  ("M-b" . consult-buffer)
-  ;("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+  ;("M-b" . consult-buffer)
+  ("M-b" . switch-to-buffer)                ;; remap to access switch-to-buffer
+  ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
   ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
   ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
   ("C-s" . consult-line)  ;; replace I-search
