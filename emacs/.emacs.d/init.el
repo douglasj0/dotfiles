@@ -12,6 +12,19 @@
 (setq package-quickstart t)
 
 
+;; Load custom configuration file
+(setq custom-file (expand-file-name "custom.el" "~/org/emacs_d/"))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+;; Append personal info directory to list
+(with-eval-after-load 'info
+  (add-to-list 'Info-additional-directory-list
+               "~/org/emacs_d/info"))
+
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/elisp/")) ;; elisp packages not in pkg mgr
+
+
 ;;; * Basic Emacs options -----
 ;; Force default socket-dir "/tmp/emacs{uid}"
 (use-package server
@@ -47,6 +60,8 @@
   ;(tool-bar-mode -1)
   ;(menu-bar-mode -1)
   (xterm-mouse-mode 1)
+  (setq x-select-enable-primary t) ; use primary X selection mechanism
+  (setq mouse-drag-copy-region t)  ; copy selection to kill ring immediately
   (show-paren-mode 1)
   (global-display-line-numbers-mode 1)
   (fringe-mode '(8 . 8))
@@ -54,16 +69,16 @@
   (setq user-full-name "Douglas Jackson" ; whoami
         user-mail-address "hpotter@hogworts.edu")
 
-  ;;; Custom variables ---
-  (let ((custom-file (expand-file-name "custom.el" "~/org/emacs_d/")))
-  (when (file-exists-p custom-file)
-    (load-file custom-file)))
-
-  (eval-after-load 'info
-     '(add-to-list 'Info-additional-directory-list
-                   "~/org/emacs_d/info"))
-
-  (add-to-list 'load-path "~/.emacs.d/elisp/") ;; elisp packages not in pkg mgr
+  ;;; Customize Modeline -----
+  ;; make the read-only and modified indicators more noticeable.
+  (setq-default mode-line-modified        ; not customizable
+                '((:eval (if buffer-read-only
+                             (propertize "R" 'face 'warning) ;; was %
+                           "-"))
+                  (:eval (if (buffer-modified-p)
+                             (propertize "*" 'face 'error) ;; was *
+                           "-"))))
+  ;;(setopt mode-line-compact 'long)
 
   ;;; Enable disabled functions
   (global-unset-key (kbd "C-x C-u")) ; default is `upcase-region'-region'
@@ -87,8 +102,14 @@
   ;(global-set-key (kbd "C-c C-m") 'execute-extended-command) ; remapped by org to org-ctrl-c-ret
 
   ;; Enable line-numbers-mode for all programming languages
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  ;(add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
+  ;; Disable line numbers for some modes
+  (dolist (mode '(org-mode-hook
+                  term-mode-hook
+                  shell-mode-hook
+                  eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
   ;; enable delete selection mode, so pasting overwrites selection
   (delete-selection-mode 1)
@@ -476,6 +497,10 @@
   (when (file-exists-p org-conf)
     (load-file org-conf)))
 
+;;; * ElFeed -----
+(let ((elfeed-conf (expand-file-name "elfeed.el" user-emacs-directory)))
+  (when (file-exists-p elfeed-conf)
+    (load-file elfeed-conf)))
 
 ;;; * daily-log
 (defun daily-log ()

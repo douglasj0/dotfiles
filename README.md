@@ -1,13 +1,16 @@
-# dotfiles
-Dotfiles for macos/linux/bsd
+# my dotfiles
+These are my dotfiles supporting macos/linux/*bsd.  Currently they are managed via
+GNU Stow (previously chezmoi, but I wasn't happy with it, the principle of least
+surprise bit me).
 
-Managed with GNU Stow
+## GNU Stow
 https://www.gnu.org/software/stow/
 
-## Clone configuration repository
+Initially setup with all dotfiles into the top level of the .dotfiles/ directory.
+After running that way for some time, I did some investigation on optimizing the
+configuration around packages and have converted to that.
 
-NOTE: Converted to gnu stow after testing out chezmoi. (Wasn't that happy with chezmoi, the principle of least surprise bit me)
-
+## How to use
 Clone this repo into ~/.dotfiles
 
 ```bash
@@ -21,6 +24,6 @@ Update: Started using stow packages intead of the entire directory of hidden dot
 Now can install individual packages or use setup.sh to install them all
 
 ```bash
-stow emacs     # install emacs pkg as ~/.emacs.d
-stow -D emacs  # remove emacs pkg
+stow emacs     # install emacs pkg as either ~/.emacs.d, or, if the directory exists, symlinks inside the ~/.emacs.d directory
+stow -D emacs  # remove emacs pkg directory or the symlinks inside ~/.emacs.d
 ```
