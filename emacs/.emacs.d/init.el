@@ -483,6 +483,13 @@
   (corfu-mode . corfu-terminal-mode))
 
 
+;;; * RMail  -----
+;; Load programing settings from programming.el
+(let ((rmail-conf (expand-file-name "rmail-cpt.el" user-emacs-directory)))
+  (when (file-exists-p rmail-conf)
+    (load-file rmail-conf)))
+
+
 ;;; * Programming Modes  -----
 ;; Load programing settings from programming.el
 ;(let ((prog-conf (expand-file-name "programming.el" user-emacs-directory)))
