@@ -36,7 +36,7 @@
     st = status
     dc = diff --cached
     co = checkout
-    ci = commit -a
+    ci = commit
     praise = blame
     bus = blame
     under-the-bus = blame
