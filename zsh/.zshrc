@@ -127,11 +127,21 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-
 # Other
 unsetopt SHWORDSPLIT # behave like Bash for word splitting
 
-# test command line editing modules / widgets
+# Command line editing modules / widgets
 autoload -z zmv  # ex. zmv -n -W '*.txt' '*.log'
-autoload -z edit-command-line
-zle -N edit-command-line  # zsh line editor
-bindkey "^X^E" edit-command-line
+
+# Load the widget
+autoload -U edit-command-line
+zle -N edit-command-line
+
+# Create a wrapper to "fix" the screen after editing
+edit-command-line-fixed() {
+  zle edit-command-line
+  zle reset-prompt         # This clears the "jumbled" look
+}
+
+zle -N edit-command-line-fixed
+bindkey '^x^e' edit-command-line-fixed
 bindkey " " magic-space
 # also: You can use fc to edit the last command in history.
 
