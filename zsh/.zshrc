@@ -127,12 +127,22 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-
 # Other
 unsetopt SHWORDSPLIT # behave like Bash for word splitting
 
-# test command line editing module
+# test command line editing modules / widgets
+autoload -z zmv  # ex. zmv -n -W '*.txt' '*.log'
 autoload -z edit-command-line
-zle -N edit-command-line
+zle -N edit-command-line  # zsh line editor
 bindkey "^X^E" edit-command-line
+bindkey " " magic-space
 # also: You can use fc to edit the last command in history.
 
+# suffix aliases
+alias -s md="bat"
+alias -s yaml="bat -l yaml"
+alias -s json="jless"
+alias -s org="$EDITOR"
+
+# command buffer hotkeys
+bindkey -s '^Xgc' 'git commit -m ""\C-b'
 
 setopt NOTIFY      # Report the status of background jobs immediately
 setopt CDABLE_VARS # try to expand the expression as if it were preceded by a ‘~’
@@ -169,8 +179,8 @@ if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
   #export TERM=vt100
   export TERM=xterm-256color  # for eat, etc.
 
-  #export EDITOR=emacsclient
-  export VISUAL=emacsclient
+  export EDITOR=emacsclient
+  export VISUAL="$EDITOR"
   export PAGER=cat
   export PS1="$ "
   export GIT_EDITOR=emacs
@@ -243,38 +253,24 @@ Darwin)  # Darwin Environment
     fi
 
     # Fix date/gdate issues, if we have gdate use it
-    #if [[ -e /opt/homebrew/bin/gdate ]]; then alias date=gdate; fi
-
-    export EDITOR="${HOME}/bin/edit"
-    export ALTERNATE_EDITOR="mg"
+    if [[ -e /opt/homebrew/bin/gdate ]]; then alias date=gdate; fi
 
     # Tell homebrew to not autoupdate every single time I run it (just once a week).
     export HOMEBREW_AUTO_UPDATE_SECS=604800
 
-    # Pull emacs info back from .aliases and .functions
-    # Configure Emacs and Emacsclient
-    # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
-    alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"  # lowercase bin/emacs is broken
-    alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient" # fix magit?
-    #EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"  # -s $EMACS_SOCKET
-    # -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
-    alias ecw="emacsclient -n -c -a emacs"  # start a windowed frame
-    #alias ect="emacsclient -t -a emacs -nw" # start a terminal frame
-    #alias  ec="emacsclient -n -a emacs"     # do not start a new frame
-    # Specialized emacs buffers
-    alias ecb="emacsclient -c -a '' --eval '(ibuffer)'"
-    alias ecd="emacsclient -c -a '' --eval '(dired nil)'"
-    alias ecm="emacsclient -c -a '' --eval '(mu4e)'"
-    alias ecn="emacsclient -c -a '' --eval '(elfeed)'"
-    alias ece="emacsclient -c -a '' --eval '(eshell)'"
 
-    # Test functions
-    #-a EDITOR, --alternate-editor=EDITOR
-    #   Editor to fallback to if the server is not running
-    #   If EDITOR is the empty string, start Emacs in daemon
-    #   mode and try connecting again
-    function ec  { emacsclient -c -a '' --eval "(progn (find-file \"$1\"))"; }
-    function ect { emacsclient -t -a '' --eval "(progn (find-file \"$1\"))"; }
+    # Configure EDITOR, VISUAL, Emacs and Emacsclient
+    # -s socket, -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
+    alias emacs="/Applications/Emacs.app/Contents/MacOS/bin/emacs"
+    alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+    #EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server  # -s ${EMACS_SOCKET}
+    export ALTERNATE_EDITOR="mg"
+    export EDITOR="emacsclient -t -a '$ALTERNATE_EDITOR'"
+    export VISUAL="$EDITOR"
+    # Functions
+    function  ec { emacsclient -c -a '' --eval "(progn (find-file \"$1\"))"; }
+    function ect { emacsclient -t -a '' -- "${@}"; }
+
 
     ediff() { emacs --eval "(ediff \"$1\" \"$2\")" }
 
@@ -282,7 +278,7 @@ Darwin)  # Darwin Environment
     magit() {
       if git status > /dev/null 2>&1; then
           #emacsclient -nw --eval "(call-interactively #'magit-status)"
-          emacsclient -s ${HOME}/.emacs.d/var/tmp/server -n -a emacs --eval "(call-interactivel    y #'magit-status)"
+          emacsclient -n -a emacs --eval "(call-interactivel    y #'magit-status)"
       else
           echo "Not in a git repo"
           return 1
@@ -337,9 +333,10 @@ Linux)  # Based off of Ubuntu
         . $HOME/.functions.linux
     fi
 
-    # export EDITOR="emacsclient -t"
-    [[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
+    #[[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
     export ALTERNATE_EDITOR="mg"
+    export EDITOR="emacsclient -t -a ''"
+    export VISUAL="$EDITOR"
 
     # On laptop, emacsclient cannot find emacs socket
     # emacs <= 26
@@ -354,15 +351,15 @@ Linux)  # Based off of Ubuntu
     #alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient" # fix magit?
     #EMACS_SOCKET="${HOME}/.emacs.d/var/tmp/server"  # -s $EMACS_SOCKET
     # -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
-    alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs"  # start a windowed frame
-    alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
-    alias  ec="emacsclient -s $EMACS_SOCKET -n -a emacs"     # do not start a new frame
-    # Specialized emacs buffers
-    alias ecb="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(ibuffer)'"
-    alias ecd="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(dired nil)'"
-    alias ecm="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(mu4e)'"
-    alias ecn="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(elfeed)'"
-    alias ece="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(eshell)'"
+    #alias ecw="emacsclient -s $EMACS_SOCKET -n -c -a emacs"  # start a windowed frame
+    #alias ect="emacsclient -s $EMACS_SOCKET -t -a emacs -nw" # start a terminal frame
+    #alias  ec="emacsclient -s $EMACS_SOCKET -n -a emacs"     # do not start a new frame
+    ## Specialized emacs buffers
+    #alias ecb="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(ibuffer)'"
+    #alias ecd="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(dired nil)'"
+    #alias ecm="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(mu4e)'"
+    #alias ecn="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(elfeed)'"
+    #alias ece="emacsclient -s $EMACS_SOCKET -c -a '' --eval '(eshell)'"
 
     ;; # end Linux
 

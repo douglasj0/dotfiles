@@ -31,8 +31,9 @@
   :defer 1
   :if (display-graphic-p)
   :config
-  (setq server-client-instructions nil) ; don't display disconnect instrs
+  (setq server-client-instructions nil) ; don't display disconnect instructions
   (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
+  ;(setq server-name "my-emacs-server") ; Choose any name, default 'server'
   (unless (server-running-p) (server-start)))
 
 (use-package emacs
