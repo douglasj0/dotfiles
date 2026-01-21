@@ -183,6 +183,16 @@ if [ -f $HOME/.functions ]; then
     . $HOME/.functions
 fi
 
+# -- Editor --
+#[[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
+#EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server  # -s ${EMACS_SOCKET}
+export ALTERNATE_EDITOR="mg"
+export EDITOR="emacsclient -t -a '$ALTERNATE_EDITOR'"
+export VISUAL="$EDITOR"
+# Emacs Functions
+function  ec { emacsclient -c -a '' --eval "(progn (find-file \"$1\"))"; }
+function ect { emacsclient -t -a '' -- "${@}"; }
+
 # -- Emacs shell setup --
 if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
   echo ".. inside Emacs"
@@ -243,8 +253,6 @@ else
 fi
 
 
-
-
 ###################
 #   OS Specific   #
 ###################
@@ -273,13 +281,7 @@ Darwin)  # Darwin Environment
     # -s socket, -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
     alias emacs="/Applications/Emacs.app/Contents/MacOS/bin/emacs"
     alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
-    #EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server  # -s ${EMACS_SOCKET}
-    export ALTERNATE_EDITOR="mg"
-    export EDITOR="emacsclient -t -a '$ALTERNATE_EDITOR'"
-    export VISUAL="$EDITOR"
-    # Functions
-    function  ec { emacsclient -c -a '' --eval "(progn (find-file \"$1\"))"; }
-    function ect { emacsclient -t -a '' -- "${@}"; }
+
 
 
     ediff() { emacs --eval "(ediff \"$1\" \"$2\")" }
@@ -343,17 +345,11 @@ Linux)  # Based off of Ubuntu
         . $HOME/.functions.linux
     fi
 
-    #[[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
-    export ALTERNATE_EDITOR="mg"
-    export EDITOR="emacsclient -t -a ''"
-    export VISUAL="$EDITOR"
-
     # On laptop, emacsclient cannot find emacs socket
     # emacs <= 26
     export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server
     # emacs 27+ (but didn't work for me with emacs 30.1)
     # export EMACS_SOCKET=$XDG_RUNTIME_DIR/emacs/server
-
     # Pull emacs info back from .aliases and .functions
     # Configure Emacs and Emacsclient
     # adapted from http://philipweaver.blogspot.com/2009/08/emacs-23.html
