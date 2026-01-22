@@ -186,7 +186,7 @@ fi
 # -- Editor --
 #[[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
 #EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server  # -s ${EMACS_SOCKET}
-export ALTERNATE_EDITOR="mg"
+export ALTERNATE_EDITOR="mg -f end-of-line"
 export EDITOR="emacsclient -t -a '$ALTERNATE_EDITOR'"
 export VISUAL="$EDITOR"
 # Emacs Functions
