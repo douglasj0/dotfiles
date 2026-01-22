@@ -237,6 +237,41 @@
 )
 
 
+;; gnus newsreader
+(use-package gnus
+  :defer t
+  ;;:custom
+  :config
+  ;;;; gnus, set to be more like tin
+  (setq gnus-select-method '(nntp "news.eternal-september.org"
+                                    (nntp-port-number 119)))
+  ;; Summary Line Format
+  ;; %U%R%z: New/Unread/Read status.
+  ;; %[%4L: %-20,20f%]%: Thread level (indentation) and sender (truncated to 20 chars).
+  ;; %s: Subject.
+  (setq gnus-summary-line-format "%U%R%z %(%[%4L: %-20,20f%]%) %s\n"
+        gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject
+        gnus-simplify-subject-functions '(gnus-simplify-subject-re))
+  ;; Configure Threading
+  (setq gnus-summary-make-false-root 'adopt
+        gnus-summary-thread-indent-string "  ")
+  ;; Key Bindings
+  (add-hook 'gnus-summary-mode-hook
+            (lambda ()
+              (local-set-key "q" 'gnus-summary-exit)
+              (local-set-key "l" 'gnus-summary-goto-subject)
+              (local-set-key "n" 'gnus-summary-next-article)
+              (local-set-key "p" 'gnus-summary-prev-article)
+              (local-set-key " " 'gnus-summary-scroll-up)
+              (local-set-key "\C-d" 'gnus-summary-enter-digest-group)
+              (local-set-key "u" 'gnus-summary-tick-article-forward)))
+  ;; Group Buffer Appearance
+  (setq gnus-group-line-format "%M%S%p%P%5y:%B %G\n")
+  ;; Enable caching
+  (setq gnus-agent t)
+)
+
+
 ;;; * Windows, MacOS, Linux specific settings -----
 ;; https://github.com/purcell/exec-path-from-shell
 ;(use-package exec-path-from-shell
