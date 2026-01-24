@@ -56,12 +56,12 @@
                 fill-column 100
                 tab-width 4)
 
-  ;(auto-save-visited-mode 1)
-  ;(tool-bar-mode -1)
-  ;(menu-bar-mode -1)
+  ;;(auto-save-visited-mode 1) ; auto-save buffer after x seconds
+  ;;(tool-bar-mode -1)
+  ;;(menu-bar-mode -1)
   (xterm-mouse-mode 1)
-  (setq x-select-enable-primary t) ; use primary X selection mechanism
-  (setq mouse-drag-copy-region t)  ; copy selection to kill ring immediately
+  (setq select-enable-primary t) ; use primary X selection mechanism
+  ;(setq mouse-drag-copy-region t)  ; copy selection to kill ring immediately
   (show-paren-mode 1)
   (global-display-line-numbers-mode 1)
   (fringe-mode '(8 . 8))
@@ -112,7 +112,8 @@
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
   ;; enable delete selection mode, so pasting overwrites selection
-  (delete-selection-mode 1)
+  (setq delete-selection-mode 1)
+  (setq delete-active-region 'kill) ;; Change to nil to just delete, not kill
 
   ;; set default shell to zsh
   (setq explicit-shell-file-name "/bin/zsh")
