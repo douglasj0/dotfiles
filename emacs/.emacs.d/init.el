@@ -24,7 +24,6 @@
 
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/elisp/")) ;; elisp packages not in pkg mgr
 
-
 ;;; * Basic Emacs options -----
 ;; Force default socket-dir "/tmp/emacs{uid}"
 (use-package server
@@ -57,7 +56,7 @@
                 fill-column 100
                 tab-width 4)
 
-  (auto-save-visited-mode 1)
+  ;(auto-save-visited-mode 1)
   ;(tool-bar-mode -1)
   ;(menu-bar-mode -1)
   (xterm-mouse-mode 1)

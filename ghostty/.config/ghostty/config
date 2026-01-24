@@ -47,7 +47,6 @@ font-size = 16
 selection-invert-fg-bg = false
 bold-is-bright = false
 font-thicken = false
-#font-thicken = true
 
 # macOS Specific
 macos-titlebar-style = tabs
