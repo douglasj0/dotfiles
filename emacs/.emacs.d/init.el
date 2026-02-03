@@ -150,14 +150,6 @@
   ;;; Enable holidays in Calendar
   (setq mark-holidays-in-calendar t)
 
-  ;; w/o-man mode (elisp man page formater for systems without 'man')
-  (defvar woman-show-log)
-  (defvar woman-cache-filename)
-  (setq woman-show-log nil)
-  (autoload 'woman "woman"
-    "Decode and browse a Unix man page." t)
-  (setq woman-cache-filename "~/.emacs.d/var/woman_cache.el")
-
   ;;; Make tooltips appear in the echo area (checks if function exists)
   (tooltip-mode nil)
 
