@@ -3,14 +3,12 @@
 ;; Commentary:
 ;;
 
-;; Problems:
 
-
+;;;; * Startup
 ;;; * Package repo setup and quickstart-----
 (require 'package) ; needed for package-archive variable
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (setq package-quickstart t)
-
 
 ;; Load custom configuration file
 (setq custom-file (expand-file-name "custom.el" "~/org/emacs_d/"))
@@ -22,75 +20,81 @@
   (add-to-list 'Info-additional-directory-list
                "~/org/emacs_d/info"))
 
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/elisp/")) ;; elisp packages not in pkg mgr
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/elisp/")) ;; elisp packages not in pkg mgr, changing in 32.0
+
+
+;;;; * esup - startupprofiler
+;(use-package esup
+;  :ensure t
+;  ;; To use MELPA Stable use ":pin melpa-stable",
+;  :pin melpa
+;  :config
+;  (setq esup-depth 0)
+;)
+;;; enable use-package profiling (M-x use-package-report)
+;(setq use-package-compute-statistics t)
+
 
 ;;; * Basic Emacs options -----
-;; Force default socket-dir "/tmp/emacs{uid}"
 (use-package server
   :defer 1
-  :if (display-graphic-p)
+  :if (display-graphic-p)  ; only start in gui
   :config
   (setq server-client-instructions nil) ; don't display disconnect instructions
-  (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
+  (setq server-socket-dir (format "/tmp/emacs%d" (user-uid))) ;; Force default socket-dir "/tmp/emacs{uid}"
   ;(setq server-name "my-emacs-server") ; Choose any name, default 'server'
   (unless (server-running-p) (server-start)))
 
 (use-package emacs
   :init
-  (setq use-short-answers t            ; use 'y" and "n"
-        confirm-kill-emacs 'yes-or-no-p
-        scroll-conservatively 101      ; don't jump scroll at window bottom
+  (setq scroll-conservatively 101      ; don't jump scroll at window bottom
         help-window-select t
         backup-by-copying t
         backup-directory-alist '((cons "."
           (file-name-concat user-emacs-directory "backup/")))
-        create-lockfiles nil
-        initial-scratch-message ""
+        create-lockfiles t
         initial-major-mode 'text-mode
         custom-safe-themes t           ; treat all themes as safe
         initial-buffer-choice t)       ; open scratch buffer at startup
   :config
-  (setq-default truncate-lines t
-                display-line-numbers-width 3
-                indent-tabs-mode nil   ; use spaces instead of tabs
-                fill-column 100
-                tab-width 4)
-
-  ;;(auto-save-visited-mode 1) ; auto-save buffer after x seconds
-  ;;(tool-bar-mode -1)
-  ;;(menu-bar-mode -1)
-  (xterm-mouse-mode 1)
-  (setq select-enable-primary t) ; use primary X selection mechanism
-  ;(setq mouse-drag-copy-region t)  ; copy selection to kill ring immediately
-  (show-paren-mode 1)
-  (global-display-line-numbers-mode 1)
-  (fringe-mode '(8 . 8))
-
-  (setq user-full-name "Douglas Jackson" ; whoami
+  ;; * initialization
+  (setq inhibit-startup-message t)
+  (setq-default initial-scratch-message nil)
+  (setq user-full-name "Douglas Jackson"
         user-mail-address "hpotter@hogworts.edu")
 
-  ;;; Customize Modeline -----
-  ;; make the read-only and modified indicators more noticeable.
-  (setq-default mode-line-modified        ; not customizable
-                '((:eval (if buffer-read-only
-                             (propertize "R" 'face 'warning) ;; was %
-                           "-"))
-                  (:eval (if (buffer-modified-p)
-                             (propertize "*" 'face 'error) ;; was *
-                           "-"))))
-  ;;(setopt mode-line-compact 'long)
-
-  ;;; Enable disabled functions
+  ;; * enable or disabled functions
+  ;; Upcase and downcase regions, default also works on inactive region, use dwim
+  ;(put 'upcase-region 'disabled nil)  ; C-x C-u
+  ;(put 'downcase-region 'disabled nil)  ; C-x C-l
   (global-unset-key (kbd "C-x C-u")) ; default is `upcase-region'-region'
   (global-unset-key (kbd "C-x C-l")) ; default is `downcase-region'
+  ;(global-unset-key (kbd "M-c"))     ; default is `kill-ring-save', didn't work
+  ;(global-set-key (kbd "M-c") #'capitalize-region) ; was M-c
   (global-set-key (kbd "C-x C-u") #'upcase-dwim)   ; was M-u
   (global-set-key (kbd "C-x C-l") #'downcase-dwim) ; was M-l
+
+  ;; Restrict buffer editing to a region
+  ;; Text Narrowing commands:
+  ;;   Region: C-x n n, Page: C-x n p
+  ;;   Funct: C-x n p, Widen: C-x n w
+  ;;   Subtree in Org-Mode:   C-x n s
+  (put 'narrow-to-region 'disabled nil)
+  (global-unset-key (kbd "C-x n n"))
 
   ;; Goal Column, enter C-x C-n, at point to set column that C-n should go to
   ;; to clear enter C-u C-x C-n
   (put 'set-goal-column 'disabled nil)
 
-  ;;; Global key bindings
+  ;; https://www.emacswiki.org/emacs/ZapUpToChar
+  (autoload 'zap-up-to-char "misc"
+    "Kill up to, but not including ARGth occurrence of CHAR.")
+  (global-set-key (kbd "M-z") 'zap-up-to-char)
+
+  ;; disable electric-indent if active, added in Emacs 24.4
+  (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
+
+  ;; * global key bindings
   ;; Show a summery of all registers with content
   (global-set-key (kbd "C-x r v") 'list-registers)
 
@@ -101,25 +105,19 @@
   (global-set-key (kbd "C-x C-m") 'execute-extended-command)
   ;(global-set-key (kbd "C-c C-m") 'execute-extended-command) ; remapped by org to org-ctrl-c-ret
 
-  ;; Enable line-numbers-mode for all programming languages
-  ;(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  ;; * global settings
+  ;; Compilation buffer scrolls to follow output.
+  ;; set to first-error to stop when the first error appers and set point
+  (setq compilation-scroll-output t)
 
-  ;; Disable line numbers for some modes
-  (dolist (mode '(org-mode-hook
-                  term-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+  ;; Enable line-numbers-mode for all programming languages
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
   ;; enable delete selection mode, so pasting overwrites selection
-  (setq delete-selection-mode 1)
-  (setq delete-active-region 'kill) ;; Change to nil to just delete, not kill
+  (delete-selection-mode 1)
 
-  ;; set default shell to zsh
-  (setq explicit-shell-file-name "/bin/zsh")
-  (setq shell-file-name "zsh")
-  (setq explicit-bash.exe-args '("--noediting" "--login" "-i"))
-  (setenv "SHELL" shell-file-name)
+  ;; expand text before point - M-/ default is dabbrev-expand
+  (global-set-key (kbd "M-/") 'hippie-expand)
 
   ;; Remove trailing whitespace on save
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -127,23 +125,77 @@
   ;; automatically follow symlinks to files under version control without prompting
   (setq vc-follow-symlinks t)
 
-  ;; Enable holidays in Calendar and week-start-day
-  (setq mark-holidays-in-calendar t
-        calendar-week-start-day 0)
+  ;;; Kill line backwards
+  ;; http://emacsredux.com/blog/2013/04/08/kill-line-backward/
+  (global-set-key (kbd "C-<backspace>") (lambda ()
+                                          (interactive)
+                                          (kill-line 0)
+                                          (indent-according-to-mode)))
 
-  ;; Emacs 24.4 and later now include something similar: Rectangle Mark mode. After a region is active, type ‘C-x SPC’ to toggle it on and off.
+  ;;; Ping settings (from net-util.el)
+  ;; http://www.masteringemacs.org/articles/2011/03/02/network-utilities-emacs/
+  (defvar ping-program-options)
+  (setq ping-program-options '("-c" "4"))
+
+  ;;; Enable whitespace-mode for diff buffers
+  ;;; http://stackoverflow.com/questions/11805584/automatically-enable-whitespace-mode-in-diff-mode
+  (add-hook 'diff-mode-hook
+            (lambda ()
+              (whitespace-mode 1)))
+
+  ;;; Enable holidays in Calendar
+  (setq mark-holidays-in-calendar t)
+
+  ;; w/o-man mode (elisp man page formater for systems without 'man')
+  (defvar woman-show-log)
+  (defvar woman-cache-filename)
+  (setq woman-show-log nil)
+  (autoload 'woman "woman"
+    "Decode and browse a Unix man page." t)
+  (setq woman-cache-filename "~/.emacs.d/var/woman_cache.el")
+
+  ;;; Make tooltips appear in the echo area (checks if function exists)
+  (tooltip-mode nil)
+
+  ;;; Emacs 24.4 and later now include something similar: Rectangle Mark mode. After a region is active, type ‘C-x SPC’ to toggle it on and off.
+  ;;; Use CUA mode for rectangles (C-RET to select, normal emacs keys to copy)
   ;;; http://emacs-fu.blogspot.com/2010/01/rectangles-and-cua.html
+  ;(setq cua-rectangle-mark-key (kbd "C-^"))
   (global-unset-key "\C-z")
   ;(setq cua-rectangle-mark-key (kbd "C-z '"))
   (setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; instead of Ctrl-Enter
   (cua-selection-mode t)
+  ;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
+  ;(cua-mode t)
 
-  ;; Alias to change apropos to ap
+  ;;; Don't create new lines when pressing 'arrow-down key' at end of the buffer
+  (setq next-line-add-newlines nil)
+
+  ;;; Fix delete key working as backspace and not forward deleting
+  ;;; (This only worked in window mode, not terminal. C-d works in both)
+  (when window-system (normal-erase-is-backspace-mode 1))
+
+  ;;; Alias to change apropos to ap
   (defalias 'ap 'apropos)
 
-  ;; hl-line: highlight the current line
+  ;;; hl-line: highlight the current line
   (when (fboundp 'global-hl-line-mode)
     (global-hl-line-mode t)) ;; turn it on for all modes by default
+
+  ;;; Make text mode default major mode with auto-fill enabled
+  (setq default-major-mode 'text-mode)
+  (add-hook 'text-mode-hook 'turn-on-visual-line-mode) ;replaces longlines in 23
+
+  ;;; Auto-scroll in *Compilation* buffer
+  (setq compilation-scroll-output t)
+
+  ;;; "y or n" instead of "yes or no", use-short-answers added in Emacs 28.1
+  ;; if odd pop-up vs minibuffer prompt issues, examine us-dialog-box?
+  ;(fset 'yes-or-no-p 'y-or-n-p) ;emacs < 28
+  (setq use-short-answers t)
+
+  ;;; Ask before quitting the last Emacs frame
+  (setq confirm-kill-emacs 'y-or-n-p)
 
   ;;; Highlight regions and add special behaviors to regions.
   ;;; "C-h d transient" for more info.  transient-mark-mode is a toggle.
@@ -151,24 +203,99 @@
   ;(setq transient-mark-mode nil)
   (setq transient-mark-mode t)
 
-  ;; Display line and column numbers in the mode line
-  (setq line-number-mode t
-        column-number-mode t)
+  ;;; Display line and column numbers in the mode line
+  (setq line-number-mode    t
+        column-number-mode  t)
 
-  ;; Stop blinking cursor
+  ;;; Stop blinking cursor
   (blink-cursor-mode 0)
 
-  ;; Explicitly show the end of a buffer (indicated on left fringe of window)
+  ;;; Explicitly show the end of a buffer (indicated on left fringe of window)
   (set-default 'indicate-empty-lines t)
 
-  ;; Goal Column, enter C-x C-n, at point to set column that C-n should go to
-  ;; to clear enter C-u C-x C-n
-  (put 'set-goal-column 'disabled nil)
-  ;; Restrict buffer editing to a region
-  (put 'narrow-to-region 'disabled nil)
-  (global-unset-key (kbd "C-x n n"))
+  ;;; Line-wrapping
+  (set-default 'fill-column 78)
 
-  ;;; Functions
+  ;; Don't truncate lines
+  (setq truncate-lines t
+        truncate-partial-width-windows nil)
+
+  ;; Create new scratch buffer if needed
+  (run-with-idle-timer 1 t
+      (lambda () (get-buffer-create "*scratch*")))
+
+  ;; allow scroll-down/up-command to move point to buffer end/beginning
+  ;(setq scroll-error-top-bottom 'true)
+
+  ;; electric-pair
+  (defun my/electric-pair-conservative-inhibit (char)
+    (or
+     ;; I (u/sandinmyjoints) find it more often preferable not to pair
+     ;; when the same char is next.
+     (eq char (char-after))
+     ;; Don't pair up when we insert the second of "" or of ((.
+     (and (eq char (char-before))
+          (eq char (char-before (1- (point)))))
+     ;; I also find it often preferable not to pair next to a word.
+     (eq (char-syntax (following-char)) ?w)
+     ;; Don't pair at the end of a word, unless parens.
+     (and
+      (eq (char-syntax (char-before (1- (point)))) ?w)
+      (eq (preceding-char) char)
+      (not (eq (char-syntax (preceding-char)) 40) ;; 40 is open paren
+           ))))
+  (setq-default electric-pair-inhibit-predicate
+                'my/electric-pair-conservative-inhibit)
+  (electric-pair-mode)
+
+  ;; disable visual-bell /!\
+  ;; you really only need one of these
+  (setq visible-bell nil)
+  ;(setq ring-bell-function 'ignore)
+
+  ;; repl alias for lisp -- read-eval-print-loop
+  ;(defun repl() (interactive) (ielm))
+  (defalias 'repl 'ielm)
+
+  ;; * function definations
+  ;; ---------------------------------------------------------------------------
+  (defun toggle-indent-tabs-mode ()
+    "Toggle indent-tabs-mode in the current buffer."
+    (interactive)
+    (setq indent-tabs-mode (not indent-tabs-mode))
+    (message "indent-tabs-mode is now %s" (if indent-tabs-mode "on" "off")))
+
+  (global-set-key (kbd "C-c b") 'toggle-indent-tabs-mode)
+
+  ;; ---------------------------------------------------------------------------
+  ;; https://www.reddit.com/r/emacs/comments/1mrqi6p/emacs_toggle_transparency_with_interactive/
+  (defun my/toggle-frame-transparency ()
+    "Toggle frame transparency with user-specified opacity value.
+  Prompts user whether to enable transparency. If yes, asks for opacity value (0-100).
+  If no, restores full opacity. Only affects the active frame."
+    (interactive)
+    (if (y-or-n-p "Enable frame transparency? ")
+        (let ((alpha-value (read-number "Enter transparency value (0-100, default 90): " 90)))
+          (if (and (>= alpha-value 0) (<= alpha-value 100))
+              (progn
+                (set-frame-parameter nil 'alpha alpha-value)
+                (message "Frame transparency set to %d%%" alpha-value))
+            (message "Invalid transparency value. Please enter a number between 0 and 100.")))
+      (progn
+        (set-frame-parameter nil 'alpha 100)
+        (message "Frame transparency disabled (full opacity restored)"))))
+
+  ;; Global keybinding for transparency toggle
+  ;(global-set-key (kbd "C-c T") 'my/toggle-frame-transparency)
+
+  ;; ---------------------------------------------------------------------------
+  ;; https://www.reddit.com/r/emacs/comments/un4wf8/weekly_tips_tricks_c_thread/
+  ;; toggle between two most recent buffers in a window
+  (defun back-and-forth-buffer ()
+      (interactive)
+      (switch-to-buffer (other-buffer (current-buffer))))
+  (global-set-key (kbd "<f7>") 'back-and-forth-buffer)
+
   ;; ---------------------------------------------------------------------------
   ;; https://gist.github.com/mwfogleman/95cc60c87a9323876c6c
   ;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
@@ -180,6 +307,7 @@
           ((equal major-mode 'org-mode) (org-narrow-to-subtree))
           (t (error "Please select a region to narrow to"))))
   (global-set-key (kbd "C-x n n") 'narrow-or-widen-dwim)  ; was: C-c n then C-c x then C-x n n
+
   ;; I bind this key to C-c n, using the bind-key function that comes with use-package.
   ;(bind-key "C-c n" 'narrow-or-widen-dwim)
   ;; I also bind it to C-x t n, using Artur Malabarba's toggle map idea:
@@ -211,85 +339,159 @@
   (global-set-key (kbd "<M-S-up>") 'move-line-up)
 
   ;; ---------------------------------------------------------------------------
-  ;;Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
-  ;;This method, when bound to C-x C-c, allows you to close an emacs frame the
-  ;;same way, whether it's the sole window you have open, or whether it's
-  ;;a "child" frame of a "parent" frame.  If you're like me, and use emacs in
-  ;;a windowing environment, you probably have lots of frames open at any given
-  ;;time.  Well, it's a pain to remember to do Ctrl-x 5 0 to dispose of a child
-  ;;frame, and to remember to do C-x C-x to close the main frame (and if you're
-  ;;not careful, doing so will take all the child frames away with it).  This
-  ;;is my solution to that: an intelligent close-frame operation that works in
-  ;;all cases (even in an emacs -nw session).
+  ;; Match Paren / based on the vim command using %
+  ;; emacs for vi users: http://grok2.tripod.com
+  (defun match-paren (arg)
+    "Go to the matching paren if on a paren; otherwise insert %."
+    (interactive "p")
+    (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
+          ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
+          (t (self-insert-command (or arg 1)))))
+  (global-set-key "%" 'match-paren)
+
+  ;; ---------------------------------------------------------------------------
   (defun intelligent-close ()
-    "quit a frame the same way no matter what kind of frame you are on"
+    "quit a frame the same way no matter what kind of frame you are on.
+
+  This method, when bound to C-x C-c, allows you to close an emacs frame the
+  same way, whether it's the sole window you have open, or whether it's
+  a \"child\" frame of a \"parent\" frame.  If you're like me, and use emacs in
+  a windowing environment, you probably have lots of frames open at any given
+  time.  Well, it's a pain to remember to do Ctrl-x 5 0 to dispose of a child
+  frame, and to remember to do C-x C-x to close the main frame (and if you're
+  not careful, doing so will take all the child frames away with it).  This
+  is my solution to that: an intelligent close-frame operation that works in
+  all cases (even in an emacs -nw session).
+
+  Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
     (interactive)
     (if (eq (car (visible-frame-list)) (selected-frame))
         ;;for parent/master frame...
         (if (> (length (visible-frame-list)) 1)
             ;;close a parent with children present
-     (delete-frame (selected-frame))
-        ;;close a parent with no children present
-   (save-buffers-kill-emacs))
+            (delete-frame (selected-frame))
+          ;;close a parent with no children present
+          (save-buffers-kill-emacs))
       ;;close a child frame
       (delete-frame (selected-frame))))
   (global-set-key "\C-x\C-c" 'intelligent-close) ;forward reference
-)
+
+  ;; ---------------------------------------------------------------------------
+  ;; It’s useful to have a scratch buffer around, and more useful to have a key chord to switch to it.
+  (defun switch-to-scratch-buffer ()
+    "Switch to the current session's scratch buffer."
+    (interactive)
+    (switch-to-buffer "*scratch*"))
+  (bind-key "C-c f s" #'switch-to-scratch-buffer)
 
 
-;; gnus newsreader
-(use-package gnus
-  :defer t
-  ;;:custom
-  :config
-  ;;;; gnus, set to be more like tin
-  (setq gnus-select-method '(nntp "news.eternal-september.org"
-                                    (nntp-port-number 119)))
-  ;; Summary Line Format
-  ;; %U%R%z: New/Unread/Read status.
-  ;; %[%4L: %-20,20f%]%: Thread level (indentation) and sender (truncated to 20 chars).
-  ;; %s: Subject.
-  (setq gnus-summary-line-format "%U%R%z %(%[%4L: %-20,20f%]%) %s\n"
-        gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject
-        gnus-simplify-subject-functions '(gnus-simplify-subject-re))
-  ;; Configure Threading
-  (setq gnus-summary-make-false-root 'adopt
-        gnus-summary-thread-indent-string "  ")
-  ;; Key Bindings
-  (add-hook 'gnus-summary-mode-hook
-            (lambda ()
-              (local-set-key "q" 'gnus-summary-exit)
-              (local-set-key "l" 'gnus-summary-goto-subject)
-              (local-set-key "n" 'gnus-summary-next-article)
-              (local-set-key "p" 'gnus-summary-prev-article)
-              (local-set-key " " 'gnus-summary-scroll-up)
-              (local-set-key "\C-d" 'gnus-summary-enter-digest-group)
-              (local-set-key "u" 'gnus-summary-tick-article-forward)))
-  ;; Group Buffer Appearance
-  (setq gnus-group-line-format "%M%S%p%P%5y:%B %G\n")
-  ;; Enable caching
-  (setq gnus-agent t)
-)
+  ;; * other
+  ;;; Customize Modeline -----
+  ;; make the read-only and modified indicators more noticeable.
+  (setq-default mode-line-modified        ; not customizable
+                '((:eval (if buffer-read-only
+                             (propertize "R" 'face 'warning) ;; was %
+                           "-"))
+                  (:eval (if (buffer-modified-p)
+                             (propertize "*" 'face 'error) ;; was *
+                           "-"))))
+  ;;(setopt mode-line-compact 'long)
 
+  (setq-default ispell-program-name "aspell")
+
+  ;; Enable line-numbers-mode for all programming languages
+  ;(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
+  ;; Disable line numbers for some modes
+  (dolist (mode '(org-mode-hook
+                  term-mode-hook
+                  shell-mode-hook
+                  eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+  ;; enable delete selection mode, so pasting overwrites selection
+  (setq delete-selection-mode 1)
+  (setq delete-active-region 'kill) ;; Change to nil to just delete, not kill
+
+  ;; Remove trailing whitespace on save
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+  ;; automatically follow symlinks to files under version control without prompting
+  (setq vc-follow-symlinks t)
+
+  ;; Enable holidays in Calendar and week-start-day
+  (setq mark-holidays-in-calendar t
+        calendar-week-start-day 0)
+
+  ;; Alias to change apropos to ap
+  (defalias 'ap 'apropos)
+
+    ;; hl-line: highlight the current line
+  (when (fboundp 'global-hl-line-mode)
+    (global-hl-line-mode t)) ;; turn it on for all modes by default
+
+  ;;; Highlight regions and add special behaviors to regions.
+  ;;; "C-h d transient" for more info.  transient-mark-mode is a toggle.
+  ;;; also in Emacs 22 and greater, C-SPC twice to temp enable transient mark
+  ;(setq transient-mark-mode nil)
+  (setq transient-mark-mode t)
+
+  ;; Tear off window into a new frame
+  (bind-key "C-x 5 t" #'tear-off-window) ; into a new frame
+
+  ;;; \/\/\/ recheck
+  ;(setq-default display-line-numbers-width 3
+  ;              indent-tabs-mode nil   ; use spaces instead of tabs
+  ;              tab-width 4)
+
+  ;(xterm-mouse-mode 1)
+  ;(setq select-enable-primary t) ; use primary X selection mechanism
+  ;(global-display-line-numbers-mode 1)
+  ;(fringe-mode '(8 . 8))
+
+  ;;; make Emacs always indent using SPC characters and never TABs
+  ;;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Just-Spaces.html
+  (setq-default indent-tabs-mode nil)
+  (show-paren-mode 1)
+  (savehist-mode 1)
+
+  (setq save-interprogram-paste-before-kill t
+        apropos-do-all t
+        require-final-newline t
+        delete-old-versions t
+        load-prefer-newer t
+        ediff-window-setup-function 'ediff-setup-windows-plain)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete)
+
+  ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
+  ;; try `cape-dict'.
+  (setq text-mode-ispell-word-completion nil)
+
+  ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
+  ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
+  ;; setting is useful beyond Corfu.
+  (setq read-extended-command-predicate #'command-completion-default-include-p)
+  ;;; ^^^ recheck
+
+  ;;; * daily-log
+  (defun daily-log ()
+    "Automatically opens my daily log file and positions cursor at end of
+  last sentence."
+    (interactive)
+    ;(diary)
+    (find-file "~/org/DailyLogs/+current") ;symlink to current log
+    (goto-char (point-max))  ;go to the maximum accessible value of point
+    (search-backward "* Notes") ;search to Notes section first to bypass notes
+    (if (re-search-backward "[.!?]") ;search for punctuation from end of file
+        (forward-char 1))
+    )
+  (global-set-key (kbd "<f9>") 'daily-log)
+) ;; end startup
 
 ;;; * Windows, MacOS, Linux specific settings -----
-;; https://github.com/purcell/exec-path-from-shell
-;(use-package exec-path-from-shell
-;  :ensure t
-;  :config
-;  ;; exec-path-from-shell, sometimes needed for GUI launch
-;  ;; Only load this package on macOS and Linux GUI Emacs
-;  (when (and (memq system-type '(darwin gnu/linux))
-;           (display-graphic-p)
-;           (require 'exec-path-from-shell nil t))
-;  ;; Variables you want imported from the shell
-;  (setq exec-path-from-shell-variables
-;        '("PATH" "MANPATH" "LANG" "LC_ALL" "SHELL"))
-;  ;; Don’t warn about non-interactive shells
-;  (setq exec-path-from-shell-check-startup-files nil)
-;  ;; Initialize environment variables and exec-path
-;  (exec-path-from-shell-initialize)))
-
 (use-package emacs
   :init
   ;; Common settings across all OSes
@@ -323,8 +525,11 @@
      (global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
 
      ;; mac 'ls' doesn't support --dired
-     (when (string= system-type "darwin")
-       (setq dired-use-ls-dired nil))
+     ;(when (string= system-type "darwin")
+     ;  (setq dired-use-ls-dired nil))
+     ;; installed brew coreutils
+     (setq insert-directory-program "gls" dired-use-ls-dired t)
+     (setq dired-listing-switches "-al --group-directories-first")
 
      ;; Use meta +/- to change text size
      (bind-key "M-+" 'text-scale-increase)
@@ -403,52 +608,18 @@
     ;; Open up URLs in browser using gnome-open (errors on bytecompile)
     ;(setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "gnome-open")
     (setq browse-url-browser-function 'browse-url-firefox))
-))
+)) ;; end environment config
 
 
 ;;; * Saving + Recent -----
 (use-package recentf
   :hook (after-init . recentf-mode)
-  :custom (recent-max-saved-items 60))
+  :custom
+  (recent-max-saved-items 60)
+  (recentf-max-menu-items 15))
 
 ;; Persist minibuffer history over Emacs restarts
 (use-package savehist :hook (after-init . savehist-mode))
-
-
-;;; * Themes + Visuals -----
-;; https://github.com/catppuccin/emacs
-(use-package catppuccin-theme
-  :ensure t
-  :config
-  (load-theme 'catppuccin :no-confirm) ; Emacs in own window
-)
-
-(use-package diminish :ensure t)
-
-(use-package centered-cursor-mode
-  :commands (centered-cursor-mode)
-  :diminish centered-cursor-mode)
-
-;(use-package golden-ratio
-;  :ensure t
-;  :diminish golden-ratio-mode
-;  :hook (after-init . golden-ratio-mode)
-;  :config
-;  (golden-ratio-toggle-widescreen)
-;  (dolist (command '(evil-window-down evil-window-up evil-window-left evil-window-right))
-;    (add-to-list 'golden-ratio-extra-commands command)))
-
-;; nerd-icons.el - A Library for Nerd Font icons
-;; https://github.com/rainstormstudio/nerd-icons.el#installing-fonts
-;; To finish, run: M-x nerd-icons-install-fonts ; installs to ‘~/Library/Fonts'
-(use-package nerd-icons
-  :ensure t
-  ;:defer 5
-  :custom
-  ;; The Nerd Font you want to use in GUI
-  ;; "Symbols Nerd Font Mono" is the default and is   ;; but you can use any other Nerd Font if you want
-  (nerd-icons-font-family "Symbols Nerd Font Mono")
-)
 
 
 ;;; * Completions -----
@@ -458,7 +629,12 @@
   :ensure t
   :bind (:map vertico-map
               ("<backspace>" . vertico-directory-delete-char)
-              ("C-h" . vertico-directory-delete-word))
+              ("C-h" . vertico-directory-delete-word)
+         :map vertico-map
+              ("C-n" . vertico-next)
+              ("C-p" . vertico-previous)
+              ("C-v" . vertico-scroll-up)
+              ("M-v" . vertico-scroll-down))
   :init
   (vertico-mode)
   (vertico-multiform-mode)
@@ -470,36 +646,6 @@
   ;   (find-file reverse)))
   (vertico-resize t)
   (vertico-count 15))
-
-;; marginalia.el - Marginalia in the minibuffer
-;; https://github.com/minad/marginalia
-(use-package marginalia
-  :ensure t
-  :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
-  :init
-  (marginalia-mode))
-
-;; https://github.com/oantolin/orderless
-(use-package orderless
-  :ensure t
-  :config
-  (setq completion-styles '(orderless basic)))
-
-;; consult.el - Consulting completing-read
-;; https://github.com/minad/consult
-(use-package consult
-  :ensure t
-  :bind
-  ;("M-b" . consult-buffer)
-  ("M-b" . switch-to-buffer)                ;; remap to access switch-to-buffer
-  ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-  ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-  ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-  ("C-s" . consult-line)  ;; replace I-search
-  ("C-x C-r" . consult-recent-file)         ;; added for recentf
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-)
 
 ;; corfu.el - Completion Overlay Region FUnction
 ;; https://github.com/minad/corfu
@@ -518,50 +664,108 @@
   :hook
   (corfu-mode . corfu-terminal-mode))
 
+;; marginalia.el - Marginalia in the minibuffer
+;; https://github.com/minad/marginalia
+(use-package marginalia
+  :ensure t
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+  :init
+  (marginalia-mode))
 
-;;; * RMail  -----
-;; Load programing settings from programming.el
-(let ((rmail-conf (expand-file-name "rmail-cpt.el" user-emacs-directory)))
-  (when (file-exists-p rmail-conf)
-    (load-file rmail-conf)))
+;; https://github.com/oantolin/orderless
+(use-package orderless
+  :ensure t
+  :config
+  (setq completion-styles '(orderless basic))
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion))))
+
+;; consult.el - Consulting completing-read
+;; https://github.com/minad/consult
+(use-package consult
+  :ensure t
+  :bind
+  ;("M-b" . consult-buffer)
+  ("M-b" . switch-to-buffer)                ;; remap to access switch-to-buffer
+  ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+  ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+  ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+  ("C-s" . consult-line)  ;; replace I-search
+  ("C-x C-r" . consult-recent-file)         ;; added for recentf
+  :hook (completion-list-mode . consult-preview-at-point-mode))
 
 
-;;; * Programming Modes  -----
-;; Load programing settings from programming.el
-;(let ((prog-conf (expand-file-name "programming.el" user-emacs-directory)))
-;  (when (file-exists-p prog-conf)
-;    (load-file prog-conf)))
+;;: * helpful
+;; alternative to the built-in Emacs help provideing more contextual information.
+;; https://github.com/Wilfred/helpful
+(use-package helpful
+  :ensure t
+  :defer t
+  :bind
+  (("C-h f" . helpful-function)
+   ("C-h x" . helpful-command)
+   ("C-h h" . helpful-key)
+   ("C-h v" . helpful-variable)))
 
 
-;;; * Org and Denote -----
-;; Load org config
-;; org and denote are huge and messy, load for now until cleaned up
-(let ((org-conf (expand-file-name "org-denote.el" user-emacs-directory)))
-  (when (file-exists-p org-conf)
-    (load-file org-conf)))
+;;; * Themes + Visuals -----
+;; https://github.com/catppuccin/emacs
+(use-package catppuccin-theme
+  :ensure t
+  :config
+  (setq catppuccin-highlight-matches t)
+  (load-theme 'catppuccin :no-confirm) ; Emacs in own window
+)
 
-;;; * ElFeed -----
-(let ((elfeed-conf (expand-file-name "elfeed.el" user-emacs-directory)))
-  (when (file-exists-p elfeed-conf)
-    (load-file elfeed-conf)))
+(use-package diminish :ensure t)
 
-;;; * daily-log
-(defun daily-log ()
-  "Automatically opens my daily log file and positions cursor at end of
-last sentence."
-  (interactive)
-  ;(diary)
-  (find-file "~/org/DailyLogs/+current") ;symlink to current log
-  (goto-char (point-max))  ;go to the maximum accessible value of point
-  (search-backward "* Notes") ;search to Notes section first to bypass notes
-  (if (re-search-backward "[.!?]") ;search for punctuation from end of file
-      (forward-char 1))
-  )
-(global-set-key (kbd "<f9>") 'daily-log)
+(use-package centered-cursor-mode
+  :commands (centered-cursor-mode)
+  :diminish centered-cursor-mode)
+
+;; nerd-icons.el - A Library for Nerd Font icons
+;; https://github.com/rainstormstudio/nerd-icons.el#installing-fonts
+;; To finish, run: M-x nerd-icons-install-fonts ; installs to ‘~/Library/Fonts'
+(use-package nerd-icons
+  :ensure t
+  ;:defer 5
+  :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is   ;; but you can use any other Nerd Font if you want
+  (nerd-icons-font-family "Symbols Nerd Font Mono")
+)
+
+;; ace-window allows switching to window by number, bind to 'C-x o'
+;; not installed by default
+(use-package ace-window
+  :ensure t
+  :bind ("C-x o" . ace-window))
+;(global-set-key (kbd "C-x o") 'ace-window)
+;;(setq aw-keys '(?a ?b ?c ?d ?e ?f ?g ?h ?i)) ;; letters instead of numbers
+
+;;; * tab-bar
+;(use-package tab-bar
+;  :init
+;  (tab-bar-mode 1)
+;  :config
+;  (custom-set-variables '(tab-bar-show 1))  ; hide bar if <= 1 tabs open
+;  (setq tab-bar-new-tab-choice "*scratch*") ; Start new tabs with the *scratch* buffer
+;  (setq tab-bar-close-button nil)  ; Hide the default close button
+;  (setq tab-bar-new-button nil)    ; Hide the default new tab button
+;  (setq tab-bar-new-tab-to 'right) ; Open new tabs to the right of the current tab
+;  (setq tab-bar-tab-hints t)       ; show tab numbers
+;
+;  ;; Optional: Define custom keybindings, for example, like Safari's
+;  (global-set-key (kbd "s-{") 'tab-bar-switch-to-prev-tab)
+;  (global-set-key (kbd "s-}") 'tab-bar-switch-to-next-tab)
+;  (global-set-key (kbd "s-t") 'tab-bar-new-tab)
+;  (global-set-key (kbd "s-w") 'tab-bar-close-tab))
 
 
 ;;; * Keybindings -----
 (use-package which-key
+  ;; Included in emacs > 30.1
   :diminish which-key-mode
   :init
   (which-key-mode)
@@ -571,7 +775,8 @@ last sentence."
         which-key-prefix-prefix "◉ "
         which-key-sort-order 'which-key-key-order-alpha
         which-key-min-display-lines 3
-        which-key-max-display-columns nil))
+        which-key-max-display-columns nil
+        which-key-show-remaining-keys t))
 
 
 ;;; * IBuffer -----
@@ -591,73 +796,6 @@ last sentence."
         '((mark modified read-only locked " " (size 9 -1 :right) " " (mode 16 16 :left :elide) " " name)
           (mark modified read-only locked " " (size 9 -1 :right) " " (mode 16 16 :left :elide) " " filename-and-process)
           (mark modified read-only locked " " name " " filename))))
-
-
-;;; * dired / dired+ -----
-;; Enable dwim - Dired tries to guess a default target directory.
-(setq dired-dwim-target t)
-
-;; Move deleted files to the System's trash can
-;; set trash-directory otherwise uses freedesktop.org-style
-;(setq trash-directory "~/.Trash") ;; macOS trash
-;(setq trash-directory "~/.local/share/Trash") ;; linux trash
-(setq delete-by-moving-to-trash t)
-
-;; ls-lisp
-;; OSX/BSD ls doesn't sort directories first, ls-lisp can
-(use-package ls-lisp
-  :custom
-  ;(ls-lisp-emulation 'MacOS)
-  (ls-lisp-ignore-case t)
-  (ls-lisp-verbosity nil)
-  (ls-lisp-dirs-first t)
-  (ls-lisp-use-insert-directory-program nil)
-)
-
-;; dired+
-;; https://www.gnu.org/software/emacs/manual/dired-x.html
-;; https://www.emacswiki.org/emacs/DiredExtra#Dired_X
-;; http://xahlee.info/emacs/emacs/emacs_diredplus_mode.html
-;; provides extra functionality for Dired Mode.
-;; Hide file detail toggle `(`
-;; Make clicking on files in Dired buffers open in the current window:
-;; (This works thanks to mouse-1-click-follows-link.)
-;(define-key dired-mode-map [mouse-2] #'dired-mouse-find-file)
-(use-package dired-x
-  :bind
-  ("C-x C-j"   . dired-jump) ; to previous level
-  ("C-x 4 C-j" . dired-jump-other-window)
-  ("s->"       . dired-omit-mode) ;; toggle using Option-Shift-.  same as macOS Finder
-  :config
-  ;; on macOS, ls doesn't support --dired option linux does
-  (when (string= system-type "darwin")
-    (setq dired-use-ls-dired nil))
-  (setq-default dired-omit-files-p t)
-  (setq dired-listing-switches "-alhv")
-  ;(setq dired-use-ls-dired nil)
-  ;(setq dired-listing-switches "-agho --group-directories-first") ; errors
-  ;(define-key dired-mode-map (kbd "/") #'dired-narrow-fuzzy) ; requires dired-hacks
-  (define-key dired-mode-map (kbd "e") #'read-only-mode)
-
-  ;; omit-mode
-  (setq dired-omit-files "^\\.\\|^#.#$\\|.~$") ; omit dot and backup files
-  (define-key dired-mode-map (kbd "h") #'dired-omit-mode) ; overriding h:describe-mode
-  (add-hook 'dired-mode-hook (lambda () (dired-omit-mode 1))) ; start in omit-mode
-
-  ;; Auto-refresh dired on file change
-  (add-hook 'dired-mode-hook 'auto-revert-mode)
-
-  ;; disable line wrapping in dired mode
-  (add-hook 'dired-mode-hook (lambda () (setq truncate-lines t)))
-
-  ;; enable side-by-side dired buffer targets
-  ;; Split your window, split-window-vertically & go to another dired directory.
-  ;; When you will press C to copy, the other dir in the split pane will be
-  ;; default destination.
-  (setq dired-dwim-target t) ;; suggest copying/moving to other dired buffer in split view
-
-  ;; Dired functions (find-alternate 'a' reuses dired buffer)
-  (put 'dired-find-alternate-file 'disabled nil))
 
 
 ;;; * Terminals -----
@@ -711,11 +849,17 @@ last sentence."
   (setq eshell-history-size         1000
         eshell-buffer-maximum-lines 1000
         eshell-hist-ignoredups t
-        eshell-scroll-to-bottom-on-input t)))
+        eshell-scroll-to-bottom-on-input t))
+
+  ;; Little quality of life improvement if you work with multiple eshell buffers:
+  (defun eshell-buffer-name ()
+    (rename-buffer (concat "*eshell*<" (eshell/pwd) ">") t))
+  (add-hook 'eshell-directory-change-hook #'eshell-buffer-name)
+  (add-hook 'eshell-prompt-load-hook #'eshell-buffer-name)
+)
 
 ;; eat - eat stands for "Emulate A Terminal"
 ;; https://codeberg.org/akib/emacs-eat
-;; https://www.reddit.com/r/emacs/comments/1gdp0fk/i_just_installed_the_eat_terminal_package_to_give/
 (use-package eat
   :ensure t
   :preface
@@ -778,5 +922,47 @@ last sentence."
     (with-eval-after-load 'compile
       (remove-hook 'compilation-mode-hook #'tramp-compile-disable-ssh-controlmaster-options)))
 )
+
+
+;;; Load local configs with 1 or more use-package macros
+;;; * Dired -----
+(let ((dired-conf (expand-file-name "config.d/local-dired.el" user-emacs-directory)))
+  (when (file-exists-p dired-conf)
+    (load-file dired-conf)))
+
+;;; * Org and Denote -----
+;; Load org config
+;; org and denote are huge and messy, load for now until cleaned up
+(let ((org-conf (expand-file-name "config.d/local-org-denote.el" user-emacs-directory)))
+  (when (file-exists-p org-conf)
+    (load-file org-conf)))
+
+;;; * Programming Modes  -----
+;; Load programing settings from programming.el
+(let ((prog-conf (expand-file-name "config.d/local-programming.el" user-emacs-directory)))
+  (when (file-exists-p prog-conf)
+    (load-file prog-conf)))
+
+;;; * ElFeed -----
+(let ((elfeed-conf (expand-file-name "config.d/local-elfeed.el" user-emacs-directory)))
+  (when (file-exists-p elfeed-conf)
+    (load-file elfeed-conf)))
+
+;;; * ERC -----
+(let ((erc-conf (expand-file-name "config.d/local-erc.el" user-emacs-directory)))
+  (when (file-exists-p erc-conf)
+    (load-file erc-conf)))
+
+;;; * gnus -----
+(let ((gnus-conf (expand-file-name "config.d/local-gnus.el" user-emacs-directory)))
+  (when (file-exists-p gnus-conf)
+    (load-file gnus-conf)))
+
+;;; * RMail -----
+;; Load programing settings from programming.el
+(let ((rmail-conf (expand-file-name "config.d/local-rmail-cpt.el" user-emacs-directory)))
+  (when (file-exists-p rmail-conf)
+    (load-file rmail-conf)))
+
 
 ;; end init.el

@@ -82,8 +82,8 @@ setopt HIST_REDUCE_BLANKS      # strip superfluous blanks
 setopt INC_APPEND_HISTORY      # don’t wait for shell to exit to save history lines
 setopt APPEND_HISTORY
 unsetopt SHARE_HISTORY
-bindkey '^[[A' history-beginning-search-backward
-bindkey '^[[B' history-beginning-search-forward
+#bindkey '^[[A' history-beginning-search-backward  # NOTE: these put the cursor
+#bindkey '^[[B' history-beginning-search-forward   # at the begining of the line
 
 ### --- Directory navigation ---
 setopt AUTO_CD      # interactive cd command to directory
@@ -185,7 +185,7 @@ export ALTERNATE_EDITOR="mg -f end-of-line"
 export EDITOR="emacsclient -t -a '$ALTERNATE_EDITOR'"
 export VISUAL="$EDITOR"
 # Emacs Functions
-function  ec { emacsclient -c -a '' --eval "(progn (find-file \"$1\"))"; }
+function  ec { emacsclient -c -n -a '' --eval "(progn (find-file \"$1\"))"; }
 function ect { emacsclient -t -a '' -- "${@}"; }
 
 # -- Emacs shell setup --
