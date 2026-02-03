@@ -485,6 +485,7 @@
 
     ;; - macOS -
     ((eq system-type 'darwin)
+     (setq trash-directory "~/.Trash") ;; macOS trash
      ;; set keys for Apple keyboard, for emacs in OS X
      (setq mac-command-modifier 'meta) ; make cmd key do Meta
      (setq mac-option-modifier 'super) ; make opt key do Super
@@ -574,6 +575,8 @@
     (defvar browse-url-browser-function)
     (defvar browse-url-browser-program)
 
+    (setq trash-directory "~/.local/share/Trash")
+
     ;; http://stackoverflow.com/questions/15277172/how-to-make-emacs-open-all-buffers-in-one-window-debian-linux-gnome
     ;(setq pop-up-frames 'graphic-only)
     (setq pop-up-frames nil)
@@ -593,6 +596,40 @@
 
 ;; Persist minibuffer history over Emacs restarts
 (use-package savehist :hook (after-init . savehist-mode))
+
+
+;;; * ls-lisp
+;; OSX/BSD ls doesn't sort directories first, ls-lisp can
+(use-package ls-lisp
+  :ensure nil
+  :if (eq system-type 'darwin)
+  :custom
+  (ls-lisp-emulation 'MacOS)
+  (ls-lisp-ignore-case t)
+  (ls-lisp-verbosity nil) ;; hide link/user/group
+  (ls-lisp-dirs-first t)
+  (ls-lisp-use-insert-directory-program nil))
+
+;;; * dired
+(use-package dired
+  :ensure nil
+  :custom
+  (delete-by-moving-to-trash t)
+  (dired-dwim-target t) ;; Guess target dir if two dired windows open
+  (dired-listing-switches "-alh -v --group-directories-first")
+  :config
+  (setq dired-recursive-deletes 'always)
+  (setq dired-recursive-copies 'always))
+
+;; Configure the built-in Dired-X package
+(use-package dired-x
+  :ensure nil
+  :after dired
+  :bind (("C-x C-j" . dired-jump) ;; Jump to current file's directory in dired
+         ("C-x 4 C-j" . dired-jump-other-window))
+  :config
+  (setq-default dired-omit-files-p t)
+  (add-to-list 'dired-omit-extensions ".DS_Store"))
 
 
 ;;; * Completions -----
@@ -897,42 +934,19 @@
 )
 
 
-;;; Load local configs with 1 or more use-package macros
-;;; * Dired -----
-(let ((dired-conf (expand-file-name "config.d/local-dired.el" user-emacs-directory)))
-  (when (file-exists-p dired-conf)
-    (load-file dired-conf)))
-
+;;; Load local configs
 ;;; * Org and Denote -----
 ;; org and denote are huge and messy, load for now until cleanup
-(let ((org-conf (expand-file-name "config.d/local-org-denote.el" user-emacs-directory)))
-  (when (file-exists-p org-conf)
-    (load-file org-conf)))
+(let ((org-conf (expand-file-name "org-denote.el" user-emacs-directory)))
+  (load org-conf 'noerror))
 
 ;;; * Programming Modes  -----
-(let ((prog-conf (expand-file-name "config.d/local-programming.el" user-emacs-directory)))
-  (when (file-exists-p prog-conf)
-    (load-file prog-conf)))
+(let ((prog-conf (expand-file-name "programming.el" user-emacs-directory)))
+  (load prog-conf 'noerror))
 
-;;; * ElFeed -----
-(let ((elfeed-conf (expand-file-name "config.d/local-elfeed.el" user-emacs-directory)))
-  (when (file-exists-p elfeed-conf)
-    (load-file elfeed-conf)))
-
-;;; * ERC -----
-(let ((erc-conf (expand-file-name "config.d/local-erc.el" user-emacs-directory)))
-  (when (file-exists-p erc-conf)
-    (load-file erc-conf)))
-
-;;; * gnus -----
-(let ((gnus-conf (expand-file-name "config.d/local-gnus.el" user-emacs-directory)))
-  (when (file-exists-p gnus-conf)
-    (load-file gnus-conf)))
-
-;;; * RMail -----
-(let ((rmail-conf (expand-file-name "config.d/local-rmail-cpt.el" user-emacs-directory)))
-  (when (file-exists-p rmail-conf)
-    (load-file rmail-conf)))
-
+;;; * Load Local Configs
+(let ((config-dir "~/.emacs.d/config/"))
+  (dolist (file (directory-files config-dir t "\\.el$"))
+    (load file)))
 
 ;; end init.el
