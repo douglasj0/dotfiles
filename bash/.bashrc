@@ -249,11 +249,11 @@ if [[ ! -z $PS1 ]]; then echo ". linux bashrc loaded"; fi	# interactive
 
     # setup fzf (fuzzy finder)
     if command -v fzf >/dev/null 2>&1; then
-      echo "... initialize fzf"
+      echo ".. initialize fzf"
       eval "$(fzf --bash)"
-      export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+      export FZF_DEFAULT_COMMAND="fdfind --hidden --strip-cwd-prefix --exclude .git"
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-      export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+      export FZF_ALT_C_COMMAND="fdfind --type=d --hidden --strip-cwd-prefix --exclude .git"
       fcd() {
 	local dir
 	dir=$(find ${1:-.} -type d -not -path '*/\.*' 2> /dev/null | fzf +m) && cd "$dir"

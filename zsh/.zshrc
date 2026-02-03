@@ -303,7 +303,7 @@ Darwin)  # Darwin Environment
 
     # setup fzf (fuzzy finder)
     if command -v fzf >/dev/null 2>&1; then
-      echo "... initialize fzf"
+      echo ".. initialize fzf"
       eval "$(fzf --zsh)"
       export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
