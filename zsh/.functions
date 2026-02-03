@@ -2,45 +2,21 @@
 # General shell functions
 
 # setenv for csh junkies (including tset)
-setenv() { export $1=$2 }
-
-# change line of space separated text into text and underscores
-# useful for converting JIRA ticket names for directories
-function underscore(){
-  str=`echo "$*" | tr -s ' ' | tr ' ' '_' | tee >(pbcopy)`
-  echo $str
+#setenv() { export "$1=$2" }
+setenv() {
+    export "$1"
+    printf -v "$1" '%s' "$2"
 }
 
 # repeat last command with sudo
 fucking() {
      LAST_CMD=`fc -nl -1`
-     echo sudo $LAST_CMD
-     sudo zsh -c $LAST_CMD
-}
-
-# remove ssh key for failed login attempt and try again
-damnit() {
-  LAST_CMD=`fc -nl -1`
-  LAST_FIELD=$(echo $LAST_CMD | awk '{print $NF}')
-  ssh-keygen -R $LAST_FIELD
-  echo ssh $LAST_FIELD
-  ssh $LAST_FIELD
+     echo "sudo $LAST_CMD"
+     sudo "$LAST_CMD"
 }
 
 #
-psg () { ps -aef | grep $* | grep -v grep }
-
-# animated table flip
-flip() {
-  echo;
-  echo -en "( º_º）  ┬─┬   \r"; sleep .5;
-  echo -en " ( º_º） ┬─┬   \r"; sleep .5;
-  echo -en "  ( ºДº）┬─┬   \r"; sleep .5;
-  echo -en "  (╯'Д'）╯︵⊏   \r"; sleep .5;
-  echo -en "  (╯'□'）╯︵ ⊏  \r"; sleep .5;
-  echo     "  (╯°□°）╯︵ ┻━┻"; sleep .5;
-}
-
+psg() { ps -ef | grep -F -- "$@" | grep -v '[g]rep'; }
 calc() { awk "BEGIN{ print $* }"; }
 
 rot13() {  # For some reason, rot13 pops up everywhere
@@ -78,20 +54,23 @@ extract () {
 }
 
 # ssh key functions
-ssh-del-host() { ssh-keygen -R $@; }  # remove entry from ~/.ssh/known_hosts
-ssh-del-all() { ssh-add -D; }                             # delete all ssh keys
 #ssh-add-all() { LIST=$(ls $HOME/.ssh/id_* | grep -v '.pub'); ssh-add $LIST; } # add all ssh keys
 #ssh-add-work() { ssh-add ${HOME}/.ssh/id_rsa_work; }      # add work key
 #ssh-del-work() { ssh-add -d ${HOME}/.ssh/id_rsa_work; }   # delete work key
 #ssh-add-home() { ssh-add ${HOME}/.ssh/id_rsa_home; }      # add home github key
 #ssh-del-home() { ssh-add -d ${HOME}/.ssh/id_rsa_home; }   # delete home github key
 #ssh-vagrant() { ssh -i ${HOME}/.ssh/id_rsa_vagrant -l vagrant $*; } # ssh with explicit vagrant key
-ssh-nopub() { ssh -qt -o ControlMaster=no -o pubkeyauthentication=no $@ }
-ssh-noid() { ssh -qt -o IdentitiesOnly=yes $@ }
+ssh-del-host() {
+    (( $# )) || { echo "usage: ssh-del-host host" >&2; return 2; }
+    ssh-keygen -R "$@"
+}
+ssh-del-all()  { ssh-add -D; }           # delete all ssh keys
+ssh-nopub()    { ssh -qt -o ControlMaster=no -o PubkeyAuthentication=no "$@"; }
+ssh-noid()     { ssh -qt -o IdentitiesOnly=yes "$@"; }
 
 # aws ssh functions
-sssh() { AWSIP=$(sed -e 's/ip-//' -e 's/-/./g' <<< "$1"); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
-assh() { AWSIP=$(awk -F"-" '{print $2"."$3"."$4"."$5}' <<< "$1"); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
+#sssh() { AWSIP=$(sed -e 's/ip-//' -e 's/-/./g' <<< "$1"); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
+#assh() { AWSIP=$(awk -F"-" '{print $2"."$3"."$4"."$5}' <<< "$1"); ssh ${AWSIP} $2 $3 $4 $5 $6 $7 $8 $9 }
 
 #greppara: grep by paragraph, http://www.commandlinefu.com/commands/view/4547/
 greppara() {
