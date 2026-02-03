@@ -500,11 +500,8 @@
      (global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
 
      ;; mac 'ls' doesn't support --dired
-     ;(when (string= system-type "darwin")
-     ;  (setq dired-use-ls-dired nil))
-     ;; installed brew coreutils
-     (setq insert-directory-program "gls" dired-use-ls-dired t)
-     (setq dired-listing-switches "-al --group-directories-first")
+     (when (string= system-type "darwin")
+       (setq dired-use-ls-dired nil))
 
      ;; Use meta +/- to change text size
      (bind-key "M-+" 'text-scale-increase)
