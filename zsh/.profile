@@ -22,8 +22,7 @@ PATH="${HOME}/bin:${HOME}/myscripts:${HOME}/.local/bin:\
 /Applications/Emacs.app/Contents/MacOS/bin:\
 /bin:/sbin:/usr/bin:/usr/sbin:/opt/X11/bin:\
 /usr/local/sbin:/usr/local/bin:"
-MANPATH="/usr/local/share/man:/usr/share/man:"
-TMPDIR="/tmp"
+export PATH
 
 # Set architecture-specific paths, mainly for Homebrew
 # NOTE might need to add to compile against brew openssl:
@@ -53,7 +52,7 @@ case $(uname -m) in  # switch to x86 shell: arch -x86_64 zsh
     echo "no known Architecture found, Homebrew path not set."
     ;;
 esac
-export PATH MANPATH TMPDIR
+
 
 
 ;; # end Darwin
@@ -61,13 +60,10 @@ export PATH MANPATH TMPDIR
 Linux)  # Based off of Ubuntu
 #echo ".. linux profile loaded"
 
-PATH="${HOME}/bin:${HOME}/scripts:${HOME}/.local/bin:\
-/usr/local/sbin:/usr/local/bin:\
-/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:\
-/opt/jdk:/opt/jdk/bin:/usr/java/bin:/usr/local/java/bin"
-MANPATH="/usr/local/share/man:/usr/share/man:/usr/X11R6/man"
-TMPDIR="/tmp"
-export PATH MANPATH TMPDIR
+PATH="${HOME}/bin:${HOME}/myscripts:${HOME}/.local/bin:\
+/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:\
+/usr/local/sbin:/usr/sbin:/sbin"
+export PATH
 
 ;; # end Linux
 

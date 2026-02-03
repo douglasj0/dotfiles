@@ -286,8 +286,9 @@ Darwin)  # Darwin Environment
     alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
 
 
-
-    ediff() { emacs --eval "(ediff \"$1\" \"$2\")" }
+    ediff() {
+        emacs --eval "(ediff-files \"$1\" \"$2\")"
+    }
 
     # Emacs magit, function to open magit buffer from current git repo
     magit() {
@@ -299,13 +300,6 @@ Darwin)  # Darwin Environment
           return 1
       fi
     }
-
-    # Source infra functions
-    if [ -d ${HOME}/.infra ]; then
-      echo "... load infra functions"
-      source ${HOME}/.infra/includes.sh
-      for f in `\ls ${HOME}/.infra/ | egrep -v 'includes.sh|~$'`; do source ${HOME}/.infra/$f; done
-    fi
 
     # setup fzf (fuzzy finder)
     if command -v fzf >/dev/null 2>&1; then
