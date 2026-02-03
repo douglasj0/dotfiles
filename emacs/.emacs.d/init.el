@@ -114,10 +114,14 @@
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
   ;; enable delete selection mode, so pasting overwrites selection
-  (delete-selection-mode 1)
+  (setq delete-selection-mode 1)
+  (setq delete-active-region 'kill) ;; Change to nil to just delete, not kill
 
   ;; expand text before point - M-/ default is dabbrev-expand
   (global-set-key (kbd "M-/") 'hippie-expand)
+
+  ;; Tear off window into a new frame
+  (bind-key "C-x 5 t" #'tear-off-window) ; into a new frame
 
   ;; Remove trailing whitespace on save
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -185,9 +189,6 @@
   ;;; Make text mode default major mode with auto-fill enabled
   (setq default-major-mode 'text-mode)
   (add-hook 'text-mode-hook 'turn-on-visual-line-mode) ;replaces longlines in 23
-
-  ;;; Auto-scroll in *Compilation* buffer
-  (setq compilation-scroll-output t)
 
   ;;; "y or n" instead of "yes or no", use-short-answers added in Emacs 28.1
   ;; if odd pop-up vs minibuffer prompt issues, examine us-dialog-box?
@@ -399,9 +400,6 @@
 
   (setq-default ispell-program-name "aspell")
 
-  ;; Enable line-numbers-mode for all programming languages
-  ;(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-
   ;; Disable line numbers for some modes
   (dolist (mode '(org-mode-hook
                   term-mode-hook
@@ -409,35 +407,12 @@
                   eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-  ;; enable delete selection mode, so pasting overwrites selection
-  (setq delete-selection-mode 1)
-  (setq delete-active-region 'kill) ;; Change to nil to just delete, not kill
 
-  ;; Remove trailing whitespace on save
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-  ;; automatically follow symlinks to files under version control without prompting
-  (setq vc-follow-symlinks t)
 
   ;; Enable holidays in Calendar and week-start-day
   (setq mark-holidays-in-calendar t
         calendar-week-start-day 0)
 
-  ;; Alias to change apropos to ap
-  (defalias 'ap 'apropos)
-
-    ;; hl-line: highlight the current line
-  (when (fboundp 'global-hl-line-mode)
-    (global-hl-line-mode t)) ;; turn it on for all modes by default
-
-  ;;; Highlight regions and add special behaviors to regions.
-  ;;; "C-h d transient" for more info.  transient-mark-mode is a toggle.
-  ;;; also in Emacs 22 and greater, C-SPC twice to temp enable transient mark
-  ;(setq transient-mark-mode nil)
-  (setq transient-mark-mode t)
-
-  ;; Tear off window into a new frame
-  (bind-key "C-x 5 t" #'tear-off-window) ; into a new frame
 
   ;;; \/\/\/ recheck
   ;(setq-default display-line-numbers-width 3
@@ -931,14 +906,12 @@
     (load-file dired-conf)))
 
 ;;; * Org and Denote -----
-;; Load org config
-;; org and denote are huge and messy, load for now until cleaned up
+;; org and denote are huge and messy, load for now until cleanup
 (let ((org-conf (expand-file-name "config.d/local-org-denote.el" user-emacs-directory)))
   (when (file-exists-p org-conf)
     (load-file org-conf)))
 
 ;;; * Programming Modes  -----
-;; Load programing settings from programming.el
 (let ((prog-conf (expand-file-name "config.d/local-programming.el" user-emacs-directory)))
   (when (file-exists-p prog-conf)
     (load-file prog-conf)))
@@ -959,7 +932,6 @@
     (load-file gnus-conf)))
 
 ;;; * RMail -----
-;; Load programing settings from programming.el
 (let ((rmail-conf (expand-file-name "config.d/local-rmail-cpt.el" user-emacs-directory)))
   (when (file-exists-p rmail-conf)
     (load-file rmail-conf)))
