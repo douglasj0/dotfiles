@@ -717,8 +717,11 @@
   :ensure t
   :config
   (setq catppuccin-highlight-matches t)
-  (load-theme 'catppuccin :no-confirm) ; Emacs in own window
-)
+  (if (display-graphic-p)
+      (progn
+        ;;(setq catppuccin-flavor 'frappe) ; set before to avoid dbl load
+        (load-theme 'catppuccin t))
+    (load-theme 'wheatgrass t))) ;; tty fallback
 
 (use-package diminish :ensure t)
 
