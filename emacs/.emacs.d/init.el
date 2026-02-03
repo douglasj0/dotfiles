@@ -228,6 +228,105 @@
   ;; allow scroll-down/up-command to move point to buffer end/beginning
   ;(setq scroll-error-top-bottom 'true)
 
+  ;; disable visual-bell /!\
+  ;; you really only need one of these
+  (setq visible-bell nil)
+  ;(setq ring-bell-function 'ignore)
+
+  ;; repl alias for lisp -- read-eval-print-loop
+  ;(defun repl() (interactive) (ielm))
+  (defalias 'repl 'ielm)
+
+
+  ;; * other
+  ;;; Customize Modeline -----
+  ;; make the read-only and modified indicators more noticeable.
+  (setq-default mode-line-modified        ; not customizable
+                '((:eval (if buffer-read-only
+                             (propertize "R" 'face 'warning) ;; was %
+                           "-"))
+                  (:eval (if (buffer-modified-p)
+                             (propertize "*" 'face 'error) ;; was *
+                           "-"))))
+  ;;(setopt mode-line-compact 'long)
+
+  (setq-default ispell-program-name "aspell")
+
+  ;; Disable line numbers for some modes
+  (dolist (mode '(org-mode-hook
+                  term-mode-hook
+                  shell-mode-hook
+                  eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+
+  ;; Enable holidays in Calendar and week-start-day
+  (setq mark-holidays-in-calendar t
+        calendar-week-start-day 0)
+
+
+  ;;; \/\/\/ recheck
+  ;(setq-default display-line-numbers-width 3
+  ;              indent-tabs-mode nil   ; use spaces instead of tabs
+  ;              tab-width 4)
+
+  ;(xterm-mouse-mode 1)
+  ;(setq select-enable-primary t) ; use primary X selection mechanism
+  ;(global-display-line-numbers-mode 1)
+  ;(fringe-mode '(8 . 8))
+
+  ;;; make Emacs always indent using SPC characters and never TABs
+  ;;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Just-Spaces.html
+  (setq-default indent-tabs-mode nil)
+  (show-paren-mode 1)
+  (savehist-mode 1)
+
+  (setq save-interprogram-paste-before-kill t
+        apropos-do-all t
+        require-final-newline t
+        delete-old-versions t
+        load-prefer-newer t
+        ediff-window-setup-function 'ediff-setup-windows-plain)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete)
+
+  ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
+  ;; try `cape-dict'.
+  (setq text-mode-ispell-word-completion nil)
+
+  ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
+  ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
+  ;; setting is useful beyond Corfu.
+  (setq read-extended-command-predicate #'command-completion-default-include-p)
+  ;;; ^^^ recheck
+
+
+  ;; * function definations
+  ;; ---------------------------------------------------------------------------
+  (defun daily-log ()
+    "Automatically opens my daily log file and positions cursor at end of last sentence."
+    (interactive)
+    ;(diary)
+    (find-file "~/org/DailyLogs/+current") ;symlink to current log
+    (goto-char (point-max))  ;go to the maximum accessible value of point
+    (search-backward "* Notes") ;search to Notes section first to bypass notes
+    (if (re-search-backward "[.!?]") ;search for punctuation from end of file
+        (forward-char 1))
+    )
+  (global-set-key (kbd "<f9>") 'daily-log)
+
+  ;; ---------------------------------------------------------------------------
+  (defun toggle-indent-tabs-mode ()
+    "Toggle indent-tabs-mode in the current buffer."
+    (interactive)
+    (setq indent-tabs-mode (not indent-tabs-mode))
+    (message "indent-tabs-mode is now %s" (if indent-tabs-mode "on" "off")))
+
+  (global-set-key (kbd "C-c b") 'toggle-indent-tabs-mode)
+
+  ;; ---------------------------------------------------------------------------
   ;; electric-pair
   (defun my/electric-pair-conservative-inhibit (char)
     (or
@@ -248,25 +347,6 @@
   (setq-default electric-pair-inhibit-predicate
                 'my/electric-pair-conservative-inhibit)
   (electric-pair-mode)
-
-  ;; disable visual-bell /!\
-  ;; you really only need one of these
-  (setq visible-bell nil)
-  ;(setq ring-bell-function 'ignore)
-
-  ;; repl alias for lisp -- read-eval-print-loop
-  ;(defun repl() (interactive) (ielm))
-  (defalias 'repl 'ielm)
-
-  ;; * function definations
-  ;; ---------------------------------------------------------------------------
-  (defun toggle-indent-tabs-mode ()
-    "Toggle indent-tabs-mode in the current buffer."
-    (interactive)
-    (setq indent-tabs-mode (not indent-tabs-mode))
-    (message "indent-tabs-mode is now %s" (if indent-tabs-mode "on" "off")))
-
-  (global-set-key (kbd "C-c b") 'toggle-indent-tabs-mode)
 
   ;; ---------------------------------------------------------------------------
   ;; https://www.reddit.com/r/emacs/comments/1mrqi6p/emacs_toggle_transparency_with_interactive/
@@ -385,85 +465,6 @@
     (switch-to-buffer "*scratch*"))
   (bind-key "C-c f s" #'switch-to-scratch-buffer)
 
-
-  ;; * other
-  ;;; Customize Modeline -----
-  ;; make the read-only and modified indicators more noticeable.
-  (setq-default mode-line-modified        ; not customizable
-                '((:eval (if buffer-read-only
-                             (propertize "R" 'face 'warning) ;; was %
-                           "-"))
-                  (:eval (if (buffer-modified-p)
-                             (propertize "*" 'face 'error) ;; was *
-                           "-"))))
-  ;;(setopt mode-line-compact 'long)
-
-  (setq-default ispell-program-name "aspell")
-
-  ;; Disable line numbers for some modes
-  (dolist (mode '(org-mode-hook
-                  term-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
-
-
-
-  ;; Enable holidays in Calendar and week-start-day
-  (setq mark-holidays-in-calendar t
-        calendar-week-start-day 0)
-
-
-  ;;; \/\/\/ recheck
-  ;(setq-default display-line-numbers-width 3
-  ;              indent-tabs-mode nil   ; use spaces instead of tabs
-  ;              tab-width 4)
-
-  ;(xterm-mouse-mode 1)
-  ;(setq select-enable-primary t) ; use primary X selection mechanism
-  ;(global-display-line-numbers-mode 1)
-  ;(fringe-mode '(8 . 8))
-
-  ;;; make Emacs always indent using SPC characters and never TABs
-  ;;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Just-Spaces.html
-  (setq-default indent-tabs-mode nil)
-  (show-paren-mode 1)
-  (savehist-mode 1)
-
-  (setq save-interprogram-paste-before-kill t
-        apropos-do-all t
-        require-final-newline t
-        delete-old-versions t
-        load-prefer-newer t
-        ediff-window-setup-function 'ediff-setup-windows-plain)
-
-  ;; Enable indentation+completion using the TAB key.
-  ;; `completion-at-point' is often bound to M-TAB.
-  (setq tab-always-indent 'complete)
-
-  ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
-  ;; try `cape-dict'.
-  (setq text-mode-ispell-word-completion nil)
-
-  ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
-  ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
-  ;; setting is useful beyond Corfu.
-  (setq read-extended-command-predicate #'command-completion-default-include-p)
-  ;;; ^^^ recheck
-
-  ;;; * daily-log
-  (defun daily-log ()
-    "Automatically opens my daily log file and positions cursor at end of
-  last sentence."
-    (interactive)
-    ;(diary)
-    (find-file "~/org/DailyLogs/+current") ;symlink to current log
-    (goto-char (point-max))  ;go to the maximum accessible value of point
-    (search-backward "* Notes") ;search to Notes section first to bypass notes
-    (if (re-search-backward "[.!?]") ;search for punctuation from end of file
-        (forward-char 1))
-    )
-  (global-set-key (kbd "<f9>") 'daily-log)
 ) ;; end startup
 
 ;;; * Windows, MacOS, Linux specific settings -----
