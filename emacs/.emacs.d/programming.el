@@ -60,6 +60,24 @@
   :defer t)
 
 
+;;; * Syntax checkers
+;;; flycheck (external)
+;;; https://www.flycheck.org/en/latest/
+;;;
+;;; flymake (built-in)
+(use-package flymake
+  :ensure nil
+  :hook (prog-mode . flymake-mode) ;; Enables flymake in programming modes
+  :bind (("H-e" . flymake-show-project-diagnostics)) ;; Optional: bind a key to show diagnostics
+  :custom
+  (flymake-suppress-zero-counters t) ;; Optional: hide diagnostics count if zero
+  :config
+  ;; Additional custom configurations can go here
+  (define-key flymake-mode-map (kbd "M-n") 'flymake-goto-next-error)
+  (define-key flymake-mode-map (kbd "M-p") 'flymake-goto-prev-error)
+)
+
+
 ;;; * Languages
 ;;; * markdown-mode / gfm-mode
 ;; gfm-mode = github-markdown-mode

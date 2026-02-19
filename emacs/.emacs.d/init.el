@@ -1,8 +1,9 @@
 ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
 
-;; Commentary:
+;;; Commentary:
 ;;
 
+;;; Code:
 
 ;;;; * Startup
 ;;; * Package repo setup and quickstart-----
@@ -108,7 +109,9 @@
   ;; * global settings
   ;; Compilation buffer scrolls to follow output.
   ;; set to first-error to stop when the first error appers and set point
-  (setq compilation-scroll-output t)
+  ;;(setq compilation-scroll-output t)
+  (with-eval-after-load 'compile
+    (setq compilation-scroll-output t))
 
   ;; Enable line-numbers-mode for all programming languages
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
@@ -242,8 +245,6 @@
                            "-"))))
   ;;(setopt mode-line-compact 'long)
 
-  (setq-default ispell-program-name "aspell")
-
   ;; Disable line numbers for some modes
   (dolist (mode '(org-mode-hook
                   term-mode-hook
@@ -286,7 +287,7 @@
 
   ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
   ;; try `cape-dict'.
-  (setq text-mode-ispell-word-completion nil)
+  ;(setq text-mode-ispell-word-completion nil)
 
   ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
   ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
@@ -298,7 +299,7 @@
   ;; * function definations
   ;; ---------------------------------------------------------------------------
   (defun daily-log ()
-    "Automatically opens my daily log file and positions cursor at end of last sentence."
+    "Opens my daily log file and positions cursor at end of last sentence."
     (interactive)
     ;(diary)
     (find-file "~/org/DailyLogs/+current") ;symlink to current log
@@ -344,8 +345,8 @@
   ;; https://www.reddit.com/r/emacs/comments/1mrqi6p/emacs_toggle_transparency_with_interactive/
   (defun my/toggle-frame-transparency ()
     "Toggle frame transparency with user-specified opacity value.
-  Prompts user whether to enable transparency. If yes, asks for opacity value (0-100).
-  If no, restores full opacity. Only affects the active frame."
+    Prompts user whether to enable transparency. If yes, asks for opacity
+    value (0-100). If no, restore full opacity. Only affects active frame."
     (interactive)
     (if (y-or-n-p "Enable frame transparency? ")
         (let ((alpha-value (read-number "Enter transparency value (0-100, default 90): " 90)))
@@ -373,7 +374,7 @@
   ;; https://gist.github.com/mwfogleman/95cc60c87a9323876c6c
   ;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
   (defun narrow-or-widen-dwim ()
-    "If the buffer is narrowed, it widens. Otherwise, it narrows to region, or Org subtree."
+    "If buffer is narrowed, widen. Otherwise, narrows to region or Org subtree"
     (interactive)
     (cond ((buffer-narrowed-p) (widen))
           ((region-active-p) (narrow-to-region (region-beginning) (region-end)))
@@ -492,6 +493,22 @@
      (global-set-key (kbd "M-a") 'mark-whole-buffer) ; ⌘-a = Select all
      (global-set-key (kbd "M-z") 'undo) ; ⌘-z = Undo
      (global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
+
+     ;; Restrict exec-path-from-shell to macOS
+     (cond ((display-graphic-p)
+            ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
+            ;; environment, so envvars will be wrong. That includes the PATH
+            ;; Emacs picks up. `exec-path-from-shell' fixes this. This is slow
+            ;; and benefits greatly from compilation.
+            ;; orig vars: "PATH" "MANPATH" "GOPATH" "GOROOT" "PYTHONPATH" "LC_TYPE" "LC_ALL" "LANG" "SSH_AGENT_PID" "SSH_AUTH_SOCK" "SHELL" "JAVA_HOME"
+            (setq exec-path
+                (or (eval-when-compile
+                    (when (require 'exec-path-from-shell nil t)
+                        (setq exec-path-from-shell-check-startup-files nil)
+                        (nconc exec-path-from-shell-variables '("PATH" "MANPATH" "LANG" "SHELL"))
+                        (exec-path-from-shell-initialize)
+                        exec-path))
+                    exec-path))))
 
      ;; mac 'ls' doesn't support --dired
      (when (string= system-type "darwin")
@@ -617,11 +634,33 @@
 (use-package dired-x
   :ensure nil
   :after dired
-  :bind (("C-x C-j" . dired-jump) ;; Jump to current file's directory in dired
+  :bind (("C-x C-j"   . dired-jump) ;; Jump to current file's directory in dired
          ("C-x 4 C-j" . dired-jump-other-window))
   :config
   (setq-default dired-omit-files-p t)
   (add-to-list 'dired-omit-extensions ".DS_Store"))
+
+
+;;; * Flyspell (internal)
+(use-package ispell                     ;
+  :ensure nil
+  :config
+  (setq ispell-program-name (or (executable-find "aspell")
+                                "aspell"))
+  (setq ispell-local-dictionary "en_US") ;; define the dictionary
+  ;; Configure dictionary settings if needed, often necessary on Windows
+  (setq ispell-local-dictionary-alist
+        '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))))
+
+(use-package flyspell
+  :ensure nil
+  :bind (("C-c s a" . flyspell-auto-correct-word)
+         ("C-c s w" . ispell-word))
+  :hook
+  ((text-mode     . flyspell-mode)
+   (org-mode      . flyspell-mode)
+   (markdown-mode . flyspell-mode))
+)
 
 
 ;;; * Completions -----
@@ -928,6 +967,22 @@
       (remove-hook 'compilation-mode-hook #'tramp-compile-disable-ssh-controlmaster-options)))
 )
 
+;;; nov.el - epub reader
+;;; https://depp.brause.cc/nov.el/
+(use-package nov
+  :ensure t
+  :mode ("\\.epub\\'" . nov-mode)
+  :config
+  ;; Optional: Customize default font for better reading experience
+  ;; (defun my-nov-font-setup ()
+  ;;   (face-remap-add-relative 'shr-text :family "Liberation Serif" :height 1.0))
+  ;; (add-hook 'nov-mode-hook 'my-nov-font-setup)
+
+  ;; Optional: Set a specific text width for comfort
+  ;; (setq nov-text-width 80)
+
+  ;; Other configurations can go here.
+)
 
 ;;; Load local configs
 ;;; * Org and Denote -----
