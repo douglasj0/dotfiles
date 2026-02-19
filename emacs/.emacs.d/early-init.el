@@ -1,5 +1,9 @@
 ;;; early-init.el --- Early Emacs Initialization -*- lexical-binding: t; -*-
 
+;;; Commentary:
+;;; Code:
+
+
 ;; Garbage Collections
 (setq gc-cons-percentage 0.6)
 
@@ -24,4 +28,5 @@
             (message "Emacs loaded in %s seconds with %d garbage collections."
                      (emacs-init-time "%.2f") gcs-done)))
 
-;; end early-init.el
+(provide 'early-init)
+;;; early-init.el ends here

@@ -3,6 +3,7 @@
 ;;; Commentary:
 ;;; programming modes, not core to Emacs functionality.
 
+;;; Code:
 
 ;;; * magit
 ;; It's Magit! A Git porcelain inside Emacs. https://magit.vc
@@ -182,3 +183,6 @@
     ;; (outline-minor-mode 1)
     )
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
+
+(provide 'programming)
+;;; programming.el ends here

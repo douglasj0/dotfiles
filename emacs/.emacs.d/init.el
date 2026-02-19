@@ -1,8 +1,6 @@
 ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;;
-
 ;;; Code:
 
 ;;;; * Startup
@@ -17,11 +15,13 @@
   (load custom-file))
 
 ;; Append personal info directory to list
+(defvar Info-additional-directory-list)
 (with-eval-after-load 'info
   (add-to-list 'Info-additional-directory-list
                "~/org/emacs_d/info"))
 
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/elisp/")) ;; elisp packages not in pkg mgr, changing in 32.0
+(add-to-list 'load-path (locate-user-emacs-file "elisp/"))  ;; elisp packages not in pkg mgr, changing in 32.0
+;(add-to-list 'load-path (expand-file-name "~/.emacs.d/elisp/"))
 
 
 ;;;; * esup - startupprofiler
@@ -44,7 +44,7 @@
   (setq server-client-instructions nil) ; don't display disconnect instructions
   (setq server-socket-dir (format "/tmp/emacs%d" (user-uid))) ;; Force default socket-dir "/tmp/emacs{uid}"
   ;(setq server-name "my-emacs-server") ; Choose any name, default 'server'
-  (unless (server-running-p) (server-start)))
+  (server-start)) ;; idempotent, won't start if already running
 
 (use-package emacs
   :init
@@ -109,7 +109,7 @@
   ;; * global settings
   ;; Compilation buffer scrolls to follow output.
   ;; set to first-error to stop when the first error appers and set point
-  ;;(setq compilation-scroll-output t)
+  (defvar compilation-scroll-output)
   (with-eval-after-load 'compile
     (setq compilation-scroll-output t))
 
@@ -151,6 +151,7 @@
               (whitespace-mode 1)))
 
   ;;; Enable holidays in Calendar
+  (defvar mark-holidays-in-calendar)
   (setq mark-holidays-in-calendar t)
 
   ;;; Make tooltips appear in the echo area (checks if function exists)
@@ -162,6 +163,7 @@
   ;(setq cua-rectangle-mark-key (kbd "C-^"))
   (global-unset-key "\C-z")
   ;(setq cua-rectangle-mark-key (kbd "C-z '"))
+  (defvar cua-rectangle-mark-key)
   (setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; instead of Ctrl-Enter
   (cua-selection-mode t)
   ;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
@@ -182,6 +184,7 @@
     (global-hl-line-mode t)) ;; turn it on for all modes by default
 
   ;;; Make text mode default major mode with auto-fill enabled
+  (defvar default-major-mode)
   (setq default-major-mode 'text-mode)
   (add-hook 'text-mode-hook 'turn-on-visual-line-mode) ;replaces longlines in 23
 
@@ -254,6 +257,7 @@
 
 
   ;; Enable holidays in Calendar and week-start-day
+  (defvar calendar-week-start-day)
   (setq mark-holidays-in-calendar t
         calendar-week-start-day 0)
 
@@ -274,6 +278,8 @@
   (show-paren-mode 1)
   (savehist-mode 1)
 
+  (defvar apropos-do-all)
+  (defvar ediff-window-setup-function)
   (setq save-interprogram-paste-before-kill t
         apropos-do-all t
         require-final-newline t
@@ -371,23 +377,6 @@
   (global-set-key (kbd "<f7>") 'back-and-forth-buffer)
 
   ;; ---------------------------------------------------------------------------
-  ;; https://gist.github.com/mwfogleman/95cc60c87a9323876c6c
-  ;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
-  (defun narrow-or-widen-dwim ()
-    "If buffer is narrowed, widen. Otherwise, narrows to region or Org subtree"
-    (interactive)
-    (cond ((buffer-narrowed-p) (widen))
-          ((region-active-p) (narrow-to-region (region-beginning) (region-end)))
-          ((equal major-mode 'org-mode) (org-narrow-to-subtree))
-          (t (error "Please select a region to narrow to"))))
-  (global-set-key (kbd "C-x n n") 'narrow-or-widen-dwim)  ; was: C-c n then C-c x then C-x n n
-
-  ;; I bind this key to C-c n, using the bind-key function that comes with use-package.
-  ;(bind-key "C-c n" 'narrow-or-widen-dwim)
-  ;; I also bind it to C-x t n, using Artur Malabarba's toggle map idea:
-  ;; http:://www.endlessparentheses.com/the-toggle-map-and-wizardry.html
-
-  ;; ---------------------------------------------------------------------------
   ;; Move lines up or down (can't easily use C-S on MacOS)
   ;; http://whattheemacsd.com//editing-defuns.el-02.html
   (defun move-line-down ()
@@ -452,11 +441,13 @@
 
   ;; ---------------------------------------------------------------------------
   ;; It’s useful to have a scratch buffer around, and more useful to have a key chord to switch to it.
+  (declare-function switch-to-scratch-buffer "init.el" ()) ;; tell byte-compiler abt function
   (defun switch-to-scratch-buffer ()
     "Switch to the current session's scratch buffer."
     (interactive)
     (switch-to-buffer "*scratch*"))
-  (bind-key "C-c f s" #'switch-to-scratch-buffer)
+  (with-eval-after-load 'bind-key
+    (bind-key "C-c f s" #'switch-to-scratch-buffer))
 
 ) ;; end startup
 
@@ -473,6 +464,7 @@
   (cond
     ;; - Windows -
     ((eq system-type 'windows-nt)
+     (defvar w32-get-true-file-attributes)
      (setq default-directory "C:/Users/YourName/"
            w32-get-true-file-attributes nil))
 
@@ -495,24 +487,23 @@
      (global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
 
      ;; Restrict exec-path-from-shell to macOS
-     (cond ((display-graphic-p)
-            ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
-            ;; environment, so envvars will be wrong. That includes the PATH
-            ;; Emacs picks up. `exec-path-from-shell' fixes this. This is slow
-            ;; and benefits greatly from compilation.
-            ;; orig vars: "PATH" "MANPATH" "GOPATH" "GOROOT" "PYTHONPATH" "LC_TYPE" "LC_ALL" "LANG" "SSH_AGENT_PID" "SSH_AUTH_SOCK" "SHELL" "JAVA_HOME"
-            (setq exec-path
-                (or (eval-when-compile
-                    (when (require 'exec-path-from-shell nil t)
-                        (setq exec-path-from-shell-check-startup-files nil)
-                        (nconc exec-path-from-shell-variables '("PATH" "MANPATH" "LANG" "SHELL"))
-                        (exec-path-from-shell-initialize)
-                        exec-path))
-                    exec-path))))
+     (eval-when-compile
+       (require 'exec-path-from-shell nil t))
 
-     ;; mac 'ls' doesn't support --dired
-     (when (string= system-type "darwin")
-       (setq dired-use-ls-dired nil))
+     (cond ((display-graphic-p)
+        ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
+        ;; environment, so envvars will be wrong. That includes the PATH
+        ;; Emacs picks up. `exec-path-from-shell' fixes this. This is slow
+        ;; and benefits greatly from compilation.
+        ;; orig vars: "PATH" "MANPATH" "GOPATH" "GOROOT" "PYTHONPATH" "LC_TYPE" "LC_ALL" "LANG" "SSH_AGENT_PID" "SSH_AUTH_SOCK" "SHELL" "JAVA_HOME"
+        (when (require 'exec-path-from-shell nil t)
+          ;; Don’t check shell startup files (faster)
+          (setq exec-path-from-shell-check-startup-files nil)
+          ;; List of env vars to import
+          (setq exec-path-from-shell-variables
+                '("PATH" "MANPATH" "LANG" "SHELL"))
+          ;; Initialize exec-path and env vars from the shell
+          (exec-path-from-shell-initialize))))
 
      ;; Use meta +/- to change text size
      (bind-key "M-+" 'text-scale-increase)
@@ -627,6 +618,9 @@
   (dired-dwim-target t) ;; Guess target dir if two dired windows open
   (dired-listing-switches "-alh -v --group-directories-first")
   :config
+  ;; mac 'ls' doesn't support --dired
+  (when (string= system-type "darwin")
+    (setq dired-use-ls-dired nil))
   (setq dired-recursive-deletes 'always)
   (setq dired-recursive-copies 'always))
 
@@ -852,15 +846,18 @@
     (define-key map (kbd "s") #'shell)
     (define-key map (kbd "e") #'eshell)
     map)
-  "Keymap for org-mode commands after `org-keymap-prefix'.")
+  "Keymap for `org-mode' commands after `org-keymap-prefix'.")
 (fset 'term-command-map term-command-map)
 (global-set-key (kbd "C-c t") '("terminals" . term-command-map))
 
 ;; shell
+(defvar explicit-shell-file-name)
+(defvar explicit-zsh-args)
 (setq explicit-shell-file-name "zsh")
 (setq shell-file-name "zsh")
 (setq explicit-zsh-args '("--login" "--interactive"))
 (defun zsh-shell-mode-setup ()
+  "Set local varialbes for zsh."
   (setq-local comint-process-echoes t))
 (add-hook 'shell-mode-hook #'zsh-shell-mode-setup)
 
@@ -872,17 +869,21 @@
 (use-package eshell-git-prompt
   :ensure t
   :after eshell
-  :config
+  :functions eshell-git-prompt-use-theme
+  :init
   (eshell-git-prompt-use-theme 'robbyrussell)
 )
 
 (use-package eshell
   :hook (eshell-first-time-mode . efs/configure-eshell)
+  :custom
+  (eshell-destroy-buffer-when-process-dies t)
+  (eshell-visual-commands '("top" "htop" "zsh" "vi" "vim"))
+  (eshell-history-size 1000)
+  (eshell-buffer-maximum-lines 1000)
+  (eshell-hist-ignoredups t)
+  (eshell-scroll-to-bottom-on-input t)
   :config
-  (with-eval-after-load 'esh-opt
-    (setq eshell-destroy-buffer-when-process-dies t)
-    (setq eshell-visual-commands '("top" "htop" "zsh" "vi" "vim")))
-
   (defun efs/configure-eshell ()
     ;; Save command history when commands are entered
     (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
@@ -890,16 +891,11 @@
   ;; Truncate buffer for performance
   (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
-  (setq eshell-history-size         1000
-        eshell-buffer-maximum-lines 1000
-        eshell-hist-ignoredups t
-        eshell-scroll-to-bottom-on-input t))
-
   ;; Little quality of life improvement if you work with multiple eshell buffers:
   (defun eshell-buffer-name ()
     (rename-buffer (concat "*eshell*<" (eshell/pwd) ">") t))
   (add-hook 'eshell-directory-change-hook #'eshell-buffer-name)
-  (add-hook 'eshell-prompt-load-hook #'eshell-buffer-name)
+  (add-hook 'eshell-prompt-load-hook #'eshell-buffer-name))
 )
 
 ;; eat - eat stands for "Emulate A Terminal"
@@ -999,4 +995,5 @@
   (dolist (file (directory-files config-dir t "\\.el$"))
     (load file)))
 
-;; end init.el
+(provide 'init)
+;;; init.el ends here

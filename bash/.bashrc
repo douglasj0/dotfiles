@@ -209,6 +209,15 @@ if command -v mise >/dev/null 2>&1; then
 fi
 
 
+# Load readable modules
+# https://www.reddit.com/r/commandline/comments/1r1tqnc/i_made_my_bashrc_modular_now_any_dotfile_manager/
+if [ -d "$HOME/.config/bash" ]; then
+    for config in "$HOME/.config/bash"/*.sh; do
+        [ -r "$config" ] && source "$config"
+    done
+fi
+
+
 ###################
 #   OS Specific   #
 ###################
