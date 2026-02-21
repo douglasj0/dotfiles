@@ -25,7 +25,7 @@
 
 ;;;; * esup - startupprofiler
 ;(use-package esup
-;  :ensure t
+                                        ;  :ensure t
 ;  ;; To use MELPA Stable use ":pin melpa-stable",
 ;  :pin melpa
 ;  :config
@@ -38,12 +38,12 @@
 ;;; * Basic Emacs options -----
 (use-package server
   :defer 1
-  :if (display-graphic-p)  ; only start in gui
+  :if (display-graphic-p) ;; Only start the server in GUI mode
   :config
-  (setq server-client-instructions nil) ; don't display disconnect instructions
+  (setq server-client-instructions nil) ;; Don't display disconnect instructions
   (setq server-socket-dir (format "/tmp/emacs%d" (user-uid))) ;; Force default socket-dir "/tmp/emacs{uid}"
-  ;(setq server-name "my-emacs-server") ; Choose any name, default 'server'
-  (unless (server-running-p) (server-start))) ;; don't start if its running
+  ;(setq server-name "my-emacs-server") ;; Optional: Custom server name
+  (unless (server-running-p) (server-start))) ;; Start server if not running
 
 (use-package emacs
   :init  ;;init → variables
@@ -289,7 +289,7 @@
     (search-backward "* Notes") ;search to Notes section first to bypass notes
     (if (re-search-backward "[.!?]") ;search for punctuation from end of file
         (forward-char 1))
-    )
+    (message "Daily log opened!"))
   (global-set-key (kbd "<f9>") 'daily-log)
 
   ;; ---------------------------------------------------------------------------
@@ -339,7 +339,7 @@
             (message "Invalid transparency value. Please enter a number between 0 and 100.")))
       (progn
         (set-frame-parameter nil 'alpha 100)
-        (message "Frame transparency disabled (full opacity restored)"))))
+        (message "Frame transparency disabled (opacity restored to 100%)"))))
 
   ;; Global keybinding for transparency toggle
   ;(global-set-key (kbd "C-c T") 'my/toggle-frame-transparency)
@@ -564,21 +564,33 @@
   :hook (after-init . recentf-mode)
   :custom
   (recent-max-saved-items 60)
-  (recentf-max-menu-items 15))
+  (recentf-max-menu-items 15)
+  (recentf-exclude '(".*/.emacs.d/" ".*/.git/" ".*tmp/"))  ; Exclude certain directories
+  (recentf-auto-cleanup 'never) ; Adjust cleanup behavior
+  :config
+  ;; Add recent files to a keybinding for easy access
+  (global-set-key (kbd "C-x C-t") 'recentf-open-files))  ;; testing
 
 ;; Persist minibuffer history over Emacs restarts
-(use-package savehist :hook (after-init . savehist-mode))
+(use-package savehist
+  :hook (after-init . savehist-mode)
+  :custom
+  (savehist-additional-variables
+   '(search-ring regexp-search-ring))  ; Save additional variables
+  (savehist-max-length 1000)            ; Store up to 1000 history items
+  (savehist-file (expand-file-name "~/.emacs.d/savehist"))) ; Persist to file
 
 
 ;;; * ls-lisp
 ;; OSX/BSD ls doesn't sort directories first, ls-lisp can
 (use-package ls-lisp
   :ensure nil
-  :if (eq system-type 'darwin)
+  ;:if (eq system-type 'darwin)
+  :if (memq system-type '(darwin gnu/linux))
   :custom
   (ls-lisp-emulation 'MacOS)
   (ls-lisp-ignore-case t)
-  (ls-lisp-verbosity nil) ;; hide link/user/group
+  (ls-lisp-verbosity nil) ;; Hide link/user/group
   (ls-lisp-dirs-first t)
   (ls-lisp-use-insert-directory-program nil))
 
@@ -600,7 +612,9 @@
   :bind (:map dired-mode-map
          ("C-o" . casual-dired-tmenu)
          ("?" . casual-dired-tmenu)
-         ("s" . casual-dired-sort-by-tmenu))
+         ("s" . casual-dired-sort-by-tmenu)
+         ("C-x j" . dired-jump)
+         ("C-x 4 C-j" . dired-jump-other-window))
   :config
   ;; mac 'ls' doesn't support --dired
   (when (string= system-type "darwin")
@@ -616,7 +630,10 @@
          ("C-x 4 C-j" . dired-jump-other-window))
   :config
   (setq-default dired-omit-files-p t)
-  (add-to-list 'dired-omit-extensions ".DS_Store"))
+  (add-to-list 'dired-omit-extensions ".DS_Store") ; macOS DS_Store files
+  (add-to-list 'dired-omit-extensions ".swp")  ; Vim swap files
+  (add-to-list 'dired-omit-extensions ".bak")  ; Backup files
+  (add-to-list 'dired-omit-extensions ".~"))    ; Temporary files
 
 
 ;;; * Flyspell (internal)
@@ -624,21 +641,28 @@
   :ensure nil
   :config
   (setq ispell-program-name (or (executable-find "aspell")
+                                (executable-find "hunspell")
                                 "aspell"))
-  (setq ispell-local-dictionary "en_US") ;; define the dictionary
+  (setq ispell-local-dictionary "en_US") ;; Define the dictionary
   ;; Configure dictionary settings if needed, often necessary on Windows
   (setq ispell-local-dictionary-alist
-        '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))))
+        '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
+  (when (eq system-type 'windows-nt)
+    (setq ispell-program-name "aspell.exe")))
 
 (use-package flyspell
   :ensure nil
-  :bind (("C-c s a" . flyspell-auto-correct-word)
-         ("C-c s w" . ispell-word))
+  :defer t  ;; Lazy load for text-based file types
+  :bind (("C-c s a" . flyspell-auto-correct-word)  ;; Auto-correct the word
+         ("C-c s w" . ispell-word)                ;; Correct the current word
+         ("C-c s b" . flyspell-buffer)            ;; Check the entire buffer
+         ("C-c s n" . flyspell-goto-next-error))  ;; Skip to the next spelling error
   :hook
-  ((text-mode     . flyspell-mode)
-   (org-mode      . flyspell-mode)
-   (markdown-mode . flyspell-mode))
-)
+  ((text-mode       . flyspell-mode)
+   (org-mode        . flyspell-mode)
+   (markdown-mode   . flyspell-mode)
+   (latex-mode      . flyspell-mode)   ;; Add LaTeX support
+   (web-mode        . flyspell-mode))) ;; Add Web-mode support for HTML/CSS
 
 
 ;;; * Completions -----
@@ -649,11 +673,11 @@
   :bind (:map vertico-map
               ("<backspace>" . vertico-directory-delete-char)
               ("C-h" . vertico-directory-delete-word)
-         :map vertico-map
               ("C-n" . vertico-next)
               ("C-p" . vertico-previous)
               ("C-v" . vertico-scroll-up)
               ("M-v" . vertico-scroll-down))
+
   :init
   (vertico-mode)
   (vertico-multiform-mode)
@@ -664,7 +688,11 @@
   ;   (consult-recent-file reverse)
   ;   (find-file reverse)))
   (vertico-resize t)
-  (vertico-count 15))
+  (vertico-count 15)
+  (vertico-multiform-commands
+   '((consult-line reverse)
+     (consult-recent-file reverse)
+     (find-file reverse))))
 
 ;; corfu.el - Completion Overlay Region FUnction
 ;; https://github.com/minad/corfu
@@ -706,11 +734,11 @@
   :ensure t
   :bind
   ;("M-b" . consult-buffer)
-  ("M-b" . switch-to-buffer)                ;; remap to access switch-to-buffer
-  ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+  ("M-b"     . switch-to-buffer)                ;; remap to access switch-to-buffer
+  ("C-x b"   . consult-buffer)                ;; orig. switch-to-buffer
   ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
   ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-  ("C-s" . consult-line)  ;; replace I-search
+  ("C-s"     . consult-line)  ;; replace I-search
   ("C-x C-r" . consult-recent-file)         ;; added for recentf
   :hook (completion-list-mode . consult-preview-at-point-mode))
 
@@ -725,7 +753,8 @@
   (("C-h f" . helpful-function)
    ("C-h x" . helpful-command)
    ("C-h h" . helpful-key)
-   ("C-h v" . helpful-variable)))
+   ("C-h v" . helpful-variable)
+   ("C-h C" . helpful-at-point))) ;; Show help for symbol at point
 
 
 ;;; * Themes + Visuals -----
@@ -738,9 +767,10 @@
       (progn
         ;;(setq catppuccin-flavor 'frappe) ; set before to avoid dbl load
         (load-theme 'catppuccin t))
-    (load-theme 'wheatgrass t))) ;; tty fallback
+    (load-theme 'wheatgrass t))) ;; TTY fallback
 
-(use-package diminish :ensure t)
+(use-package diminish
+  :ensure t)
 
 (use-package centered-cursor-mode
   :commands (centered-cursor-mode)
@@ -751,20 +781,20 @@
 ;; To finish, run: M-x nerd-icons-install-fonts ; installs to ‘~/Library/Fonts'
 (use-package nerd-icons
   :ensure t
-  ;:defer 5
   :custom
-  ;; The Nerd Font you want to use in GUI
-  ;; "Symbols Nerd Font Mono" is the default and is   ;; but you can use any other Nerd Font if you want
-  (nerd-icons-font-family "Symbols Nerd Font Mono")
+  (nerd-icons-font-family "Symbols Nerd Font Mono")  ;; Adjust Nerd Font if necessary
+  ;:config
+  ;(nerd-icons-install-fonts)  ;; Automatically install Nerd Font
 )
 
 ;; ace-window allows switching to window by number, bind to 'C-x o'
 ;; not installed by default
 (use-package ace-window
   :ensure t
-  :bind ("C-x o" . ace-window))
-;(global-set-key (kbd "C-x o") 'ace-window)
-;;(setq aw-keys '(?a ?b ?c ?d ?e ?f ?g ?h ?i)) ;; letters instead of numbers
+  :bind ("C-x o" . ace-window)
+  :custom
+  (aw-keys '(?a ?b ?c ?d ?e ?f ?g ?h ?i))) ;; Use letters instead of numbers for window selection
+
 
 ;;; * tab-bar
 ;(use-package tab-bar
@@ -787,7 +817,7 @@
 
 ;;; * Keybindings -----
 (use-package which-key
-  ;; Included in emacs > 30.1
+  :ensure nil ;; Included in emacs > 30.1
   :diminish which-key-mode
   :init
   (which-key-mode)
@@ -832,6 +862,7 @@
     map)
   "Keymap for `org-mode' commands after `org-keymap-prefix'.")
 (fset 'term-command-map term-command-map)
+(define-prefix-command 'term-command-map)
 (global-set-key (kbd "C-c t") '("terminals" . term-command-map))
 
 ;; shell
@@ -853,8 +884,7 @@
   :after eshell
   :functions eshell-git-prompt-use-theme
   :init
-  (eshell-git-prompt-use-theme 'robbyrussell)
-)
+  (eshell-git-prompt-use-theme 'robbyrussell))
 
 (use-package eshell
   :hook (eshell-first-time-mode . efs/configure-eshell)
@@ -869,10 +899,8 @@
   (defun efs/configure-eshell ()
     ;; Save command history when commands are entered
     (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
-
   ;; Truncate buffer for performance
   (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-
   ;; Little quality of life improvement if you work with multiple eshell buffers:
   (defun eshell-buffer-name ()
     (rename-buffer (concat "*eshell*<" (eshell/pwd) ">") t))
@@ -950,7 +978,7 @@
 (use-package nov
   :ensure t
   :mode ("\\.epub\\'" . nov-mode)
-  :config
+  ;;:config
   ;; Optional: Customize default font for better reading experience
   ;; (defun my-nov-font-setup ()
   ;;   (face-remap-add-relative 'shr-text :family "Liberation Serif" :height 1.0))
@@ -975,7 +1003,9 @@
 ;;; * Load Local Configs
 (let ((config-dir "~/.emacs.d/config/"))
   (dolist (file (directory-files config-dir t "\\.el$"))
-    (load file)))
+    (condition-case err
+        (load file)
+      (error (message "Error loading %s: %s" file err)))))
 
 (provide 'init)
 ;;; init.el ends here
