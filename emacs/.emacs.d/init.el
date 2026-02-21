@@ -15,7 +15,6 @@
   (load custom-file))
 
 ;; Append personal info directory to list
-(defvar Info-additional-directory-list)
 (with-eval-after-load 'info
   (add-to-list 'Info-additional-directory-list
                "~/org/emacs_d/info"))
@@ -44,23 +43,27 @@
   (setq server-client-instructions nil) ; don't display disconnect instructions
   (setq server-socket-dir (format "/tmp/emacs%d" (user-uid))) ;; Force default socket-dir "/tmp/emacs{uid}"
   ;(setq server-name "my-emacs-server") ; Choose any name, default 'server'
-  (server-start)) ;; idempotent, won't start if already running
+  (unless (server-running-p) (server-start))) ;; don't start if its running
 
 (use-package emacs
-  :init
-  (setq scroll-conservatively 101      ; don't jump scroll at window bottom
-        help-window-select t
-        backup-by-copying t
-        backup-directory-alist '((cons "."
-          (file-name-concat user-emacs-directory "backup/")))
-        create-lockfiles t
-        initial-major-mode 'text-mode
-        custom-safe-themes t           ; treat all themes as safe
-        initial-buffer-choice t)       ; open scratch buffer at startup
-  :config
+  :init  ;;init → variables
+  (setopt scroll-conservatively 101  ; don't jump scroll at window bottom
+          help-window-select t
+          vc-follow-symlinks t
+          use-short-answers t
+          inhibit-startup-message t
+          initial-scratch-message nil
+          default-major-mode 'text-mode
+          ;;create-lockfiles t  ;; default
+          initial-major-mode 'text-mode
+          custom-safe-themes t           ; treat all themes as safe
+          backup-by-copying t
+          tab-always-indent 'complete
+          backup-directory-alist
+            `(("." . ,(expand-file-name "backup/" user-emacs-directory)))
+          initial-buffer-choice (lambda () (get-buffer-create "*scratch*")))
+  :config  ;;config → keybindings and hooks
   ;; * initialization
-  (setq inhibit-startup-message t)
-  (setq-default initial-scratch-message nil)
   (setq user-full-name "Douglas Jackson"
         user-mail-address "hpotter@hogworts.edu")
 
@@ -109,16 +112,15 @@
   ;; * global settings
   ;; Compilation buffer scrolls to follow output.
   ;; set to first-error to stop when the first error appers and set point
-  (defvar compilation-scroll-output)
   (with-eval-after-load 'compile
     (setq compilation-scroll-output t))
 
   ;; Enable line-numbers-mode for all programming languages
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (setq display-line-numbers-type 'relative)
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
-  ;; enable delete selection mode, so pasting overwrites selection
-  (setq delete-selection-mode 1)
-  (setq delete-active-region 'kill) ;; Change to nil to just delete, not kill
+  ;; enable delete selection mode, pasting overwrites selection
+  (delete-selection-mode 1)
 
   ;; expand text before point - M-/ default is dabbrev-expand
   (global-set-key (kbd "M-/") 'hippie-expand)
@@ -129,9 +131,6 @@
   ;; Remove trailing whitespace on save
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-  ;; automatically follow symlinks to files under version control without prompting
-  (setq vc-follow-symlinks t)
-
   ;;; Kill line backwards
   ;; http://emacsredux.com/blog/2013/04/08/kill-line-backward/
   (global-set-key (kbd "C-<backspace>") (lambda ()
@@ -141,7 +140,6 @@
 
   ;;; Ping settings (from net-util.el)
   ;; http://www.masteringemacs.org/articles/2011/03/02/network-utilities-emacs/
-  (defvar ping-program-options)
   (setq ping-program-options '("-c" "4"))
 
   ;;; Enable whitespace-mode for diff buffers
@@ -150,10 +148,6 @@
             (lambda ()
               (whitespace-mode 1)))
 
-  ;;; Enable holidays in Calendar
-  (defvar mark-holidays-in-calendar)
-  (setq mark-holidays-in-calendar t)
-
   ;;; Make tooltips appear in the echo area (checks if function exists)
   (tooltip-mode nil)
 
@@ -161,9 +155,8 @@
   ;;; Use CUA mode for rectangles (C-RET to select, normal emacs keys to copy)
   ;;; http://emacs-fu.blogspot.com/2010/01/rectangles-and-cua.html
   ;(setq cua-rectangle-mark-key (kbd "C-^"))
-  (global-unset-key "\C-z")
+  (global-unset-key (kbd "C-z"))
   ;(setq cua-rectangle-mark-key (kbd "C-z '"))
-  (defvar cua-rectangle-mark-key)
   (setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; instead of Ctrl-Enter
   (cua-selection-mode t)
   ;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
@@ -184,23 +177,11 @@
     (global-hl-line-mode t)) ;; turn it on for all modes by default
 
   ;;; Make text mode default major mode with auto-fill enabled
-  (defvar default-major-mode)
-  (setq default-major-mode 'text-mode)
+  ;;setq default-major-mode 'text-mode)
   (add-hook 'text-mode-hook 'turn-on-visual-line-mode) ;replaces longlines in 23
-
-  ;;; "y or n" instead of "yes or no", use-short-answers added in Emacs 28.1
-  ;; if odd pop-up vs minibuffer prompt issues, examine us-dialog-box?
-  ;(fset 'yes-or-no-p 'y-or-n-p) ;emacs < 28
-  (setq use-short-answers t)
 
   ;;; Ask before quitting the last Emacs frame
   (setq confirm-kill-emacs 'y-or-n-p)
-
-  ;;; Highlight regions and add special behaviors to regions.
-  ;;; "C-h d transient" for more info.  transient-mark-mode is a toggle.
-  ;;; also in Emacs 22 and greater, C-SPC twice to temp enable transient mark
-  ;(setq transient-mark-mode nil)
-  (setq transient-mark-mode t)
 
   ;;; Display line and column numbers in the mode line
   (setq line-number-mode    t
@@ -215,13 +196,15 @@
   ;;; Line-wrapping
   (set-default 'fill-column 78)
 
-  ;; Don't truncate lines
+  ;; Truncate lines
   (setq truncate-lines t
         truncate-partial-width-windows nil)
 
   ;; Create new scratch buffer if needed
-  (run-with-idle-timer 1 t
-      (lambda () (get-buffer-create "*scratch*")))
+  ;;(run-with-idle-timer 1 t
+  ;;    (lambda () (get-buffer-create "*scratch*")))
+  (unless (get-buffer "*scratch*")
+    (get-buffer-create "*scratch*"))
 
   ;; allow scroll-down/up-command to move point to buffer end/beginning
   ;(setq scroll-error-top-bottom 'true)
@@ -257,7 +240,6 @@
 
 
   ;; Enable holidays in Calendar and week-start-day
-  (defvar calendar-week-start-day)
   (setq mark-holidays-in-calendar t
         calendar-week-start-day 0)
 
@@ -278,18 +260,12 @@
   (show-paren-mode 1)
   (savehist-mode 1)
 
-  (defvar apropos-do-all)
-  (defvar ediff-window-setup-function)
   (setq save-interprogram-paste-before-kill t
         apropos-do-all t
         require-final-newline t
         delete-old-versions t
         load-prefer-newer t
         ediff-window-setup-function 'ediff-setup-windows-plain)
-
-  ;; Enable indentation+completion using the TAB key.
-  ;; `completion-at-point' is often bound to M-TAB.
-  (setq tab-always-indent 'complete)
 
   ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
   ;; try `cape-dict'.
@@ -463,14 +439,11 @@
   :config
   (cond
     ;; - Windows -
-    ((eq system-type 'windows-nt)
-     (defvar w32-get-true-file-attributes)
-     (setq default-directory "C:/Users/YourName/"
-           w32-get-true-file-attributes nil))
+    ;;((eq system-type 'windows-nt))
 
     ;; - macOS -
     ((eq system-type 'darwin)
-     (setq trash-directory "~/.Trash") ;; macOS trash
+     ;;(setq trash-directory "~/.Trash") ;; macOS trash
      ;; set keys for Apple keyboard, for emacs in OS X
      (setq mac-command-modifier 'meta) ; make cmd key do Meta
      (setq mac-option-modifier 'super) ; make opt key do Super
@@ -486,24 +459,29 @@
      (global-set-key (kbd "M-z") 'undo) ; ⌘-z = Undo
      (global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
 
-     ;; Restrict exec-path-from-shell to macOS
-     (eval-when-compile
-       (require 'exec-path-from-shell nil t))
+;;     ;; Restrict exec-path-from-shell to macOS
+;;     (when (display-graphic-p)
+;;        ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
+;;        ;; environment, so envvars will be wrong. That includes the PATH
+;;        ;; Emacs picks up. `exec-path-from-shell' fixes this. This is slow
+;;        ;; and benefits greatly from compilation.
+;;        ;; orig vars: "PATH" "MANPATH" "GOPATH" "GOROOT" "PYTHONPATH" "LC_TYPE" "LC_ALL" "LANG" "SSH_AGENT_PID" "SSH_AUTH_SOCK" "SHELL" "JAVA_HOME"
+;;        (when (require 'exec-path-from-shell nil t)
+;;          ;; Don’t check shell startup files (faster)
+;;          (setq exec-path-from-shell-check-startup-files nil)
+;;          ;; List of env vars to import
+;;          (setq exec-path-from-shell-variables
+;;                '("PATH" "MANPATH" "LANG" "SHELL"))
+;;          ;; Initialize exec-path and env vars from the shell
+;;          (exec-path-from-shell-initialize)))
 
-     (cond ((display-graphic-p)
-        ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
-        ;; environment, so envvars will be wrong. That includes the PATH
-        ;; Emacs picks up. `exec-path-from-shell' fixes this. This is slow
-        ;; and benefits greatly from compilation.
-        ;; orig vars: "PATH" "MANPATH" "GOPATH" "GOROOT" "PYTHONPATH" "LC_TYPE" "LC_ALL" "LANG" "SSH_AGENT_PID" "SSH_AUTH_SOCK" "SHELL" "JAVA_HOME"
-        (when (require 'exec-path-from-shell nil t)
-          ;; Don’t check shell startup files (faster)
-          (setq exec-path-from-shell-check-startup-files nil)
-          ;; List of env vars to import
-          (setq exec-path-from-shell-variables
-                '("PATH" "MANPATH" "LANG" "SHELL"))
-          ;; Initialize exec-path and env vars from the shell
-          (exec-path-from-shell-initialize))))
+(when (and (display-graphic-p)
+           (require 'exec-path-from-shell nil t))
+  (setq exec-path-from-shell-check-startup-files nil
+        exec-path-from-shell-variables
+        '("PATH" "MANPATH" "LANG" "SHELL"))
+  (exec-path-from-shell-initialize))
+
 
      ;; Use meta +/- to change text size
      (bind-key "M-+" 'text-scale-increase)
@@ -528,7 +506,6 @@
      (set-face-attribute 'default nil :font "Geist Mono-16" :weight 'regular) ; Or "Geist Sans-12"
 
      ;; Don't open up new frames for files dropped on icon, use active frame
-     (defvar ns-pop-up-frames)
      (setq ns-pop-up-frames nil)
 
      ;; Drag and drop on the emacs window opens the file in a new buffer instead of
@@ -560,7 +537,7 @@
      (defun pt-pbcopy ()
        "Copy region to pasteboard."
        (interactive)
-       (print (mark))
+       ;;(print (mark))
        (when mark-active
          (shell-command-on-region
            (point) (mark) "pbcopy")
@@ -570,12 +547,7 @@
 
    ;; - Linux -
    ((eq system-type 'gnu/linux)
-    (setq default-directory "~/"
-          x-ctrl-keysym 'control)
-    (defvar browse-url-browser-function)
-    (defvar browse-url-browser-program)
-
-    (setq trash-directory "~/.local/share/Trash")
+    ;;(setq trash-directory "~/.local/share/Trash")
 
     ;; http://stackoverflow.com/questions/15277172/how-to-make-emacs-open-all-buffers-in-one-window-debian-linux-gnome
     ;(setq pop-up-frames 'graphic-only)
@@ -611,12 +583,24 @@
   (ls-lisp-use-insert-directory-program nil))
 
 ;;; * dired
+(use-package casual
+  :ensure t
+  :defer t
+  :custom (casual-lib-use-unicode t))
+
+(use-package casual-dired
+  :after dired)
+
 (use-package dired
   :ensure nil
   :custom
   (delete-by-moving-to-trash t)
   (dired-dwim-target t) ;; Guess target dir if two dired windows open
   (dired-listing-switches "-alh -v --group-directories-first")
+  :bind (:map dired-mode-map
+         ("C-o" . casual-dired-tmenu)
+         ("?" . casual-dired-tmenu)
+         ("s" . casual-dired-sort-by-tmenu))
   :config
   ;; mac 'ls' doesn't support --dired
   (when (string= system-type "darwin")
@@ -851,8 +835,6 @@
 (global-set-key (kbd "C-c t") '("terminals" . term-command-map))
 
 ;; shell
-(defvar explicit-shell-file-name)
-(defvar explicit-zsh-args)
 (setq explicit-shell-file-name "zsh")
 (setq shell-file-name "zsh")
 (setq explicit-zsh-args '("--login" "--interactive"))
