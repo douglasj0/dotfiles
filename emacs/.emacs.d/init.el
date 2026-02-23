@@ -511,12 +511,12 @@
 ;;          ;; Initialize exec-path and env vars from the shell
 ;;          (exec-path-from-shell-initialize)))
 
-(when (and (display-graphic-p)
-           (require 'exec-path-from-shell nil t))
-  (setq exec-path-from-shell-check-startup-files nil
-        exec-path-from-shell-variables
-        '("PATH" "MANPATH" "LANG" "SHELL"))
-  (exec-path-from-shell-initialize))
+    (when (and (display-graphic-p)
+               (require 'exec-path-from-shell nil t))
+      (setq exec-path-from-shell-check-startup-files nil
+            exec-path-from-shell-variables
+            '("PATH" "MANPATH" "LANG" "SHELL"))
+      (exec-path-from-shell-initialize))
 
 
      ;; Use meta +/- to change text size
