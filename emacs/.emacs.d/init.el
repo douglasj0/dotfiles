@@ -151,17 +151,6 @@
   ;;; Make tooltips appear in the echo area (checks if function exists)
   (tooltip-mode nil)
 
-  ;;; Emacs 24.4 and later now include something similar: Rectangle Mark mode. After a region is active, type ‘C-x SPC’ to toggle it on and off.
-  ;;; Use CUA mode for rectangles (C-RET to select, normal emacs keys to copy)
-  ;;; http://emacs-fu.blogspot.com/2010/01/rectangles-and-cua.html
-  ;(setq cua-rectangle-mark-key (kbd "C-^"))
-  (global-unset-key (kbd "C-z"))
-  ;(setq cua-rectangle-mark-key (kbd "C-z '"))
-  (setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; instead of Ctrl-Enter
-  (cua-selection-mode t)
-  ;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
-  ;(cua-mode t)
-
   ;;; Don't create new lines when pressing 'arrow-down key' at end of the buffer
   (setq next-line-add-newlines nil)
 
@@ -222,14 +211,14 @@
   ;; * other
   ;;; Customize Modeline -----
   ;; make the read-only and modified indicators more noticeable.
-  (setq-default mode-line-modified        ; not customizable
-                '((:eval (if buffer-read-only
-                             (propertize "R" 'face 'warning) ;; was %
-                           "-"))
-                  (:eval (if (buffer-modified-p)
-                             (propertize "*" 'face 'error) ;; was *
-                           "-"))))
-  ;;(setopt mode-line-compact 'long)
+  ;;(setq-default mode-line-modified        ; not customizable
+  ;;              '((:eval (if buffer-read-only
+  ;;                           (propertize "R" 'face 'warning) ;; was %
+  ;;                         "-"))
+  ;;                (:eval (if (buffer-modified-p)
+  ;;                           (propertize "*" 'face 'error) ;; was *
+  ;;                         "-"))))
+  ;;;;(setopt mode-line-compact 'long)
 
   ;; Disable line numbers for some modes
   (dolist (mode '(org-mode-hook
@@ -291,6 +280,53 @@
         (forward-char 1))
     (message "Daily log opened!"))
   (global-set-key (kbd "<f9>") 'daily-log)
+
+  ;; ---------------------------------------------------------------------------
+  ;; Use C-c r to start rectangle selection
+  ;;| Key       | Action                            |
+  ;;| --------- | --------------------------------- |
+  ;;| `C-x r t` | Insert text on each line          |
+  ;;| `C-x r k` | Kill rectangle                    |
+  ;;| `C-x r y` | Yank rectangle                    |
+  ;;| `C-x r o` | Open rectangle (shift text right) |
+  ;;| `C-x r c` | Clear rectangle                   |
+  ;;| `C-x TAB' | Indent Ridigdly                   |
+  ;; Use C-c r to start rectangle selection
+;;  (defvar my/rectangle-region-cookie nil
+;;    "Face remapping cookie for rectangle region.")
+;;
+;;  (defun my/rectangle-region-on ()
+;;    (setq my/rectangle-region-cookie
+;;          (face-remap-add-relative
+;;           'region
+;;           '(:background "red" :foreground "black"))))
+;;
+;;  (defun my/rectangle-region-off ()
+;;    (when my/rectangle-region-cookie
+;;      (face-remap-remove-relative my/rectangle-region-cookie)
+;;      (setq my/rectangle-region-cookie nil)))
+;;
+;;  (add-hook 'rectangle-mark-mode-hook
+;;            (lambda ()
+;;              (if rectangle-mark-mode
+;;                  (my/rectangle-region-on)
+;;                (my/rectangle-region-off))))
+;;
+;;  (global-set-key (kbd "C-c r") #'rectangle-mark-mode)
+
+  ;;; Emacs 24.4 and later now include something similar: Rectangle Mark mode.
+  ;;; After a region is active, type ‘C-x SPC’ to toggle it on and off.
+  ;;; Use CUA mode for rectangles (C-RET to select, normal emacs keys to copy)
+  ;;; http://emacs-fu.blogspot.com/2010/01/rectangles-and-cua.html
+  ;(setq cua-rectangle-mark-key (kbd "C-^"))
+  ;;(global-unset-key (kbd "C-z"))
+  ;(setq cua-rectangle-mark-key (kbd "C-z '"))
+  ;(setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; instead of Ctrl-Enter
+  (cua-mode 1)
+  (setq cua-rectangle-mark-key (kbd "C-<return>"))  ;; instead of Ctrl-Enter
+  (cua-selection-mode t)
+  ;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
+  ;(cua-mode t)
 
   ;; ---------------------------------------------------------------------------
   (defun toggle-indent-tabs-mode ()
