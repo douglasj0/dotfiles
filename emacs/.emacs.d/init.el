@@ -318,15 +318,12 @@
   ;;; After a region is active, type ‘C-x SPC’ to toggle it on and off.
   ;;; Use CUA mode for rectangles (C-RET to select, normal emacs keys to copy)
   ;;; http://emacs-fu.blogspot.com/2010/01/rectangles-and-cua.html
-  ;(setq cua-rectangle-mark-key (kbd "C-^"))
-  ;;(global-unset-key (kbd "C-z"))
-  ;(setq cua-rectangle-mark-key (kbd "C-z '"))
-  ;(setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; instead of Ctrl-Enter
-  (cua-mode 1)
-  (setq cua-rectangle-mark-key (kbd "C-<return>"))  ;; instead of Ctrl-Enter
-  (cua-selection-mode t)
+  (global-unset-key (kbd "C-z"))
+  (setq cua-rectangle-mark-key (kbd "C-c C-z"))  ;; Ctrl-Enter, used by org-mode
+  ;(setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; Ctrl-Enter, used by org-mode
   ;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
-  ;(cua-mode t)
+  (cua-mode 1)
+  (cua-selection-mode t)
 
   ;; ---------------------------------------------------------------------------
   (defun toggle-indent-tabs-mode ()
