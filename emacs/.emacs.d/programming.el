@@ -13,6 +13,7 @@
   :ensure t
   :defer t
   :commands magit
+  :hook (magit-status-sections . magit-insert-worktrees)
   :bind
     (("C-x g"   . magit-status)
      ("C-x G"   . magit-status-with-prefix)
