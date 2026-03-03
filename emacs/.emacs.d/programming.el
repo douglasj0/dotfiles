@@ -13,7 +13,6 @@
   :ensure t
   :defer t
   :commands magit
-  :hook (magit-status-sections . magit-insert-worktrees)
   :bind
     (("C-x g"   . magit-status)
      ("C-x G"   . magit-status-with-prefix)
@@ -24,6 +23,9 @@
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
   (set-variable 'magit-emacsclient-executable "emacsclient")
   :config
+  (add-to-list 'magit-status-sections-hook
+               'magit-insert-worktrees
+               t)
   (setq magit-log-section-commit-count 25
         magit-copy-revision-abbreviated t)
 )
