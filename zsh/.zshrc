@@ -229,32 +229,32 @@ fi
 export RIPGREP_CONFIG_PATH=$HOME/.config/ripgrep/config
 
 # pyenv init
-#if [[ -f $HOME/.config/NO_ZSH_PYENV ]]; then
-#  echo "Skipping .zshrc init pyenv"
-#else
-#  if [[ -d $HOME/.pyenv ]]; then
-#    if [[ -z ${PYENV_SHELL} ]]; then
-#      echo ". initializing pyenv"
-#      export PYENV_ROOT="${HOME}/.pyenv"
-#      export PATH="$PYENV_ROOT/bin:$PATH"
-#      eval "$(pyenv init -)"
-#      eval "$(pyenv virtualenv-init -)"
-#    else
-#      echo ".. pyenv already initialized, skipping"
-#    fi
-#  else
-#    echo ".. pyenv directory not found, exiting"
-#  fi
-#fi
+if [[ -f $HOME/.config/NO_ZSH_PYENV ]]; then
+  echo "Skipping .zshrc init pyenv"
+else
+  if [[ -d $HOME/.pyenv ]]; then
+    if [[ -z ${PYENV_SHELL} ]]; then
+      echo ". initializing pyenv"
+      export PYENV_ROOT="${HOME}/.pyenv"
+      export PATH="$PYENV_ROOT/bin:$PATH"
+      eval "$(pyenv init -)"
+      eval "$(pyenv virtualenv-init -)"
+    else
+      echo ".. pyenv already initialized, skipping"
+    fi
+  else
+    echo ".. pyenv directory not found, exiting"
+  fi
+fi
 
 # Activate mise for zsh if installed
 # https://mise.jdx.dev/getting-started.html
 # https://mise.jdx.dev/lang/python.html
 # venv: python -m venv /path/to/venv
-if command -v mise >/dev/null 2>&1; then
-    echo ". activating mise"
-    eval "$(mise activate zsh)"
-fi
+##if command -v mise >/dev/null 2>&1; then
+##    echo ". activating mise"
+##    eval "$(mise activate zsh)"
+##fi
 
 ###################
 #   OS Specific   #
