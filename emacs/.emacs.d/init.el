@@ -535,8 +535,8 @@
      ;; M-: (face-attribute 'default :font)
      ;; #<font-object "-*-Monaco-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1">
      ;; geist mono - https://vercel.com/font - switched from:
-     ;(set-face-attribute 'default nil :font "Monaco-16" :weight 'regular)
-     (set-face-attribute 'default nil :font "Geist Mono-16" :weight 'regular) ; Or "Geist Sans-12"
+     (set-face-attribute 'default nil :font "Monaco-16" :weight 'regular)
+     ;(set-face-attribute 'default nil :font "Geist Mono-16" :weight 'regular) ; Or "Geist Sans-12"
 
      ;; Don't open up new frames for files dropped on icon, use active frame
      (setq ns-pop-up-frames nil)
