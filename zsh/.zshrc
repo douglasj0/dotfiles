@@ -180,21 +180,19 @@ fi
 
 # -- Editor --
 #[[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
-export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server  # -s ${EMACS_SOCKET}
-export ALTERNATE_EDITOR="mg -f end-of-line"
-export EDITOR="emacsclient -t -a '$ALTERNATE_EDITOR'"
+export EMACS_SOCKET_NAME="/tmp/emacs${UID}/server"  # emacsclient will automatically use EMACS_SOCKET_NAME
+export ALTERNATE_EDITOR="zile"
+export EDITOR="emacsclient -t -a \"$ALTERNATE_EDITOR\""
 export VISUAL="$EDITOR"
 # Emacs Functions
-function  ec { emacsclient -s ${EMACS_SOCKET} -c -n -a '' --eval "(progn (find-file \"$1\"))"; }
-function ecr { emacsclient -s ${EMACS_SOCKET} -r -n -a '' -- "${@}"; }
-function ect { emacsclient -s ${EMACS_SOCKET} -t -a '' -- "${@}"; }
+function  ec { emacsclient -c -n -a '' -- "$@"; }
+function ecr { emacsclient -n -a '' -- "$@"; }
+function ect { emacsclient -t -a '' -- "$@"; }
 
 # -- Emacs shell setup --
 if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
   echo ".. inside Emacs"
-  #export TERM=vt100
   export TERM=xterm-256color  # for eat, etc.
-
   export EDITOR=emacsclient
   export VISUAL="$EDITOR"
   export PAGER=cat
