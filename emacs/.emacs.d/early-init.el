@@ -8,8 +8,9 @@
 (setq gc-cons-percentage 0.6)
 
 ;; Compile warnings
-(setq native-comp-async-report-warnings-errors 'silent) ;; native-comp warning
-(setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
+(setq native-comp-verbose nil) ;; hide internal memory compile logs
+;(setq native-comp-async-report-warnings-errors 'silent) ;; native-comp warning
+;(setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
 
 (setq-default cursor-in-non-selected-windows nil)
 (setq highlight-nonselected-windows nil)

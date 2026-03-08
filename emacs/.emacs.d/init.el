@@ -10,7 +10,7 @@
 (setq package-quickstart t)
 
 ;; Load custom configuration file
-(setq custom-file (expand-file-name "custom.el" "~/org/emacs_d/"))
+(setq custom-file (expand-file-name "custom.el" "~/sync/org/emacs_d/"))
 (when (file-exists-p custom-file)
   (load custom-file))
 
@@ -319,7 +319,7 @@
   ;;; Use CUA mode for rectangles (C-RET to select, normal emacs keys to copy)
   ;;; http://emacs-fu.blogspot.com/2010/01/rectangles-and-cua.html
   (global-unset-key (kbd "C-z"))
-  (setq cua-rectangle-mark-key (kbd "C-c C-z"))  ;; Ctrl-Enter, used by org-mode
+  (setq cua-rectangle-mark-key (kbd "C-c C-d"))  ;; Ctrl-Enter, used by org-mode
   ;(setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; Ctrl-Enter, used by org-mode
   ;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
   (cua-mode 1)
