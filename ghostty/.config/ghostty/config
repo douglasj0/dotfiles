@@ -16,10 +16,9 @@ auto-update-channel = stable
 
 # Theme: ghostty +list-themes
 window-theme = auto
-# catppuccin theme: frappe / latte / macchiato / mocha
-theme = Captppuccin Macchiato
-#theme = catppuccin-macchiato
-#theme = dracula
+# catppuccin theme: Frappe / Latte / Macchiato / Mocha
+theme = "Catppuccin Macchiato"
+#theme = Dracula
 background-opacity = 0.94
 background-blur-radius = 40
 
