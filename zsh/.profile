@@ -20,6 +20,7 @@ Darwin)  # Darwin Environment
 PATH="${HOME}/bin:${HOME}/myscripts:${HOME}/.local/bin:\
 /Applications/Emacs.app/Contents/MacOS:\
 /Applications/Emacs.app/Contents/MacOS/bin:\
+/Applications/VNC Viewer.app/Contents/MacOS:\
 /bin:/sbin:/usr/bin:/usr/sbin:/opt/X11/bin:\
 /usr/local/sbin:/usr/local/bin:"
 export PATH
