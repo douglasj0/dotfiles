@@ -19,7 +19,7 @@
   (add-to-list 'Info-additional-directory-list
                "~/org/emacs_d/info"))
 
-(add-to-list 'load-path (locate-user-emacs-file "elisp/"))  ;; elisp packages not in pkg mgr, changing in 32.0
+;; (add-to-list 'load-path (locate-user-emacs-file "elisp/"))  ;; elisp packages not in pkg mgr, changing in 32.0
 ;(add-to-list 'load-path (expand-file-name "~/.emacs.d/elisp/"))
 
 
