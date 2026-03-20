@@ -5,28 +5,24 @@
 
 ;; TRAMP
 ;; https://www.reddit.com/r/emacs/comments/uto1uv/magit_and_authentication/
-;(require 'tramp)
-;(require 'auth-source)
-
 (use-package tramp
-  :config
+  :ensure nil
+  :defer t
+  :init
   (setq tramp-default-method "ssh") ; Set the default TRAMP method
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path) ; Add own remote path
 
-  ;; Enable TRAMP's support for authentication information from `auth-source'
-  (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc"))
-
-  ;; https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./
-  ;; prevent TRAMP from creating a bunch of extra files and use scp directly when moving files.
-  (setq remote-file-name-inhibit-locks t
+  :config
+  (setq tramp-use-ssh-controlmaster-options t
+        tramp-verbose 1
+        tramp-chunksize 2000                   ;; reduce tramp overhead
+        tramp-copy-size-limit (* 1024 1024)    ;; 1 MB
         tramp-use-scp-direct-remote-copying t
+        remote-file-name-inhibit-locks t
         remote-file-name-inhibit-auto-save-visited t)
 
-  ;; TRAMP uses 2 ways to copy files, OOB and Inline (base64 over ssh)
-  ;; inline is usually faster all the way up until about 2MB.  Also, rsync
-  ;; can update faster, but can also break remote shells (fixed in 30.3?), use scp
-  (setq tramp-copy-size-limit (* 1024 1024) ;; 1MB
-        tramp-verbose 2)
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path) ;; Add remote path
+  ;;(add-to-list 'tramp-remote-path "/usr/local/bin")
+  ;;(add-to-list 'tramp-remote-path "/usr/bin")
 
   ;; Use Direct Async (faster then before in Tramp 2.7+)
   ;; now magit and git-gutter work better
@@ -34,20 +30,27 @@
    'remote-direct-async-process
    '((tramp-direct-async-process . t)))
 
-  ;; change 'server' to remote host
-  ;(connection-local-set-profiles
-  ; '(:application tramp :machine "server")
-  ; 'remote-direct-async-process)
+  ;; Fix remote compile, uses ssh connection sharing
+  ;; compile command disablesm this, re-enable
+  (with-eval-after-load 'compile
+    (remove-hook 'compilation-mode-hook
+                 #'tramp-compile-disable-ssh-controlmaster-options))
 
-  (setq magit-tramp-pipe-stty-settings 'pty)
+  ;; https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./
+  ;; prevent TRAMP from creating a bunch of extra files and use scp directly when moving files.
+  (setq remote-file-name-inhibit-locks t
+        tramp-use-scp-direct-remote-copying t
+        remote-file-name-inhibit-auto-save-visited t)
 
-  ;; Fix remote compile
-  ;; tramp will use ssh connection sharing, but compile command disables, turn back on
-  (with-eval-after-load 'tramp
-    (with-eval-after-load 'compile
-      (remove-hook 'compilation-mode-hook #'tramp-compile-disable-ssh-controlmaster-options)))
+  (setq magit-tramp-pipe-stty-settings "")  ;; was 'pty
+
+  ;; keep connection history across sessions
+  (setq tramp-persistency-file-name
+        (expand-file-name "tramp" user-emacs-directory))
 )
 
+;;; tramp-hlo
+;;; Higher level emacs functions as optimized tramp operations
 ;;; https://github.com/jsadusk/tramp-hlo
 (use-package tramp-hlo
     :ensure t
@@ -56,3 +59,4 @@
 )
 
 (provide 'tools-tramp)
+;;; tools-tramp.el ends here
