@@ -55,15 +55,16 @@ precmd() {
 
 # --- Prompt colors based on hostname ---
 case ${HOST%%.*} in
-  lothlorien*|weasel*|macbook28)  PROMPT_COLOR="yellow";  PROMPT_HOST="%m" ;;
-  Mac)          PROMPT_COLOR="red";    PROMPT_HOST="%m" ;;
+  lothlorien*|weasel*)  PROMPT_COLOR="yellow";  PROMPT_HOST="%m" ;;
+  macbook28)    PROMPT_COLOR="yellow";  PROMPT_HOST="%S%m%s" ;;
+  Mac)          PROMPT_COLOR="red";    PROMPT_HOST="%S%m%s" ;;
   flowers)      PROMPT_COLOR="magenta"; PROMPT_HOST="%m" ;;
   *)            PROMPT_COLOR="white";  PROMPT_HOST="%m" ;;
 esac
 
-# --- Prompt definition ---
+# --- Prompt definition, red if root ---
 NEWLINE=$'\n'
-PS1='%F{blue}%T%f %F{$PROMPT_COLOR}%n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f${NEWLINE}%F{white}%# %f'
+PS1='%F{blue}%T%f %F{$PROMPT_COLOR}%n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{green}${vcs_info_msg_0_}%f${NEWLINE}%F%(!.%F{red}# %f.%F{white}$ %f)'
 ### --- Prompt Config End ---
 
 

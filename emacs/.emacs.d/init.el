@@ -8,6 +8,8 @@
 (require 'package) ; needed for package-archive variable
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (setq package-quickstart t)
+;; initialize the packge system
+(package-initialize)
 
 ;; Load custom configuration file
 (setq custom-file (expand-file-name "custom.el" "~/sync/org/emacs_d/"))
@@ -115,7 +117,7 @@
 
 ;; Enable line-numbers-mode for all programming languages
 ;(setq display-line-numbers-type 'relative)
-;(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
 ;; enable delete selection mode, pasting overwrites selection
 (delete-selection-mode 1)

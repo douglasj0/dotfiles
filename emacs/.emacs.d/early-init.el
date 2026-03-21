@@ -4,24 +4,30 @@
 ;;; Code:
 
 
-;; Garbage Collections
-(setq gc-cons-percentage 0.6)
+;; Garbage Collection, fast startup, normal settings afterwards
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.6)
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 16 1024 1024)
+                  gc-cons-percentage 0.1)))
 
 ;; Compile warnings
 (setq native-comp-verbose nil) ;; hide internal memory compile logs
 ;(setq native-comp-async-report-warnings-errors 'silent) ;; native-comp warning
 ;(setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
 
-(setq-default cursor-in-non-selected-windows nil)
-(setq highlight-nonselected-windows nil)
-(setq fast-but-imprecise-scrolling t)
-(setq inhibit-compacting-font-caches t)
+;; Prevent initialize packages before config
+(setq package-enable-at-startup nil)
 
-;; Prevent the glimpse of un-styled Emacs by disabling UI elements early.
-;; These values are read when the frame is created.
-(add-to-list 'default-frame-alist '(menu-bar-height . 0))
-(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
-(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
+;; Disable UI elements early, safely
+(push '(menu-bar-lines . 0) default-frame-alist)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars . nil) default-frame-alist)
+
+;; Prevernt fram resise jitter
+(setq frame-inhibit-implied-resize t)
 
 ;; Post-Startup Cleanup and Reporting
 (add-hook 'emacs-startup-hook

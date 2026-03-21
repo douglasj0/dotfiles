@@ -60,26 +60,23 @@
 ;; - b Run magit-blame on the currently visited revision (if magit available).
 ;; - c Show current commit using magit (if magit available).
 
-(use-package git-timemachine
-  :defer t)
-
 
 ;;; * Syntax checkers
-;;; flycheck (external)
+;;; flycheck (external) - TODO getting errors half the time
 ;;; https://www.flycheck.org/en/latest/
 ;;;
 ;;; flymake (built-in)
-(use-package flymake
-  :ensure nil
-  :hook (prog-mode . flymake-mode) ;; Enables flymake in programming modes
-  :bind (("H-e" . flymake-show-project-diagnostics)) ;; Optional: bind a key to show diagnostics
-  :custom
-  (flymake-suppress-zero-counters t) ;; Optional: hide diagnostics count if zero
-  :config
-  ;; Additional custom configurations can go here
-  (define-key flymake-mode-map (kbd "M-n") 'flymake-goto-next-error)
-  (define-key flymake-mode-map (kbd "M-p") 'flymake-goto-prev-error)
-)
+;;(use-package flymake
+;;  :ensure nil
+;;  :hook (prog-mode . flymake-mode) ;; Enables flymake in programming modes
+;;  :bind (("H-e" . flymake-show-project-diagnostics)) ;; Optional: bind a key to show diagnostics
+;;  :custom
+;;  (flymake-suppress-zero-counters t) ;; Optional: hide diagnostics count if zero
+;;  :config
+;;  ;; Additional custom configurations can go here
+;;  (define-key flymake-mode-map (kbd "M-n") 'flymake-goto-next-error)
+;;  (define-key flymake-mode-map (kbd "M-p") 'flymake-goto-prev-error)
+;;)
 
 
 ;;; * Languages
@@ -114,10 +111,12 @@
 )
 
 (use-package awk-mode
+  :ensure nil
   :mode (("\\.awk\\'" . awk-mode))
 )
 
 (use-package perl-mode
+  :ensure nil
   :mode ("\\.pl\\'" . perl-mode)
 )
 
@@ -144,6 +143,7 @@
 )
 
 (use-package jsonc-mode
+  :ensure nil
   :mode "\\.jsonc\\'")
 
 (use-package yaml-mode
@@ -170,22 +170,22 @@
 ;; Using locally download el files
 ;;
 ;; hcl-mode https://github.com/syohex/emacs-hcl-mode
-(use-package hcl-mode
-  :ensure t
-  :defer t
-  :mode ("\\.hcl\\'" . hcl-mode)
-  :custom (hcl-indent-level 2))
-
-(use-package terraform-mode
-  :ensure t
-  :defer t
-  :custom (terraform-indent-level 2)
-  :config
-  (defun my-terraform-mode-init ()
-    ;; if you want to use outline-minor-mode
-    ;; (outline-minor-mode 1)
-    )
-  (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
+;;(use-package hcl-mode
+;;  :ensure t
+;;  :defer t
+;;  :mode ("\\.hcl\\'" . hcl-mode)
+;;  :custom (hcl-indent-level 2))
+;;
+;;(use-package terraform-mode
+;;  :ensure t
+;;  :defer t
+;;  :custom (terraform-indent-level 2)
+;;  :config
+;;  (defun my-terraform-mode-init ()
+;;    ;; if you want to use outline-minor-mode
+;;    ;; (outline-minor-mode 1)
+;;    )
+;;  (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
 
 (provide 'programming)
 ;;; programming.el ends here
