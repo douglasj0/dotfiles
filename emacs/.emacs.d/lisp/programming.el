@@ -27,8 +27,14 @@
                'magit-insert-worktrees
                t)
   (setq magit-log-section-commit-count 25
-        magit-copy-revision-abbreviated t)
-)
+        magit-copy-revision-abbreviated t))
+
+;;; Minimal magit setup for debugging
+;;(use-package magit
+;;  :ensure t
+;;  :bind
+;;  (("C-x g" . magit-status)))
+
 
 ;; Notes from Reddit- PriorOutcome
 ;;
