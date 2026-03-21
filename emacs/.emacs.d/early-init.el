@@ -38,12 +38,11 @@
 (setq native-comp-verbose nil)
 
 ;; -----------------------------
-;; 4. UI tweaks (prevent flicker)
+;; 4. Disable UI elements early (prevent flicker)
 ;; -----------------------------
-(dolist (param '((menu-bar-lines . 0)
-                 (tool-bar-lines . 0)
-                 (vertical-scroll-bars . nil)))
-  (push param default-frame-alist))
+(push '(menu-bar-lines . 0) default-frame-alist)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars . nil) default-frame-alist)`
 
 ;; Optional: prevent implicit frame resize during startup
 ;(setq frame-inhibit-implied-resize t)  ;; not sure needed
