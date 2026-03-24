@@ -1,55 +1,83 @@
 ;;; early-init.el --- Early Emacs Initialization -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;;; This file runs *before* init.el. It configures UI defaults, startup optimizations,
-;;; and GC tuning in a safe way compatible with packages like Magit, TRAMP, and help-mode.
-;;; Fine tuned my initial early-init.el with AI LLM help.
+; Emacs 27.1 introduced early-init.el, which is run before init.el, before
+; package and UI initialization happens, and before site files are loaded.
 
 ;;; Code:
 
-;; -----------------------------
-;; 1. Package system control
-;; -----------------------------
-;; Disable automatic package initialization; we'll do it manually in init.el
+;;; 1. Startup Optimizations
+;;; From: https://emacs.stackexchange.com/questions/34342/is-there-any-downside-to-setting-gc-cons-threshold-very-high-and-collecting-ga
+;;; Set garbage collection threshold
+
+;;; Print out values before they're changed for debugging
+;;(message "gc-cons-threshold value: %s" gc-cons-threshold)
+;;(message "file-name-handler-alist value: %s" file-name-handler-alist)
+
+;;; From: https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
+(setq gc-cons-threshold-original gc-cons-threshold)
+(setq gc-cons-threshold (* 1024 1024 100))
+;;; Set file-name-handler-alist - Q: does setting 'nil' prevents TRAMP from working?
+(setq file-name-handler-alist-original file-name-handler-alist)
+(setq file-name-handler-alist nil)
+;;; Set deferred timer to reset them
+(run-with-idle-timer
+ 5 nil
+   (lambda ()
+     (setq gc-cons-threshold gc-cons-threshold-original
+           file-name-handler-alist file-name-handler-alist-original)
+     (makunbound 'gc-cons-threshold-original)
+     (makunbound 'file-name-handler-alist-original)
+     (message "gc-cons-threshold and file-name-handler-alist restored")))
+
+;;; Avoid the pitfall of “loading old bytecode instead of newer source”
+(setq load-prefer-newer t)
+
+;;; Prevent the glimpse of un-styled Emacs by disabling UI elements early.
+;;; These values are read when the frame is created.
+(add-to-list 'default-frame-alist '(menu-bar-height . 0))
+(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
+(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
+
+;;; Prevent Emacs from automatically initializing packages at startup.
 (setq package-enable-at-startup nil)
+(advice-add #'package--ensure-init-file :override #'ignore)
 
-;; -----------------------------
-;; 2. Garbage Collection
-;; -----------------------------
-;; Temporarily raise GC threshold to speed up startup without breaking runtime
-(setq gc-cons-threshold 100000000   ; 100 MB
-      gc-cons-percentage 0.6)
+;;; Avoid loading site-specific startup files.
+(setq site-run-file nil)
 
-;; Restore normal GC after startup (16 MB threshold)
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            ;; use idle timer to ensure help/Magit/etc can run safely
-            (run-with-idle-timer
-             1 nil
-             (lambda ()
-               (setq gc-cons-threshold (* 16 1024 1024)  ; 16 MB
-                     gc-cons-percentage 0.1)))))
+;;; allow remembering risky variables, needed for init.org
+;;(defun risky-local-variable-p (sym &optional _ignored) nil)
 
 
-;; -----------------------------
-;; 3. Native Compilation
-;; -----------------------------
-;; suppress verbose logs from native compilation
-(setq native-comp-verbose nil)
+;;; 2. Warning and Message Suppression
+;;; Temp solution(s) for JIT Async-native-compile-log compile warnings
+;;(setq native-comp-jit-compilation-deny-list '("org-loaddefs" "cl-loaddefs" "tramp-loaddefs"))
+;;; or just set silence the errors entirely for now
+;;(setq native-comp-async-report-warnings-errors 'silent)
+;;; emacs 30 filtering errors by kind, show imporants
+(setq native-comp-async-report-warnings-errors-kind 'importants)
 
-;; -----------------------------
-;; 4. Disable UI elements early (prevent flicker)
-;; -----------------------------
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars . nil) default-frame-alist)`
+;;; Disable ad-redefinition-action messages on startup
+;;; Caused by third party functions redefining defadvice
+;;; From: https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/
+(setq ad-redefinition-action 'accept)
 
-;; Optional: prevent implicit frame resize during startup
-;(setq frame-inhibit-implied-resize t)  ;; not sure needed
+;;; Ignore byte-compile warning
+;;; ex. for Emacs 27: Warning: cl package required at runtime
+(setq byte-compile-warnings
+      '(not unresolved free-vars callargs redefine obsolete lexical
+            noruntime make-local cl-functions interactive-only))
 
-;; -----------------------------
-;; 5. Post-startup reporting
-;; -----------------------------
+;;; Also suppress extraneous package-initialize errors
+(setq warning-suppress-log-types '((package reinitialization)))
+(setq native-comp-async-report-warnings-errors 'silent)
+
+;;; silence warnings?
+;;(setq comp-async-report-warnings-errors nil)
+
+
+;;; 3. Post-Startup Cleanup and Reporting
 (add-hook 'emacs-startup-hook
           (lambda ()
             (message "Emacs loaded in %s seconds with %d garbage collections."
