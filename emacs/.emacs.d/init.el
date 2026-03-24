@@ -498,29 +498,13 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
    (global-set-key (kbd "M-z") 'undo) ; ⌘-z = Undo
    (global-set-key (kbd "s-x") 'execute-extended-command) ; Replace ≈ with whatever your option-x produces
 
-   ;; ;; Restrict exec-path-from-shell to macOS
-   ;; (when (display-graphic-p)
-   ;;    ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
-   ;;    ;; environment, so envvars will be wrong. That includes the PATH
-   ;;    ;; Emacs picks up. `exec-path-from-shell' fixes this. This is slow
-   ;;    ;; and benefits greatly from compilation.
-   ;;    ;; orig vars: "PATH" "MANPATH" "GOPATH" "GOROOT" "PYTHONPATH" "LC_TYPE" "LC_ALL" "LANG" "SSH_AGENT_PID" "SSH_AUTH_SOCK" "SHELL" "JAVA_HOME"
-   ;;    (when (require 'exec-path-from-shell nil t)
-   ;;      ;; Don’t check shell startup files (faster)
-   ;;      (setq exec-path-from-shell-check-startup-files nil)
-   ;;      ;; List of env vars to import
-   ;;      (setq exec-path-from-shell-variables
-   ;;            '("PATH" "MANPATH" "LANG" "SHELL"))
-   ;;      ;; Initialize exec-path and env vars from the shell
-   ;;      (exec-path-from-shell-initialize)))
-
-   (when (and (display-graphic-p)
-              (require 'exec-path-from-shell nil t))
-     (setq exec-path-from-shell-check-startup-files nil
-           exec-path-from-shell-variables
-           '("PATH" "MANPATH" "LANG" "SHELL"))
-     (exec-path-from-shell-initialize))
-
+   ;;; Add common macOS package manager paths to Emacs exec-path
+   (let ((extra-paths '("/opt/homebrew/bin"   ; Apple Silicon Homebrew
+                        "/usr/local/bin"      ; Intel Homebrew / MacPorts
+                        "/usr/local/sbin")))
+     (setq exec-path (append extra-paths exec-path))
+     ;; Also update the PATH environment variable so subprocesses see it
+     (setenv "PATH" (concat (mapconcat 'identity extra-paths ":") ":" (getenv "PATH"))))
 
    ;; Use meta +/- to change text size
    (bind-key "M-+" 'text-scale-increase)
@@ -599,28 +583,6 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
 ) ;; end os cond
 
 
-;;; * Saving + Recent -----
-;;; Accidently disabled when moved out init.el?
-(use-package recentf
-  :hook (after-init . recentf-mode)
-  :custom
-  (recent-max-saved-items 60)
-  (recentf-max-menu-items 15)
-  (recentf-exclude '(".*/.emacs.d/" ".*/.git/" ".*tmp/"))  ; Exclude certain directories
-  (recentf-auto-cleanup 'never) ; Adjust cleanup behavior
-  :config
-  ;; Add recent files to a keybinding for easy access
-  (global-set-key (kbd "C-x C-t") 'recentf-open-files))  ;; testing
-
-;; Persist minibuffer history over Emacs restarts
-(use-package savehist
-  :hook (after-init . savehist-mode)
-  :custom
-  (savehist-additional-variables
-   '(search-ring regexp-search-ring))  ; Save additional variables
-  (savehist-max-length 1000)            ; Store up to 1000 history items
-  (savehist-file (expand-file-name "~/.emacs.d/savehist"))) ; Persist to file
-
 ;;; * Split config into sections
 ;; Completion
 (require 'completion)
@@ -630,6 +592,9 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
 
 ;; dired
 (require 'tools-dired)
+
+;; recentf and other tools
+(require 'tools-misc)
 
 ;; Shell
 (require 'tools-shell)
