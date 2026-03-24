@@ -181,14 +181,16 @@ fi
 
 # -- Editor --
 #[[ "x$EDITOR" == "x" ]] && export EDITOR="mg"  # set EDITOR if blank
-export EMACS_SOCKET_NAME="/tmp/emacs${UID}/server"  # emacsclient will automatically use EMACS_SOCKET_NAME
 export ALTERNATE_EDITOR="zile"
-export EDITOR="emacsclient -t -a \"$ALTERNATE_EDITOR\""
-export VISUAL="$EDITOR"
+export EDITOR="emacsclient -t -a $ALTERNATE_EDITOR"
+export VISUAL="emacsclient -c -a $ALTERNATE_EDITOR"
+
 # Emacs Functions
-function  ec { emacsclient -c -n -a '' -- "$@"; }
-function ecr { emacsclient -n -a '' -- "$@"; }
-function ect { emacsclient -t -a '' -- "$@"; }
+#export EMACS_SOCKET_NAME="/tmp/emacs${UID}/server"
+function ec  { emacsclient -c -n -a '' "$@"; } # new frame
+function ecr { emacsclient -n -a '' "$@"; }    # use existing
+function ect { emacsclient -t -n -a '' "$@"; } # new console
+
 
 # -- Emacs shell setup --
 if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
