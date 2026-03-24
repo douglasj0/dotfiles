@@ -3,29 +3,6 @@
 ;;; Commentary:
 ;;; Code:
 
-
-;;; * Saving + Recent -----
-(use-package recentf
-  :hook (after-init . recentf-mode)
-  :custom
-  (recent-max-saved-items 60)
-  (recentf-max-menu-items 15)
-  (recentf-exclude '(".*/.emacs.d/" ".*/.git/" ".*tmp/"))  ; Exclude certain directories
-  (recentf-auto-cleanup 'never) ; Adjust cleanup behavior
-  :config
-  ;; Add recent files to a keybinding for easy access
-  (global-set-key (kbd "C-x C-t") 'recentf-open-files))  ;; testing
-
-;; Persist minibuffer history over Emacs restarts
-(use-package savehist
-  :hook (after-init . savehist-mode)
-  :custom
-  (savehist-additional-variables
-   '(search-ring regexp-search-ring))  ; Save additional variables
-  (savehist-max-length 1000)            ; Store up to 1000 history items
-  (savehist-file (expand-file-name "~/.emacs.d/savehist"))) ; Persist to file
-
-
 ;;; * Flyspell (internal)
 (use-package ispell                     ;
   :ensure nil
