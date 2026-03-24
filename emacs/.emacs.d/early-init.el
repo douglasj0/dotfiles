@@ -23,12 +23,12 @@
 ;;; Set deferred timer to reset them
 (run-with-idle-timer
  5 nil
-   (lambda ()
-     (setq gc-cons-threshold gc-cons-threshold-original
-           file-name-handler-alist file-name-handler-alist-original)
-     (makunbound 'gc-cons-threshold-original)
-     (makunbound 'file-name-handler-alist-original)
-     (message "gc-cons-threshold and file-name-handler-alist restored")))
+ (lambda ()
+   (setq gc-cons-threshold gc-cons-threshold-original
+         file-name-handler-alist file-name-handler-alist-original)
+   (makunbound 'gc-cons-threshold-original)
+   (makunbound 'file-name-handler-alist-original)
+   (message "gc-cons-threshold and file-name-handler-alist restored")))
 
 ;;; Avoid the pitfall of “loading old bytecode instead of newer source”
 (setq load-prefer-newer t)
