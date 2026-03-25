@@ -55,11 +55,11 @@ precmd() {
 
 # --- Prompt colors based on hostname ---
 case ${HOST%%.*} in
-  lothlorien*|weasel*)  PROMPT_COLOR="yellow";  PROMPT_HOST="%m" ;;
-  macbook28)    PROMPT_COLOR="yellow";  PROMPT_HOST="%S%m%s" ;;
-  Mac)          PROMPT_COLOR="red";    PROMPT_HOST="%S%m%s" ;;
-  flowers)      PROMPT_COLOR="magenta"; PROMPT_HOST="%m" ;;
-  *)            PROMPT_COLOR="white";  PROMPT_HOST="%m" ;;
+  lothlorien*|weasel*) PROMPT_COLOR="yellow"; PROMPT_HOST="%m" ;;
+  macbook28) PROMPT_COLOR="yellow";  PROMPT_HOST="%S[%s%m%S]%s" ;;
+  Mac)       PROMPT_COLOR="red";     PROMPT_HOST="%S%m%s" ;;
+  flowers)   PROMPT_COLOR="magenta"; PROMPT_HOST="%m" ;;
+  *)         PROMPT_COLOR="white";   PROMPT_HOST="%m" ;;
 esac
 
 # --- Prompt definition, red if root ---
