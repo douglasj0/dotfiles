@@ -54,6 +54,7 @@
 ;;; https://github.com/jsadusk/tramp-hlo
 (use-package tramp-hlo
     :ensure t
+    :after tramp
     :config
     (tramp-hlo-setup)
 )

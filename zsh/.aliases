@@ -8,7 +8,7 @@ alias pu='pushd'
 alias po='popd'
 alias t1='TERM=vt100; export TERM; stty rows 24; DISPLAY=kludge:0.0; export DISPLAY'
 
-alias keepalive='while true; do date; sleep 120; done'
+alias keepalive='while true; do date >/dev/null; sleep 120; done'
 
 alias ping4='ping -c4'
 alias weather='curl wttr.in/chicago'

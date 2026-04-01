@@ -192,8 +192,8 @@
 ;; Create new scratch buffer if needed
 ;;(run-with-idle-timer 1 t
 ;;    (lambda () (get-buffer-create "*scratch*")))
-(unless (get-buffer "*scratch*")
-  (get-buffer-create "*scratch*"))
+;;(unless (get-buffer "*scratch*")
+;;  (get-buffer-create "*scratch*"))
 
 ;; allow scroll-down/up-command to move point to buffer end/beginning
 ;(setq scroll-error-top-bottom 'true)
@@ -451,14 +451,14 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
 
 ;; ---------------------------------------------------------------------------
 ;; It’s useful to have a scratch buffer around, and more useful to have a key chord to switch to it.
-(declare-function switch-to-scratch-buffer "init.el" ()) ;; tell byte-compiler abt function
-(defun switch-to-scratch-buffer ()
-  "Switch to the current session's scratch buffer."
-  (interactive)
-  (switch-to-buffer "*scratch*"))
-(with-eval-after-load 'bind-key
-  (bind-key "C-c f s" #'switch-to-scratch-buffer))
-
+;;(declare-function switch-to-scratch-buffer "init.el" ()) ;; tell byte-compiler abt function
+;;(defun switch-to-scratch-buffer ()
+;;  "Switch to the current session's scratch buffer."
+;;  (interactive)
+;;  (switch-to-buffer "*scratch*"))
+;;(with-eval-after-load 'bind-key
+;;  (bind-key "C-c f s" #'switch-to-scratch-buffer))
+(bind-key "C-c f s" 'scratch-buffer)
 
 ;;; * Windows, MacOS, Linux specific settings -----
 ;; Common settings across all OSes
