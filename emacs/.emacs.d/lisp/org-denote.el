@@ -1,6 +1,8 @@
 ;;; org-denote.el --- org and denote -*- lexical-binding: t; -*-
 
 ;;; Commentary:
+;;; Possible solution to paths, wrap them in veratim wrappers:
+;;; equal sign (=/home/user/path=) or tildes (~/path~)
 ;;; Code:
 
 ;;;; * --- Org ---
@@ -25,12 +27,12 @@
   :hook (org-mode . visual-line-mode) ; enable word-wrap, treat lines as visual not logical
   :hook (org-mode . (lambda () (corfu-mode -1))) ; turns off corfu completions
   :hook (org-mode . (lambda () (electric-indent-local-mode -1))) ; turns off global electric-indent-mode in org buffers
-  ;:hook (org-mode . (lambda () (diminish 'org-indent-mode -1))) ; unsure if needed
-  ;:hook (org-mode . (lambda () (display-line-numbers-mode -1))) ; disable line numbers in org
+  ;;:hook (org-mode . (lambda () (diminish 'org-indent-mode -1))) ; unsure if needed
+  ;;:hook (org-mode . (lambda () (display-line-numbers-mode -1))) ; disable line numbers in org
   :custom
   (org-ellipsis "...")
-  ;(org-startup-indented t) ; not a fan, disabling
-  (org-hide-emphasis-markers t)
+  ;;(org-startup-indented t) ; not a fan, disabling
+  ;;(org-hide-emphasis-markers t) ; bug? *** backspace to *
   :config
   ;; * function definations
   ;; ---------------------------------------------------------------------------
@@ -49,7 +51,6 @@
   ;(bind-key "C-c n" 'narrow-or-widen-dwim)
   ;; I also bind it to C-x t n, using Artur Malabarba's toggle map idea:
   ;; http:://www.endlessparentheses.com/the-toggle-map-and-wizardry.html
-
 
   (setq org-adapt-indentation nil)
   (setq org-startup-folded t) ; initial visibility set to closed
