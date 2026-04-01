@@ -86,3 +86,10 @@ pushkey() {
     ssh -q $1 "mkdir -p ~/.ssh && chmod 0700 ~/.ssh && touch ~/.ssh/authorized_keys && echo "$KEYCODE" >> ~/.ssh/authorized_keys && chmod 644 ~/.ssh/authorized_keys"
   fi
 }
+
+# tree for systems without
+tree() {
+    # If no directory is provided, use the current one
+    local target=${1:-.}
+    find "$target" -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+}
