@@ -93,3 +93,5 @@ tree() {
     local target=${1:-.}
     find "$target" -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
 }
+
+lh-ip() { grep $1 /etc/hosts }

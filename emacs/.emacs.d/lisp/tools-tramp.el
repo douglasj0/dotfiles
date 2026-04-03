@@ -20,7 +20,8 @@
         remote-file-name-inhibit-locks t
         remote-file-name-inhibit-auto-save-visited t)
 
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path) ;; Add remote path
+  ;;(add-to-list 'tramp-remote-path 'tramp-own-remote-path) ;; Add remote path
+  (add-to-list 'tramp-remote-path 'tramp-default-remote-path)
   ;;(add-to-list 'tramp-remote-path "/usr/local/bin")
   ;;(add-to-list 'tramp-remote-path "/usr/bin")
 
@@ -52,12 +53,12 @@
 ;;; tramp-hlo
 ;;; Higher level emacs functions as optimized tramp operations
 ;;; https://github.com/jsadusk/tramp-hlo
-(use-package tramp-hlo
-    :ensure t
-    :after tramp
-    :config
-    (tramp-hlo-setup)
-)
+;;(use-package tramp-hlo
+;;    :ensure t
+;;    :after tramp
+;;    :config
+;;    (tramp-hlo-setup)
+;;)
 
 (provide 'tools-tramp)
 ;;; tools-tramp.el ends here

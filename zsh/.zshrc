@@ -275,6 +275,10 @@ Darwin)  # Darwin Environment
         . $HOME/.functions.darwin
     fi
 
+    # fix display param for X2GO
+    #export DISPLAY=":0.0"
+    alias x2go="DISPLAY=:0.0 /Applications/x2goclient.app/Contents/MacOS/x2goclient"
+
     # Fix date/gdate issues, if we have gdate use it
     if [[ -e /opt/homebrew/bin/gdate ]]; then alias date=gdate; fi
 
