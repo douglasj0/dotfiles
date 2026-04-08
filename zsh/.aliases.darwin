@@ -24,6 +24,8 @@ alias keepassxc-cli="/Applications/KeePassXC.app/Contents/MacOS/keepassxc-cli"
 # utmctl
 alias utmctl="/Applications/UTM.app/Contents/MacOS/utmctl"
 
-# clear ssh tmp
-alias ssh-tmp-del="rm ~/.ssh/tmp/cm-*"
-alias ssh-lh="ssh-add .ssh/id_ed25519_lh"
+# clear ssh control path files
+ssh-rm-tmp() {
+  ls ~/.ssh/tmp/
+  rm ~/.ssh/tmp/cm-*
+}

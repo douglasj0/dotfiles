@@ -335,7 +335,7 @@ SCHEDULED: %^t
   (:map global-map
    ("C-c n n" . denote)
    ("C-c n d" . denote-dired)
-   ("C-c n g" . denote-grep)
+   ("C-c n q g" . denote-grep) ;; was C-c n g
    ("C-c n l" . denote-link)
    ("C-c n L" . denote-add-links)
    ("C-c n b" . denote-backlinks)
@@ -389,9 +389,10 @@ SCHEDULED: %^t
 ;; https://protesilaos.com/emacs/consult-denote
 (use-package consult-denote
   :ensure t
+  :after denote
   :bind
-  (("C-c n c f" . consult-denote-find)
-   ("C-c n c g" . consult-denote-grep))
+  (("C-c n f" . consult-denote-find)  ;; was C-c n c f
+   ("C-c n g" . consult-denote-grep)) ;; was C-c n c g
   :config
   (consult-denote-mode 1))
 

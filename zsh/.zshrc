@@ -19,6 +19,17 @@
 # Bail out of rest of setup if we're coming in from TRAMP or non-interactive shell
 [[ $TERM == "dumb" ]] && [[ -n $EMACS ]] && unsetopt zle && PS1='$ ' && return
 
+# Debug toggle
+DEBUG_ECHO=0
+
+# Define function once based on flag
+if [[ "$DEBUG_ECHO" == "1" ]]; then
+  debug_log() { printf '%s\n' "$@"; }
+else
+  debug_log() { :; }
+fi
+
+
 umask 077
 limit core 0  # disables core dumps
 NNTPSERVER=news.eternal-september.org
@@ -194,7 +205,7 @@ function ect { emacsclient -t -n -a '' "$@"; } # new console
 
 # -- Emacs shell setup --
 if [[ ${INSIDE_EMACS:-no} != 'no' ]]; then
-  echo ".. inside Emacs"
+  debug_log ".. inside Emacs"
   export TERM=xterm-256color  # for eat, etc.
   export EDITOR=emacsclient
   export VISUAL="$EDITOR"
@@ -230,24 +241,22 @@ fi
 # Set ripgrep config file
 export RIPGREP_CONFIG_PATH=$HOME/.config/ripgrep/config
 
+
 # pyenv init
-if [[ -f $HOME/.config/NO_ZSH_PYENV ]]; then
-  echo "Skipping .zshrc init pyenv"
+if [[ -f "$HOME/.config/NO_ZSH_PYENV" ]]; then
+  debug_log ". skipping .zshrc init pyenv"
+elif [[ ! -d "$HOME/.pyenv" ]]; then
+  debug_log ".. pyenv directory not found, exiting"
+elif [[ -n "$PYENV_SHELL" ]]; then
+  debug_log ".. pyenv already initialized, skipping"
 else
-  if [[ -d $HOME/.pyenv ]]; then
-    if [[ -z ${PYENV_SHELL} ]]; then
-      echo ". initializing pyenv"
-      export PYENV_ROOT="${HOME}/.pyenv"
-      export PATH="$PYENV_ROOT/bin:$PATH"
-      eval "$(pyenv init -)"
-      eval "$(pyenv virtualenv-init -)"
-    else
-      echo ".. pyenv already initialized, skipping"
-    fi
-  else
-    echo ".. pyenv directory not found, exiting"
-  fi
+  debug_log ". initialize pyenv"
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
 fi
+
 
 # Activate mise for zsh if installed
 # https://mise.jdx.dev/getting-started.html
@@ -258,12 +267,18 @@ fi
 ##    eval "$(mise activate zsh)"
 ##fi
 
+## Load work specific aliases, functions, etc.
+[[ -f ~/.workrc ]] && { debug_log ".. loading workrc"; source ~/.workrc }
+
+
 ###################
 #   OS Specific   #
 ###################
 case "$(uname)" in
 Darwin)  # Darwin Environment
-    if [[ ! -z $PS1 ]]; then echo ".. darwin zshrc settings loaded"; fi  # Interactive
+    if [[ ! -z $PS1 ]]; then
+      debug_log ".. load darwin zshrc settings"
+    fi  # Interactive
 
     # Load Darwin aliases
     if [[ -f $HOME/.aliases.darwin ]]; then
@@ -309,7 +324,7 @@ Darwin)  # Darwin Environment
 
     # setup fzf (fuzzy finder)
     if command -v fzf >/dev/null 2>&1; then
-      echo ".. initialize fzf"
+      debug_log ".. initialize fzf"
       eval "$(fzf --zsh)"
       export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -323,7 +338,7 @@ Darwin)  # Darwin Environment
     # Enable awscli command completion (requires bashcompinit for 'complete')
     # Must run after python is enabled (pyenv init or .infra)
     if type aws_completer &>/dev/null; then
-      echo "... aws completer enabled"
+      debug_log "... aws completer enabled"
       autoload bashcompinit && bashcompinit
       autoload -Uz compinit && compinit
       complete -C '~/.pyenv/shims/aws_completer' aws
@@ -336,7 +351,9 @@ Darwin)  # Darwin Environment
     ;; # end Darwin
 
 Linux)  # Based off of Ubuntu
-    if [[ ! -z $PS1 ]]; then echo ".. linux zshrc settings loaded"; fi # interactive
+    if [[ ! -z $PS1 ]]; then
+     debug_log ".. linux zshrc settings loaded"
+    fi # interactive
 
     # Load Linux aliases
     if [[ -f $HOME/.aliases.linux ]]; then
