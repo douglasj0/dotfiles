@@ -389,7 +389,6 @@ SCHEDULED: %^t
 ;; https://protesilaos.com/emacs/consult-denote
 (use-package consult-denote
   :ensure t
-  :after denote
   :bind
   (("C-c n f" . consult-denote-find)  ;; was C-c n c f
    ("C-c n g" . consult-denote-grep)) ;; was C-c n c g
