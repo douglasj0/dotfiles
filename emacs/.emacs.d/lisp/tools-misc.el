@@ -68,20 +68,20 @@
 
 ;;; nov.el - epub reader
 ;;; https://depp.brause.cc/nov.el/
-(use-package nov
-  :ensure t
-  :mode ("\\.epub\\'" . nov-mode)
-  ;;:config
-  ;; Optional: Customize default font for better reading experience
-  ;; (defun my-nov-font-setup ()
-  ;;   (face-remap-add-relative 'shr-text :family "Liberation Serif" :height 1.0))
-  ;; (add-hook 'nov-mode-hook 'my-nov-font-setup)
-
-  ;; Optional: Set a specific text width for comfort
-  ;; (setq nov-text-width 80)
-
-  ;; Other configurations can go here.
-)
+;(use-package nov
+;  :ensure t
+;  :mode ("\\.epub\\'" . nov-mode)
+;  ;;:config
+;  ;; Optional: Customize default font for better reading experience
+;  ;; (defun my-nov-font-setup ()
+;  ;;   (face-remap-add-relative 'shr-text :family "Liberation Serif" :height 1.0))
+;  ;; (add-hook 'nov-mode-hook 'my-nov-font-setup)
+;
+;  ;; Optional: Set a specific text width for comfort
+;  ;; (setq nov-text-width 80)
+;
+;  ;; Other configurations can go here.
+;)
 
 (provide 'tools-misc)
 ;;; tools-misc.el ends here

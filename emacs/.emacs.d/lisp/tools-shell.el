@@ -6,7 +6,7 @@
 ;;; * Terminals -----
 ;; define terminal keymaps (C-c t)
 (define-prefix-command 'term-command-map)
-(define-key term-command-map (kbd "t") #'eat)
+;(define-key term-command-map (kbd "t") #'eat)
 (define-key term-command-map (kbd "m") #'term)
 (define-key term-command-map (kbd "a") #'ansi-term)
 (define-key term-command-map (kbd "s") #'shell)
@@ -27,14 +27,15 @@
 ;; https://www.masteringemacs.org/article/complete-guide-mastering-eshell
 
 ;; https://github.com/xuchunyang/eshell-git-prompt
-(use-package eshell-git-prompt
-  :ensure t
-  :after eshell
-  :functions eshell-git-prompt-use-theme
-  :init
-  (eshell-git-prompt-use-theme 'robbyrussell))
+;(use-package eshell-git-prompt
+;  :ensure t
+;  :after eshell
+;  :functions eshell-git-prompt-use-theme
+;  :init
+;  (eshell-git-prompt-use-theme 'robbyrussell))
 
 (use-package eshell
+  :ensure nil
   :hook (eshell-first-time-mode . efs/configure-eshell)
   :custom
   (eshell-destroy-buffer-when-process-dies t)
@@ -58,23 +59,23 @@
 
 ;; eat - eat stands for "Emulate A Terminal"
 ;; https://codeberg.org/akib/emacs-eat
-(use-package eat
-  :ensure t
-  :preface
-  (defun my--eat-open (file)
-      "Helper function to open files from eat terminal."
-      (interactive)
-      (if (file-exists-p file)
-              (find-file-other-window file t)
-          (warn "File doesn't exist")))
-  :config
-  (add-to-list 'eat-message-handler-alist (cons "open" 'my--eat-open))
-  (setq process-adaptive-read-buffering nil) ; makes EAT a lot quicker!
-  (setq eat-term-name "xterm-256color") ; https://codeberg.org/akib/emacs-eat/issues/119"
-  (setq eat-kill-buffer-on-exit t)
-  (setq eat-shell-prompt-annotation-failure-margin-indicator "")
-  (setq eat-shell-prompt-annotation-running-margin-indicator "")
-  (setq eat-shell-prompt-annotation-success-margin-indicator ""))
+;(use-package eat
+;  :ensure t
+;  :preface
+;  (defun my--eat-open (file)
+;      "Helper function to open files from eat terminal."
+;      (interactive)
+;      (if (file-exists-p file)
+;              (find-file-other-window file t)
+;          (warn "File doesn't exist")))
+;  :config
+;  (add-to-list 'eat-message-handler-alist (cons "open" 'my--eat-open))
+;  (setq process-adaptive-read-buffering nil) ; makes EAT a lot quicker!
+;  (setq eat-term-name "xterm-256color") ; https://codeberg.org/akib/emacs-eat/issues/119"
+;  (setq eat-kill-buffer-on-exit t)
+;  (setq eat-shell-prompt-annotation-failure-margin-indicator "")
+;  (setq eat-shell-prompt-annotation-running-margin-indicator "")
+;  (setq eat-shell-prompt-annotation-success-margin-indicator ""))
 
 (provide 'tools-shell)
 ;;; tools-shell.el ends here

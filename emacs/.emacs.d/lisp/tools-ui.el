@@ -18,9 +18,9 @@
 (use-package diminish
   :ensure t)
 
-(use-package centered-cursor-mode
-  :commands (centered-cursor-mode)
-  :diminish centered-cursor-mode)
+;(use-package centered-cursor-mode
+;  :commands (centered-cursor-mode)
+;  :diminish centered-cursor-mode)
 
 ;; nerd-icons.el - A Library for Nerd Font icons
 ;; https://github.com/rainstormstudio/nerd-icons.el#installing-fonts
@@ -35,11 +35,11 @@
 
 ;; ace-window allows switching to window by number, bind to 'C-x o'
 ;; not installed by default
-(use-package ace-window
-  :ensure t
-  :bind ("C-x o" . ace-window)
-  :custom
-  (aw-keys '(?a ?b ?c ?d ?e ?f ?g ?h ?i))) ;; Use letters instead of numbers for window selection
+;(use-package ace-window
+;  :ensure t
+;  :bind ("C-x o" . ace-window)
+;  :custom
+;  (aw-keys '(?a ?b ?c ?d ?e ?f ?g ?h ?i))) ;; Use letters instead of numbers for window selection
 
 
 ;;; * tab-bar
@@ -80,6 +80,7 @@
 ;;; * IBuffer -----
 ;; ibuffer - *Nice* buffer switching
 (use-package ibuffer
+  :ensure nil
   :bind ("C-x C-b" . ibuffer) ; replaces electric-buffer-list
   :custom
   (ibuffer-expert t) ; Enable expert mode for more ibuffer features.
@@ -99,16 +100,15 @@
 ;;: * helpful
 ;; alternative to the built-in Emacs help provideing more contextual information.
 ;; https://github.com/Wilfred/helpful
-(use-package helpful
-  :ensure t
-  :defer t
-  :bind
-  (("C-h f" . helpful-function)
-   ("C-h x" . helpful-command)
-   ("C-h h" . helpful-key)
-   ("C-h v" . helpful-variable)
-   ("C-h C" . helpful-at-point))) ;; Show help for symbol at point
-
+;(use-package helpful
+;  :ensure t
+;  :defer t
+;  :bind
+;  (("C-h f" . helpful-function)
+;   ("C-h x" . helpful-command)
+;   ("C-h h" . helpful-key)
+;   ("C-h v" . helpful-variable)
+;   ("C-h C" . helpful-at-point))) ;; Show help for symbol at point
 
 (provide 'tools-ui)
 ;;; tools-ui.el ends here

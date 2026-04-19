@@ -16,6 +16,7 @@
 ;; git clone https://gitlab.com/jackkamm/ob-python-mode-mode.git
 
 (use-package org
+  :ensure nil
   :diminish visual-line-mode
   :bind
   (:map global-map

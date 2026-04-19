@@ -44,6 +44,7 @@
   (corfu-count 8)
   (corfu-auto-prefix 2))
 
+;; Use corfu in tui, replace child frames with overlay-based popups
 (use-package corfu-terminal
   :ensure t
   :hook

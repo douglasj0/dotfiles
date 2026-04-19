@@ -9,25 +9,25 @@
 ;; It's Magit! A Git porcelain inside Emacs. https://magit.vc
 ;; https://github.com/magit/magit
 
-(use-package magit
-  :ensure t
-  :defer t
-  :commands magit
-  :bind
-    (("C-x g"   . magit-status)
-     ("C-x G"   . magit-status-with-prefix)
-     ("C-x M-g" . magit-dispatch)
-     ("C-c M-g" . global-magit-file-mode))
-  :custom
-  ;(magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
-  (set-variable 'magit-emacsclient-executable "emacsclient")
-  :config
-  (add-to-list 'magit-status-sections-hook
-               'magit-insert-worktrees
-               t)
-  (setq magit-log-section-commit-count 25
-        magit-copy-revision-abbreviated t))
+;(use-package magit
+;  :ensure t
+;  :defer t
+;  :commands magit
+;  :bind
+;    (("C-x g"   . magit-status)
+;     ("C-x G"   . magit-status-with-prefix)
+;     ("C-x M-g" . magit-dispatch)
+;     ("C-c M-g" . global-magit-file-mode))
+;  :custom
+;  ;(magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+;  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+;  (set-variable 'magit-emacsclient-executable "emacsclient")
+;  :config
+;  (add-to-list 'magit-status-sections-hook
+;               'magit-insert-worktrees
+;               t)
+;  (setq magit-log-section-commit-count 25
+;        magit-copy-revision-abbreviated t))
 
 ;;; Minimal magit setup for debugging
 ;;(use-package magit
@@ -47,6 +47,12 @@
 ;;   '("-" "last branch" lw-magit-checkout-last))
 ;;
 ;; So that C-x g b - switches to the last branch I was on, similar to cd -.
+
+;;; try using vc-mode for git/svn
+;; C-x v v  -> "Do next action" (e.g., stage and commit)
+;; C-x v =  -> Diff of current file
+;; C-x v l  -> Log of current file
+(setq vc-follow-symlinks t)
 
 
 ;;; * git-timemachine
@@ -90,31 +96,31 @@
 ;; gfm-mode = github-markdown-mode
 ;; Install pandoc for preview
 ;; $ brew install pandoc
-(use-package markdown-mode
-  :ensure t
-  :commands (markdown-mode gfm-mode) ; Autoloads markdown-mode and gfm-mode
-  :mode (("README\\.md\\'" . gfm-mode) ; Use gfm-mode for README.md files
-         ("\\.md\\'" . markdown-mode) ; Use markdown-mode for .md files
-         ("\\.markdown\\'" . markdown-mode)) ; Use markdown-mode for .markdown files
-  :init
-  ;; Optional: Configure a specific Markdown processor (e.g., pandoc)
-  ;; (setq markdown-command "pandoc")
-  ;; Optional: Hide markup by default
-  ;; (setq-default markdown-hide-markup t)
-  :config
-  ;; Optional: Further configuration specific to markdown-mode
-  ;; For example, enable math support
-  ;; (setq markdown-enable-math t)
-)
+;(use-package markdown-mode
+;  :ensure t
+;  :commands (markdown-mode gfm-mode) ; Autoloads markdown-mode and gfm-mode
+;  :mode (("README\\.md\\'" . gfm-mode) ; Use gfm-mode for README.md files
+;         ("\\.md\\'" . markdown-mode) ; Use markdown-mode for .md files
+;         ("\\.markdown\\'" . markdown-mode)) ; Use markdown-mode for .markdown files
+;  :init
+;  ;; Optional: Configure a specific Markdown processor (e.g., pandoc)
+;  ;; (setq markdown-command "pandoc")
+;  ;; Optional: Hide markup by default
+;  ;; (setq-default markdown-hide-markup t)
+;  :config
+;  ;; Optional: Further configuration specific to markdown-mode
+;  ;; For example, enable math support
+;  ;; (setq markdown-enable-math t)
+;)
 
 
 ;;;; * sed, awk, perl
 ;; Mode for editing sed files
 ;; Look for Russ Cox solving advent-of-code using sed
 ;; /usr/bin/sed -f
-(use-package sed-mode
-  :ensure t
-)
+;(use-package sed-mode
+;  :ensure t
+;)
 
 (use-package awk-mode
   :ensure nil
@@ -135,38 +141,38 @@
 ;; TOML [Tom's Obvious Minimal Language]
 ;; toml-mode https://github.com/dryman/toml-mode.el
 
-(use-package json-mode
-  :ensure t
-  :mode "\\.json\\'"
-  :config
-  (progn
-    (setq js-indent-level 2)
+;(use-package json-mode
+;  :ensure t
+;  :mode "\\.json\\'"
+;  :config
+;  (progn
+;    (setq js-indent-level 2)
+;
+;    ;; Define custom keybindings for common actions
+;    (define-key json-mode-map (kbd "C-c C-f") 'json-pretty-print-buffer) ; Format buffer
+;    (define-key json-mode-map (kbd "C-c C-p") 'json-snatcher-display-path) ; Display path to object at point
+;  )
+;)
 
-    ;; Define custom keybindings for common actions
-    (define-key json-mode-map (kbd "C-c C-f") 'json-pretty-print-buffer) ; Format buffer
-    (define-key json-mode-map (kbd "C-c C-p") 'json-snatcher-display-path) ; Display path to object at point
-  )
-)
+;(use-package jsonc-mode
+;  :ensure nil
+;  :mode "\\.jsonc\\'")
 
-(use-package jsonc-mode
-  :ensure nil
-  :mode "\\.jsonc\\'")
+;(use-package yaml-mode
+;  :ensure t
+;  :mode ("\\.yaml\\'" "\\.yml\\'"))
 
-(use-package yaml-mode
-  :ensure t
-  :mode ("\\.yaml\\'" "\\.yml\\'"))
+;(use-package toml-mode
+;  :ensure t
+;  :mode ("\\.toml\\'" . toml-mode))
 
-(use-package toml-mode
-  :ensure t
-  :mode ("\\.toml\\'" . toml-mode))
-
-(use-package lua-mode
-  :ensure t
-  :mode ("\\.lua$" . lua-mode)
-  :interpreter ("lua" . lua-mode)
-  :config
-  (setq lua-indent-level 2)
-  (setq lua-check-command "luacheck"))
+;(use-package lua-mode
+;  :ensure t
+;  :mode ("\\.lua$" . lua-mode)
+;  :interpreter ("lua" . lua-mode)
+;  :config
+;  (setq lua-indent-level 2)
+;  (setq lua-check-command "luacheck"))
 
 
 ;;;; * terraform and hcl

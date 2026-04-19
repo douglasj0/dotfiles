@@ -17,13 +17,13 @@
   (ls-lisp-use-insert-directory-program nil))
 
 ;;; * dired
-(use-package casual
-  :ensure t
-  :defer t
-  :custom (casual-lib-use-unicode t))
+;(use-package casual
+;  :ensure t
+;  :defer t
+;  :custom (casual-lib-use-unicode t))
 
-(use-package casual-dired
-  :after dired)
+;(use-package casual-dired
+;  :after dired)
 
 (use-package dired
   :ensure nil
@@ -56,7 +56,6 @@
   (add-to-list 'dired-omit-extensions ".swp")  ; Vim swap files
   (add-to-list 'dired-omit-extensions ".bak")  ; Backup files
   (add-to-list 'dired-omit-extensions ".~"))    ; Temporary files
-
 
 (provide 'tools-dired)
 ;;; tools-dired.el ends here
