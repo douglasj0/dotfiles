@@ -50,8 +50,10 @@
 
 ;;; try using vc-mode for git/svn
 ;; C-x v v  -> "Do next action" (e.g., stage and commit)
-;; C-x v =  -> Diff of current file
+;; P        -> git push in vc-dir
+;; G        -> git pull in vc-dir
 ;; C-x v l  -> Log of current file
+;; C-x v =  -> Diff of current file
 (setq vc-follow-symlinks t)
 
 
