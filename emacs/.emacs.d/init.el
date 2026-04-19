@@ -615,11 +615,11 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
 (require 'programming)
 
 ;;; * Load Local configs
-(let ((config-dir "~/.emacs.d/local/"))
-  (dolist (file (directory-files config-dir t "\\.el$"))
-    (condition-case err
-        (load file)
-      (error (message "Error loading %s: %s" file err)))))
+;(let ((config-dir "~/.emacs.d/local/"))
+;  (dolist (file (directory-files config-dir t "\\.el$"))
+;    (condition-case err
+;        (load file)
+;      (error (message "Error loading %s: %s" file err)))))
 
 (provide 'init)
 ;;; init.el ends here
