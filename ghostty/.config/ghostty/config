@@ -81,6 +81,11 @@ mouse-hide-while-typing = true
 # mouse-scroll-multiplier = 1
 # focus-follows-mouse = false
 
+# Right Click context menu
+#right-click-action = paste
+right-click-action = ignore
+#mouse-reporting = true
+
 # Key Bindings
 keybind = global:alt+grave_accent=toggle_quick_terminal
 keybind = shift+ctrl+left_bracket=previous_tab
