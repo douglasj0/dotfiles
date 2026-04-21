@@ -452,13 +452,13 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
 ;; ---------------------------------------------------------------------------
 ;; It’s useful to have a scratch buffer around, and more useful to have a key chord to switch to it.
 ;;(declare-function switch-to-scratch-buffer "init.el" ()) ;; tell byte-compiler abt function
-;;(defun switch-to-scratch-buffer ()
-;;  "Switch to the current session's scratch buffer."
-;;  (interactive)
-;;  (switch-to-buffer "*scratch*"))
-;;(with-eval-after-load 'bind-key
-;;  (bind-key "C-c f s" #'switch-to-scratch-buffer))
-(bind-key "C-c f s" 'scratch-buffer)
+(defun switch-to-messages-buffer ()
+  "Switch to the current session's scratch buffer."
+  (interactive)
+  (switch-to-buffer "*Messages*"))
+(with-eval-after-load 'bind-key
+  (bind-key "C-c f m" #'switch-to-messages-buffer)
+  (bind-key "C-c f s" 'scratch-buffer))
 
 ;;; * Windows, MacOS, Linux specific settings -----
 ;; Common settings across all OSes

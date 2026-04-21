@@ -56,6 +56,7 @@
   :defer t  ;; Lazy load for text-based file types
   :bind (("C-c s a" . flyspell-auto-correct-word)  ;; Auto-correct the word
          ("C-c s w" . ispell-word)                ;; Correct the current word
+         ("C-c s p" . flyspell-correct-word-before-point)
          ("C-c s b" . flyspell-buffer)            ;; Check the entire buffer
          ("C-c s n" . flyspell-goto-next-error))  ;; Skip to the next spelling error
   :hook
