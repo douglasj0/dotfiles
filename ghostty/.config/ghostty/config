@@ -64,6 +64,9 @@ macos-window-shadow = true
 # Set to 0 to disable animation, can be changed at runtime.
 quick-terminal-animation-duration = 0.08
 
+# Notifications
+notify-on-command-finish = unfocused
+
 # Initial window width and height
 window-height = 24
 window-width = 80

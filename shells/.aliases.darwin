@@ -25,7 +25,14 @@ alias keepassxc-cli="/Applications/KeePassXC.app/Contents/MacOS/keepassxc-cli"
 alias utmctl="/Applications/UTM.app/Contents/MacOS/utmctl"
 
 # clear ssh control path files
+#ssh-rm-tmp() {
+#  ls ~/.ssh/tmp/
+#  rm ~/.ssh/tmp/cm-*
+#}
 ssh-rm-tmp() {
-  ls ~/.ssh/tmp/
-  rm ~/.ssh/tmp/cm-*
+  for i in $HOME/.ssh/tmp/*
+  do
+    echo "stopping: $i"
+    ssh -S ${i} -O exit dummy-host
+  done
 }
