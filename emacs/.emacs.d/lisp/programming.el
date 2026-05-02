@@ -94,7 +94,9 @@
 
 
 ;;; * Languages
+
 ;;; * markdown-mode / gfm-mode
+;; https://jblevins.org/projects/markdown-mode/
 ;; gfm-mode = github-markdown-mode
 ;; Install pandoc for preview
 ;; $ brew install pandoc
