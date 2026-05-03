@@ -32,17 +32,17 @@
   (setq org-roam-capture-templates
         '(("d" "default" plain "%?"
            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-               "#+title: ${title}\n#+date: %u\n#+startup: overview\n#+filetags: %^g\n")
+               "#+title: ${title}\n#+date: %U\n#+startup: overview\n#+filetags: %^g\n\n")
            :unnarrowed t)
           ;; Template for "projects" subdirectory
           ("p" "project" plain "%?"
            :target (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org"
-               "#+title: ${title}\n#+date: %u\n#+startup: overview\n#+filetags: %^g\n")
+               "#+title: ${title}\n#+date: %U\n#+startup: overview\n#+filetags: %^g\n\n")
            :unnarrowed t)
           ;; Template for "work" subdirectory
           ("w" "work" plain "%?"
            :target (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org"
-               "#+title: ${title}\n#+date: %u\n#+startup: overview\n#+filetags: %^g\n")
+               "#+title: ${title}\n#+date: %U\n#+startup: overview\n#+filetags: %^g\n\n")
            :unnarrowed t)))
 )
 
