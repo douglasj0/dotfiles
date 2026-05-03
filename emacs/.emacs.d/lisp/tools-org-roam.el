@@ -14,7 +14,7 @@
   :hook (org-roam-mode . consult-org-roam-mode)
   :custom
   (org-roam-directory (file-truename "~/org-roam"))
-  ;; IMPROVE COMPLETION: Show tags in the Vertico/Consult menu
+  ;; Show tags in the Vertico/Consult menu
   (org-roam-node-display-template
    (concat "${title:*} " (propertize "${tags:50}" 'face 'org-tag)))
 
@@ -24,27 +24,44 @@
          ("C-c n c" . org-roam-capture)) ; Added capture shortcut
 
   :config
-  ;; Ensure IDs are created when you save a file
+  (add-hook 'org-capture-mode-hook  ;; moves the cursor to end of capture buffer
+            (lambda () (goto-char (point-max)))
+            t)  ;; run last after other hooks
+  ;; Ensure IDs are created when file saved
   (org-id-update-id-locations)
   (org-roam-db-autosync-mode)
 
-  ;; YOUR CUSTOM TEMPLATES (From previous step)
+  ;; Custom Templates
   (setq org-roam-capture-templates
         '(("d" "default" plain "%?"
            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-               "#+title: ${title}\n#+date: %U\n#+startup: overview\n#+filetags: %^g\n\n")
+            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
            :unnarrowed t)
           ;; Template for "projects" subdirectory
           ("p" "project" plain "%?"
            :target (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org"
-               "#+title: ${title}\n#+date: %U\n#+startup: overview\n#+filetags: %^g\n\n")
+            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
            :unnarrowed t)
           ;; Template for "work" subdirectory
           ("w" "work" plain "%?"
            :target (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org"
-               "#+title: ${title}\n#+date: %U\n#+startup: overview\n#+filetags: %^g\n\n")
-           :unnarrowed t)))
-)
+            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+           :unnarrowed t)
+          ;; Template for "abbys_lab" subdirectory
+          ("a" "abbys_lab" plain "%?"
+           :target (file+head "abbys_lab/%<%Y%m%d%H%M%S>-${slug}.org"
+            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+           :unnarrowed t)
+          ;; Template for "chuck" subdirectory
+          ("c" "chuck" plain "%?"
+           :target (file+head "chuck/%<%Y%m%d%H%M%S>-${slug}.org"
+            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+           :unnarrowed t)
+          ;; Template for "grubhub" subdirectory
+          ("g" "grubhub" plain "%?"
+           :target (file+head "grubhub/%<%Y%m%d%H%M%S>-${slug}.org"
+            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+           :unnarrowed t))))
 
 
 ;;; consult-org-roam
