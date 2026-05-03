@@ -43,7 +43,7 @@
         tramp-use-scp-direct-remote-copying t
         remote-file-name-inhibit-auto-save-visited t)
 
-  (setq magit-tramp-pipe-stty-settings "")  ;; was 'pty
+  ;;(setq magit-tramp-pipe-stty-settings "")  ;; was 'pty
 
   ;; keep connection history across sessions
   (setq tramp-persistency-file-name

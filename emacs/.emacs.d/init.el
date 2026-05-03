@@ -5,6 +5,12 @@
 
 ;;;; * Startup
 ;;; * Package repo setup and quickstart-----
+;; Enable package manager to upgrade built-in packages (eg. transient)
+;(setq package-install-upgrade-built-in t)
+;; Override built-in tranient package for org-roam
+(add-to-list 'load-path (expand-file-name "vendor/transient/lisp" user-emacs-directory))
+;;(require 'transient) ; not required?
+
 (require 'package) ; needed for package-archive variable
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (setq package-quickstart t)
@@ -24,9 +30,9 @@
 ;; (add-to-list 'load-path (locate-user-emacs-file "elisp/"))  ;; elisp packages not in pkg mgr, changing in 32.0
 ;(add-to-list 'load-path (expand-file-name "~/.emacs.d/elisp/"))
 
-
 ;;; add lisp directory for split init.el packages
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+
 
 ;;;; * esup - startupprofiler
 ;(use-package esup
@@ -602,12 +608,9 @@ Stolen from http://www.dotemacs.de/dotfiles/BenjaminRutt.emacs.html."
 ;; TRAMP
 (require 'tools-tramp)
 
-;; org-mode, denote
-;;; * Org and Denote -----
-;; org and denote are huge and messy, load for now until cleanup
-;;(let ((org-conf (expand-file-name "org-denote.el" user-emacs-directory)))
-;;  (load org-conf 'noerror))
-(require 'org-denote)
+;; org-mode, org-roam
+(require 'tools-org)
+(require 'tools-org-roam)
 
 ;;; * Programming Modes  -----
 ;;(let ((prog-conf (expand-file-name "programming.el" user-emacs-directory)))
