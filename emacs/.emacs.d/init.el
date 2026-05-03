@@ -8,6 +8,8 @@
 ;; Enable package manager to upgrade built-in packages (eg. transient)
 ;(setq package-install-upgrade-built-in t)
 ;; Override built-in tranient package for org-roam
+;;   mkdir ~/.emacs.d/vendor && ~/.emacs.d/vendor
+;;   git clone https://github.com/magit/transient
 (add-to-list 'load-path (expand-file-name "vendor/transient/lisp" user-emacs-directory))
 ;;(require 'transient) ; not required?
 
