@@ -24,8 +24,8 @@
          ("C-c n c" . org-roam-capture)) ; Added capture shortcut
 
   :config
-  ;; updates last_modified date on save
-  (defun my/org-roam-update-last-modified ()
+  ;; updates modified date on save
+  (defun my/org-roam-update-modified ()
     (when (and (derived-mode-p 'org-mode)
                (boundp 'org-roam-directory)
                (buffer-file-name)
@@ -35,16 +35,16 @@
       (save-excursion
         (goto-char (point-min))
         (let ((new-ts (format-time-string "[%Y-%m-%d %a %H:%M]")))
-          (if (re-search-forward "^#\\+last_modified: \\(.*\\)" nil t)
+          (if (re-search-forward "^#\\+modified: \\(.*\\)" nil t)
               (let ((old-ts (match-string 1)))
                 (unless (string= old-ts new-ts)
-                  (replace-match (format "#+last_modified: %s" new-ts))))
+                  (replace-match (format "#+modified: %s" new-ts))))
             ;; If missing, insert it after #+date
             (when (re-search-forward "^#\\+date:.*" nil t)
               (end-of-line)
-              (insert (format "\n#+last_modified: %s" new-ts))))))))
+              (insert (format "\n#+modified: %s" new-ts))))))))
 
-  (add-hook 'before-save-hook #'my/org-roam-update-last-modified)
+  (add-hook 'before-save-hook #'my/org-roam-update-modified)
 
   ;; moves the cursor to end of capture buffer
   (add-hook 'org-capture-mode-hook
@@ -62,7 +62,7 @@
            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
 "#+title:    ${title}
 #+date:     %U
-#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+modified: %<[%Y-%m-%d %a %H:%M]>
 #+filetags: %^g
 
 ")
@@ -72,7 +72,7 @@
            :target (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org"
 "#+title:    ${title}
 #+date:     %U
-#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+modified: %<[%Y-%m-%d %a %H:%M]>
 #+filetags: %^g
 
 ")
@@ -82,7 +82,7 @@
            :target (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org"
 "#+title:    ${title}
 #+date:     %U
-#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+modified: %<[%Y-%m-%d %a %H:%M]>
 #+filetags: %^g
 
 ")
@@ -92,7 +92,7 @@
            :target (file+head "abbys_lab/%<%Y%m%d%H%M%S>-${slug}.org"
 "#+title:    ${title}
 #+date:     %U
-#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+modified: %<[%Y-%m-%d %a %H:%M]>
 #+filetags: %^g
 
 ")
@@ -102,7 +102,7 @@
            :target (file+head "chuck/%<%Y%m%d%H%M%S>-${slug}.org"
 "#+title:    ${title}
 #+date:     %U
-#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+modified: %<[%Y-%m-%d %a %H:%M]>
 #+filetags: %^g
 
 ")
@@ -112,7 +112,7 @@
            :target (file+head "grubhub/%<%Y%m%d%H%M%S>-${slug}.org"
 "#+title:    ${title}
 #+date:     %U
-#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+modified: %<[%Y-%m-%d %a %H:%M]>
 #+filetags: %^g
 
 ")
