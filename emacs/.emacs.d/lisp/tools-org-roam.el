@@ -24,43 +24,98 @@
          ("C-c n c" . org-roam-capture)) ; Added capture shortcut
 
   :config
-  (add-hook 'org-capture-mode-hook  ;; moves the cursor to end of capture buffer
+  ;; updates last_modified date on save
+  (defun my/org-roam-update-last-modified ()
+    (when (and (derived-mode-p 'org-mode)
+               (boundp 'org-roam-directory)
+               (buffer-file-name)
+               (buffer-modified-p)
+               (string-prefix-p (expand-file-name org-roam-directory)
+                                (buffer-file-name)))
+      (save-excursion
+        (goto-char (point-min))
+        (let ((new-ts (format-time-string "[%Y-%m-%d %a %H:%M]")))
+          (if (re-search-forward "^#\\+last_modified: \\(.*\\)" nil t)
+              (let ((old-ts (match-string 1)))
+                (unless (string= old-ts new-ts)
+                  (replace-match (format "#+last_modified: %s" new-ts))))
+            ;; If missing, insert it after #+date
+            (when (re-search-forward "^#\\+date:.*" nil t)
+              (end-of-line)
+              (insert (format "\n#+last_modified: %s" new-ts))))))))
+
+  (add-hook 'before-save-hook #'my/org-roam-update-last-modified)
+
+  ;; moves the cursor to end of capture buffer
+  (add-hook 'org-capture-mode-hook
             (lambda () (goto-char (point-max)))
             t)  ;; run last after other hooks
-  ;; Ensure IDs are created when file saved
+
+  ; Ensure IDs are created when file saved
   (org-id-update-id-locations)
   (org-roam-db-autosync-mode)
+
 
   ;; Custom Templates
   (setq org-roam-capture-templates
         '(("d" "default" plain "%?"
            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+"#+title:    ${title}
+#+date:     %U
+#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+filetags: %^g
+
+")
            :unnarrowed t)
           ;; Template for "projects" subdirectory
           ("p" "project" plain "%?"
            :target (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org"
-            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+"#+title:    ${title}
+#+date:     %U
+#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+filetags: %^g
+
+")
            :unnarrowed t)
           ;; Template for "work" subdirectory
           ("w" "work" plain "%?"
            :target (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org"
-            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+"#+title:    ${title}
+#+date:     %U
+#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+filetags: %^g
+
+")
            :unnarrowed t)
           ;; Template for "abbys_lab" subdirectory
           ("a" "abbys_lab" plain "%?"
            :target (file+head "abbys_lab/%<%Y%m%d%H%M%S>-${slug}.org"
-            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+"#+title:    ${title}
+#+date:     %U
+#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+filetags: %^g
+
+")
            :unnarrowed t)
           ;; Template for "chuck" subdirectory
           ("c" "chuck" plain "%?"
            :target (file+head "chuck/%<%Y%m%d%H%M%S>-${slug}.org"
-            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+"#+title:    ${title}
+#+date:     %U
+#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+filetags: %^g
+
+")
            :unnarrowed t)
           ;; Template for "grubhub" subdirectory
           ("g" "grubhub" plain "%?"
            :target (file+head "grubhub/%<%Y%m%d%H%M%S>-${slug}.org"
-            "#+title:   ${title}\n#+date:    %U\n#+startup: overview\n#+filetags: %^g\n\n")
+"#+title:    ${title}
+#+date:     %U
+#+last_modified: %<[%Y-%m-%d %a %H:%M]>
+#+filetags: %^g
+
+")
            :unnarrowed t))))
 
 
@@ -87,7 +142,7 @@
   (consult-org-roam-mode 1)
   (consult-customize
    consult-org-roam-forward-links
-   :preview-key "M-.") )
+  :preview-key "M-.") )
 
 
 (provide 'tools-org-roam)
