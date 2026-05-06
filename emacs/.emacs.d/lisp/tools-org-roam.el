@@ -63,6 +63,7 @@
 "#+title:    ${title}
 #+date:     %U
 #+modified: %<[%Y-%m-%d %a %H:%M]>
+#+startup:  overview
 #+filetags: %^g
 
 ")
@@ -73,6 +74,7 @@
 "#+title:    ${title}
 #+date:     %U
 #+modified: %<[%Y-%m-%d %a %H:%M]>
+#+startup:  overview
 #+filetags: %^g
 
 ")
@@ -83,6 +85,7 @@
 "#+title:    ${title}
 #+date:     %U
 #+modified: %<[%Y-%m-%d %a %H:%M]>
+#+startup:  overview
 #+filetags: %^g
 
 ")
@@ -93,6 +96,7 @@
 "#+title:    ${title}
 #+date:     %U
 #+modified: %<[%Y-%m-%d %a %H:%M]>
+#+startup:  overview
 #+filetags: %^g
 
 ")
@@ -103,6 +107,7 @@
 "#+title:    ${title}
 #+date:     %U
 #+modified: %<[%Y-%m-%d %a %H:%M]>
+#+startup:  overview
 #+filetags: %^g
 
 ")
@@ -113,6 +118,7 @@
 "#+title:    ${title}
 #+date:     %U
 #+modified: %<[%Y-%m-%d %a %H:%M]>
+#+startup:  overview
 #+filetags: %^g
 
 ")
