@@ -36,3 +36,8 @@ ssh-rm-tmp() {
     ssh -S ${i} -O exit dummy-host
   done
 }
+
+# fix ssh hosts
+ssh-fix-host() {
+  ssh-keygen -f "$HOME/.ssh/known_hosts" -R $@
+}
