@@ -43,6 +43,10 @@ if [ -f $HOME/.aliases ]; then
     . $HOME/.aliases
 fi
 
+if [ -f $HOME/.bash_aliases ]; then
+    . $HOME/.bash_aliases
+fi
+
 # Load general functions
 if [ -f $HOME/.functions ]; then
     . $HOME/.functions

@@ -10,11 +10,15 @@
 web:*.{html,css,js}*
 
 # Using glob patterns to include/exclude files or folders
---glob=!git/*
+--glob=!.git/
+--glob=!Library/
+--glob=!Music/
+--glob=!Movies/
+--glob=!Pictures/
 
 # or
---glob
-!git/*
+#--glob
+#!git/*
 
 # Set the colors.
 --colors=line:none
