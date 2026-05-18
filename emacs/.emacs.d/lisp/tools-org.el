@@ -64,6 +64,14 @@
 
   ;; Include emacs diary, not needed if using org-anniversary
   ;(setq org-agenda-include-diary t)
+  ;; Filter out specific religious holidays
+  (setq holiday-bahai-holidays nil
+        holiday-hebrew-holidays nil
+        holiday-islamic-holidays nil)
+  ;; add specific not-quite holidays
+  (setq holiday-other-holidays
+        '((holiday-fixed 12 24 "Christmas Eve")
+          (holiday-fixed 11 27 "Black Friday")))
 
   ;; Custom agenda commands
   ;; http://members.optusnet.com.au/~charles57/GTD/mydotemacs.txt
