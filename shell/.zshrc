@@ -181,13 +181,13 @@ compinit -i
 
 
 # Load general aliases
-if [ -f $HOME/.aliases ]; then
-    . $HOME/.aliases
+if [ -f $HOME/.config/profile.d/common_aliases ]; then
+    . $HOME/.config/profile.d/common_aliases
 fi
 
 # Load general functions
-if [ -f $HOME/.functions ]; then
-    . $HOME/.functions
+if [ -f $HOME/.config/profile.d/common_functions ]; then
+    . $HOME/.config/profile.d/common_functions
 fi
 
 # -- Editor --
@@ -281,13 +281,13 @@ Darwin)  # Darwin Environment
     fi  # Interactive
 
     # Load Darwin aliases
-    if [[ -f $HOME/.aliases.darwin ]]; then
-        . $HOME/.aliases.darwin
+    if [[ -f $HOME/.config/profile.d/common_aliases.darwin ]]; then
+        . $HOME/.config/profile.d/common_aliases.darwin
     fi
 
     # Load Darwin functions
-    if [[ -f $HOME/.functions.darwin ]]; then
-        . $HOME/.functions.darwin
+    if [[ -f $HOME/.config/profile.d/common_functions.darwin ]]; then
+        . $HOME/.config/profile.d/common_functions.darwin
     fi
 
     # fix display param for X2GO
@@ -356,13 +356,13 @@ Linux)  # Based off of Ubuntu
     fi # interactive
 
     # Load Linux aliases
-    if [[ -f $HOME/.aliases.linux ]]; then
-        . $HOME/.aliases.linux
+    if [[ -f $HOME/.config/profile.d/common_aliases.linux ]]; then
+        . $HOME/.config/profile.d/common_aliases.linux
     fi
 
     # Load Linux functions
-    if [[ -f $HOME/.functions.linux ]]; then
-        . $HOME/.functions.linux
+    if [[ -f $HOME/.config/profile.d/common_functions.linux ]]; then
+        . $HOME/.config/profile.d/common_functions.linux
     fi
 
     # On laptop, emacsclient cannot find emacs socket

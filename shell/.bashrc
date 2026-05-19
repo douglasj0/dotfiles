@@ -38,19 +38,14 @@ shopt -s histverify	# history substitution loaded into readline buffer
 shopt -s checkwinsize   # check term row/column size after each command before prompt
 
 
-# Load general aliases
-if [ -f $HOME/.aliases ]; then
-    . $HOME/.aliases
-fi
+# load shared aliases
+source ~/.config/profile.d/common_aliases
+source ~/.config/profile.d/common_functions
 
-if [ -f $HOME/.bash_aliases ]; then
-    . $HOME/.bash_aliases
-fi
+# load bash aliases and functions
+[ -f ~/.config/bash/aliases.bash ] && source ~/.config/bash/aliases.bash
+[ -f ~/.config/bash/functions.bash ] && source ~/.config/bash/functions.bash
 
-# Load general functions
-if [ -f $HOME/.functions ]; then
-    . $HOME/.functions
-fi
 
 
 ################
@@ -246,14 +241,10 @@ if [[ ! -z $PS1 ]]; then echo ". linux bashrc loaded"; fi	# interactive
     ## Open like command for Linux:  xdg-open or see
     function open { xdg-open "$1" &> /dev/null & }
 
-    # Load Linux aliases
-    if [[ -f $HOME/.aliases.linux ]]; then
-	. $HOME/.aliases.linux
-    fi
+    # Load Linux aliases and Functions
+    [ -f ~/.config/profile.d/common_aliases.linux ] && source ~/.config/profile.d/common_aliases.linux
+    [ -f ~/.config/profile.d/common_functions.linux ] && source ~/.config/profile.d/common_functions.linux
 
-    # Load Linux functions
-    if [[ -f $HOME/.functions.linux ]]; then
-	. $HOME/.functions.linux
     fi
 
     ediff() {
