@@ -245,8 +245,6 @@ if [[ ! -z $PS1 ]]; then echo ". linux bashrc loaded"; fi	# interactive
     [ -f ~/.config/profile.d/common_aliases.linux ] && source ~/.config/profile.d/common_aliases.linux
     [ -f ~/.config/profile.d/common_functions.linux ] && source ~/.config/profile.d/common_functions.linux
 
-    fi
-
     ediff() {
       emacs --eval "(ediff-files \"$1\" \"$2\")"
     }
