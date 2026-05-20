@@ -1,7 +1,15 @@
 # -*- mode: sh -*-
 # Darwin specific aliases
 
-alias ls="ls -G" # colorize output
+if [[ -f /opt/homebrew/opt/eza/bin/eza ]]; then
+  alias els='eza --icons'            # better ls
+  alias ell='eza -lh --icons --git'  # detailed listing
+  alias ela='eza -lah --icons --git' # listing w/ hidden files
+  alias etree='eza --tree --icons'   # tree view
+  compdef eza=ls  # resuse ls completions for eza (avoids defining a separate completion function)
+fi
+
+#alias ls="ls -G" # colorize output
 alias ldd="otool -L"
 alias vmstat="vm_stat"
 alias truss="dtruss"
@@ -24,11 +32,7 @@ alias keepassxc-cli="/Applications/KeePassXC.app/Contents/MacOS/keepassxc-cli"
 # utmctl
 alias utmctl="/Applications/UTM.app/Contents/MacOS/utmctl"
 
-# clear ssh control path files
-#ssh-rm-tmp() {
-#  ls ~/.ssh/tmp/
-#  rm ~/.ssh/tmp/cm-*
-#}
+# clear all ssh control path files
 ssh-rm-tmp() {
   for i in $HOME/.ssh/tmp/*
   do

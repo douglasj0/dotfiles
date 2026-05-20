@@ -80,30 +80,37 @@ PS1='%F{blue}%T%f %F{$PROMPT_COLOR}%n@${PROMPT_HOST}[%h]%f %F{cyan}[%~]%f %F{gre
 
 
 ### --- History ---
-[ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
-SAVEHIST=50000
-HISTSIZE=50000                 # set HISTSIZE > SAVEHIST
-setopt EXTENDED_HISTORY        # include timestamp
-setopt HIST_IGNORE_ALL_DUPS
-#setopt HIST_EXPIRE_DUPS_FIRST  # trim dupes first if history is full
-#setopt HIST_IGNORE_DUPS        # do not save duplicate of prior command
-setopt HIST_FIND_NO_DUPS       # do not display previously found command
-setopt HIST_IGNORE_SPACE       # do not save if line starts with space
-setopt HIST_NO_STORE           # do not save history commands
-setopt HIST_REDUCE_BLANKS      # strip superfluous blanks
-setopt INC_APPEND_HISTORY      # don’t wait for shell to exit to save history lines
-setopt APPEND_HISTORY
-unsetopt SHARE_HISTORY
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=85000                 # Give RAM extra room to process duplicates
+SAVEHIST=75000                 # Keep your final saved file at 75k lines
+
+# Core Saving Behavior
+setopt INC_APPEND_HISTORY      # Save commands immediately after execution
+unsetopt SHARE_HISTORY         # Do not instantly pull history from other active tabs
+setopt EXTENDED_HISTORY        # Include timestamps for each command
+
+# Duplicate Management
+setopt HIST_IGNORE_ALL_DUPS    # Keep only the newest unique command, delete old duplicates
+setopt HIST_EXPIRE_DUPS_FIRST  # Trim duplicates first if history limit is reached
+setopt HIST_FIND_NO_DUPS       # Do not display duplicates when searching backward
+
+# Cleanup and Filtering
+setopt HIST_IGNORE_SPACE       # Do not save lines starting with a space
+setopt HIST_REDUCE_BLANKS      # Strip extra spaces inside commands before saving
+setopt HIST_NO_STORE           # Do not save history built-in commands (like fc -l)
+
+
 #bindkey '^[[A' history-beginning-search-backward  # NOTE: these put the cursor
 #bindkey '^[[B' history-beginning-search-forward   # at the begining of the line
 
 ### --- Directory navigation ---
 setopt AUTO_CD      # interactive cd command to directory
 setopt AUTO_PUSHD   # Make cd push old directory onto the directory stack
+setopt NOBEEP
+setopt NUMERIC_GLOB_SORT # sort file10 after file9, not after file1
 setopt PUSHD_IGNORE_DUPS # Don’t push multiple copies of the same directory onto the directory stack.
 setopt PUSHD_MINUS
 setopt PUSHD_SILENT
-DIRSTACKSIZE=20
 
 # Completion
 setopt AUTO_MENU        # use menu completion after the second consecutive request for completion
@@ -111,6 +118,7 @@ setopt ALWAYS_TO_END    # Cursor moved to  end of the word if a single match/men
 setopt COMPLETE_IN_WORD # completion is done from both ends.
 unsetopt FLOW_CONTROL
 unsetopt MENU_COMPLETE
+
 # Completion menus
 zstyle ':completion:*:*:*:*:*' menu select
 # Matching rules
@@ -175,9 +183,9 @@ unsetopt BG_NICE   # Run all background jobs at a lower priority.
 zle_highlight+=(paste:none)
 
 # Turn on auto completetion (ssh, ssh with user, etc)
-fpath+=~/.zfunc
+fpath+=( ~/.zfunc )                  # Standard Zsh array syntax
 autoload -Uz compinit
-compinit -i
+compinit -i                          # Initializes everything securely in one go
 
 
 # Load general aliases

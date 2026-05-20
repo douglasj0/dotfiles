@@ -1,6 +1,7 @@
 # -*- mode: sh -*-
 # General shell aliases
 #alias la='ls -a'
+alias ls='ls -G' # colorize output
 alias la='ls -lathr'
 alias lf='ls -F'
 alias ll='ls -la'
