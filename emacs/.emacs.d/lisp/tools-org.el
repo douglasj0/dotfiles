@@ -73,6 +73,16 @@
         '((holiday-fixed 12 24 "Christmas Eve")
           (holiday-fixed 11 27 "Black Friday")))
 
+
+  ;; org-agenda
+  (setq org-agenda-span 20) ;; show next 20 days
+  (setq org-deadline-warning-days 30) ;; no deadline warnings today
+  (setq org-agenda-custom-commands
+        '(("w" "Twenty day view"
+           agenda ""
+           ((org-agenda-span 20)
+            (org-deadline-warning-days 0)))))
+
   ;; Custom agenda commands
   ;; http://members.optusnet.com.au/~charles57/GTD/mydotemacs.txt
   (setq org-agenda-custom-commands
