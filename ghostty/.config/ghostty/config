@@ -63,6 +63,9 @@ macos-window-shadow = true
 # Quick Terminal animation duration (in seconds)
 # Set to 0 to disable animation, can be changed at runtime.
 quick-terminal-animation-duration = 0.08
+quick-terminal-position = top
+#window-save-state = never
+window-save-state = default
 
 # Notifications
 notify-on-command-finish = unfocused
@@ -90,7 +93,8 @@ right-click-action = ignore
 #mouse-reporting = true
 
 # Key Bindings
-keybind = global:alt+grave_accent=toggle_quick_terminal
+#keybind = global:alt+grave_accent=toggle_quick_terminal
+keybind = global:super+grave_accent=toggle_quick_terminal
 keybind = shift+ctrl+left_bracket=previous_tab
 keybind = shift+ctrl+right_bracket=next_tab
 
