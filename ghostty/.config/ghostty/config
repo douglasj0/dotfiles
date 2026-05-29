@@ -97,13 +97,3 @@ right-click-action = ignore
 keybind = global:super+grave_accent=toggle_quick_terminal
 keybind = shift+ctrl+left_bracket=previous_tab
 keybind = shift+ctrl+right_bracket=next_tab
-
-# Splits
-keybind = ctrl+o>\=new_split:right
-keybind = ctrl+o>-=new_split:down
-
-keybind = ctrl+shift+up=goto_split:top
-keybind = ctrl+shift+down=goto_split:bottom
-
-keybind = ctrl+shift+left=goto_split:left
-keybind = ctrl+shift+right=goto_split:right
