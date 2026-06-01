@@ -327,12 +327,49 @@
 ;;; After a region is active, type ‘C-x SPC’ to toggle it on and off.
 ;;; Use CUA mode for rectangles (C-RET to select, normal emacs keys to copy)
 ;;; http://emacs-fu.blogspot.com/2010/01/rectangles-and-cua.html
+
+;;; fixes for missing first character
+;; Start selection from between the exact character clicked
+;;(setq mouse-drag-copy-region t)
+;; Treat single character clicks as between characters
+;;(setq kill-do-not-save-duplicates t)
+
+;;(global-unset-key (kbd "C-z"))
+;;(setq cua-rectangle-mark-key (kbd "C-c C-d"))  ;; Ctrl-Enter, used by org-mode
+;;;(setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; Ctrl-Enter, used by org-mode
+;;;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
+;;(cua-mode 1)
+;;(cua-selection-mode t)
+
+;;; FIX 1
+;;; fix for selection issues
+;;(global-unset-key (kbd "C-z"))
+;;
+;;;; Remap rectangle key to avoid Org-mode conflicts
+;;(setq cua-rectangle-mark-key (kbd "C-c C-d"))
+;;
+;;;; Enable CUA mode (automatically handles standard copy/cut/paste keys)
+;;(cua-mode 1)
+;;
+;;;; REMOVED: (cua-selection-mode t)
+;;;; This line was conflicting with mouse-drag actions.
+;;
+;;;; FIX: Ensure Emacs native transient mark handles mouse drags accurately
+;;(setq transient-mark-mode t)
+;;(setq shift-select-mode t)
+
+
+;;; FIX 2
 (global-unset-key (kbd "C-z"))
-(setq cua-rectangle-mark-key (kbd "C-c C-d"))  ;; Ctrl-Enter, used by org-mode
-;(setq cua-rectangle-mark-key (kbd "C-z C-SPC"))  ;; Ctrl-Enter, used by org-mode
-;(setq cua-enable-cua-keys nil)  ;; only for rectangles, keeps (C-c, C-v, C-x).
-(cua-mode 1)
-(cua-selection-mode t)
+
+;; Remap the rectangle trigger to avoid Org-mode conflicts
+(setq cua-rectangle-mark-key (kbd "C-c C-d"))
+
+;; Enable ONLY CUA selection & rectangles (leaves standard Emacs keys alone)
+(cua-selection-mode 1)
+
+
+
 
 ;; ---------------------------------------------------------------------------
 (defun toggle-indent-tabs-mode ()
