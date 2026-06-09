@@ -4,6 +4,9 @@ local config = wezterm.config_builder()
 -- Mimic Ubuntu's standard terminal color theme from your "ubuntu-theme.conf"
 config.color_scheme = 'Ubuntu' 
 
+-- Keeps the application alive when no windows are open
+config.quit_when_all_windows_are_closed = false
+
 -- ==========================================================================
 -- TYPOGRAPHY & TEXT
 -- ==========================================================================
