@@ -43,5 +43,6 @@ Makefile.in
 .deps
 .libs
 
-# wezterm
-hosts_private.lua
+# terms
+wezterm/.config/wezterm/hosts_private.lua
+kitty/.config/kitty/ssh.conf
