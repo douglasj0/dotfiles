@@ -1,130 +1,171 @@
--- Pull in the wezterm API
-local wezterm =  require("wezterm")
-
--- This will hold the configuration
+local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
+-- Mimic Ubuntu's standard terminal color theme from your "ubuntu-theme.conf"
+config.color_scheme = 'Ubuntu' 
 
--- Launching
--- config.default_prog = { "zsh" }
-config.automatically_reload_config = true
+-- ==========================================================================
+-- TYPOGRAPHY & TEXT
+-- ==========================================================================
+config.font = wezterm.font('Monaco')
+config.font_size = 16.0
 
+-- ==========================================================================
+-- GHOSTTY STYLING: BACKGROUND OPACITY & BLUR
+-- ==========================================================================
+config.window_background_opacity = 0.85
+config.macos_window_background_blur = 40 -- Apple-specific background blur depth
 
--- Colorscheme
--- More themes could be found here - https://wezfurlong.org/wezterm/colorschemes/index.html
--- config.color_scheme = 'Ubuntu'
--- config.color_scheme = 'Tokyo Night'
-config.color_scheme = 'Dracula'
+-- ==========================================================================
+-- WINDOW LAYOUT & INITIAL DIMENSIONS
+-- ==========================================================================
+config.window_decorations = "TITLE | RESIZE" -- Restores the standard title bar
+config.initial_cols = 80
+config.initial_rows = 24
 
-
--- Window
-config.bold_brightens_ansi_colors = true
-config.initial_cols = 80 -- width
-config.initial_rows = 25 -- height
--- check size: echo $(tty) TERM=$TERM with ${COLUMNS}x${LINES}
--- config.text_background_opacity = 0.9
--- config.window_background_opacity = 0.9
--- config.window_decorations = "RESIZE"
--- config.window_padding = {left = 5, right = 5, top = 5, bottom = 5}
-config.adjust_window_size_when_changing_font_size = true
-
--- config.pane_focus_follows_mouse = true
--- config.window_background_opacity = 0.9
--- config.macos_window_background_blur = 10
-config.quit_when_all_windows_are_closed = false
-config.audible_bell = "Disabled"
-
-
--- Graphics
-config.front_end = "WebGpu"
-config.webgpu_power_preference = "HighPerformance"
-config.animation_fps = 60
-
-
--- Cursor
-config.bypass_mouse_reporting_modifiers = "SHIFT"
--- config.cursor_blink_ease_in = "Linear"
--- config.cursor_blink_rate = 500
--- config.default_cursor_style = "BlinkingBlock"
-config.hide_mouse_cursor_when_typing = false
-
-
--- Font
-config.font = wezterm.font_with_fallback({
-    -- disable ligatures for Monaco as it has a `fi` ligature that doesn't look great
-    {family="Monaco", harfbuzz_features={"kern", "clig", "liga=0"}},
-    "Menlo",
-    "Apple Color Emoji"
-  }, {weight="Regular"}) -- choices: Bold, Medium
-
-config.font_size = 15.0
-config.line_height = 1.0
--- config.cell_width = 0.9
--- config.freetype_render_target = "HorizontalLcd"
--- config.freetype_load_flags = 'NO_HINTING'
--- config.freetype_load_target = 'Light'
--- config.freetype_render_target = 'HorizontalLcd'
-
-
--- Hyperlink
--- config.hyperlink_rules = wezterm.default_hyperlink_rules()
--- -- e-mail fulano-ciclano@example.com fulano_ciclano@example.com
--- table.insert(config.hyperlink_rules,{
---   regex = "\\b[A-Z-a-z0-9-_\\.]+@[\\w-]+(\\.[\\w-]+)+\\b",
---   format = "mailto:$0",
--- })
-
-
--- Scrolling
-config.enable_scroll_bar = true
-config.scrollback_lines = 20000000
-config.alternate_buffer_wheel_scroll_speed = 5
-config.min_scroll_bar_height = "1cell"
-
-
--- Tabs
-config.enable_tab_bar = true
-config.hide_tab_bar_if_only_one_tab = true
-config.show_new_tab_button_in_tab_bar = false
-config.show_tab_index_in_tab_bar = true
-config.status_update_interval = 1000
-config.tab_bar_at_bottom = false
-config.tab_max_width = 32
-config.use_fancy_tab_bar = false
-config.switch_to_last_active_tab_when_closing_tab = false
-
-
--- Key Mapping
--- https://alexplescan.com/posts/2024/08/10/wezterm/
-local function move_pane(key, direction)
-  return {
-    key = key,
-    mods = 'LEADER',
-    action = wezterm.action.ActivatePaneDirection(direction),
-  }
-end
-
-config.leader = { key = 'z', mods = 'CTRL', timeout_milliseconds = 1000 }
-config.keys = {
-  -- ... add these new entries to your config.keys table
-  -- Redefine cwd for new windows, but not tabs
-  { key = 'n', mods = 'CMD', action = wezterm.action.SpawnCommandInNewWindow { cwd=wezterm.home_dir } },
-  { key = 'z', mods = 'LEADER|CTRL', action = wezterm.action.SendKey { key = 'z', mods = 'CTRL' } },
-  -- split window (was " and %), switch with CTRL-SHIFT-arrow
-  -- maybe add PaneSelect too
-  -- https://wezfurlong.org/wezterm/config/lua/keyassignment/PaneSelect.html
-  { key='\\', mods='LEADER', action=wezterm.action.SplitHorizontal {domain='CurrentPaneDomain'} },
-  { key='-',  mods='LEADER', action=wezterm.action.SplitVertical {domain='CurrentPaneDomain'} },
-  { key='Z',  mods='LEADER', action=wezterm.action.TogglePaneZoomState },
-
-  move_pane('DownArrow', 'Down'),
-  move_pane('UpArrow', 'Up'),
-  move_pane('LeftArrow', 'Left'),
-  move_pane('RightArrow', 'Right'),
-
-  -- move tabs
-  { key="LeftArrow", mods="CMD", action=wezterm.action {MoveTabRelative=-1} },
-  { key="RightArrow", mods="CMD", action=wezterm.action {MoveTabRelative=1} },
+-- Compact & Balanced Padding: Maps '0 1.5' (Kitty scale) to WezTerm pixel spacing
+config.window_padding = {
+  left = 6,
+  right = 6,
+  top = 4,
+  bottom = 4,
 }
 
+-- ==========================================================================
+-- CURSOR SETTINGS
+-- ==========================================================================
+config.default_cursor_style = 'SteadyBlock' -- Replaces BlinkingBlock to disable animations
+config.cursor_blink_rate = 0               -- Ensures blinking is completely turned off
+
+-- ==========================================================================
+-- MOUSE & SCROLLBACK
+-- ==========================================================================
+config.hide_mouse_cursor_when_typing = true
+config.scrollback_lines = 80000
+
+-- ==========================================================================
+-- MACOS SPECIFIC CONFIGURATIONS
+-- ==========================================================================
+config.send_composed_key_when_left_alt_is_pressed = false   -- Treats Left Option as Alt
+config.send_composed_key_when_right_alt_is_pressed = false  -- Treats Right Option as Alt
+config.window_close_confirmation = 'NeverPrompt'
+
+-- ==========================================================================
+-- PERFORMANCE & HIGH REFRESH RATE (FPS)
+-- ==========================================================================
+config.front_end = "WebGpu"   
+config.max_fps = 120         
+config.animation_fps = 120   
+
+-- ==========================================================================
+-- TAB BAR LAYOUT & BASIC STYLING
+-- ==========================================================================
+config.tab_bar_at_bottom = false -- Forces tab bar to the top
+config.use_fancy_tab_bar = false -- Gives you a clean, flat, minimalist layout
+config.hide_tab_bar_if_only_one_tab = true -- Only shows bar if 2 or more tabs are open
+
+-- ==========================================================================
+-- CUSTOM KEYBINDS (Including your new split window layouts)
+-- ==========================================================================
+config.keys = {
+  -- map shift+ctrl+left_bracket previous_tab
+  {
+    key = '[',
+    mods = 'CTRL|SHIFT',
+    action = wezterm.action.ActivateTabRelative(-1),
+  },
+  -- map shift+ctrl+right_bracket next_tab
+  {
+    key = ']',
+    mods = 'CTRL|SHIFT',
+    action = wezterm.action.ActivateTabRelative(1),
+  },
+  -- Split horizontally (CMD + d)
+  {
+    key = 'd',
+    mods = 'CMD',
+    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+  },
+  -- Split vertically (CMD + SHIFT + d)
+  {
+    key = 'd',
+    mods = 'CMD|SHIFT',
+    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+  },
+  -- Cycle sequentially between split window panes
+  {
+    key = '[',
+    mods = 'CMD',
+    action = wezterm.action.ActivatePaneDirection 'Next',
+  },
+  {
+    key = ']',
+    mods = 'CMD',
+    action = wezterm.action.ActivatePaneDirection 'Prev',
+  },
+}
+
+-- ==========================================================================
+-- KITTY-STYLE DYNAMIC TAB TITLES WITH FIX FOR FALSE ACTIVITY INDICATORS
+-- ==========================================================================
+local seen_tabs = {}
+
+wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
+  local active_pane = tab.active_pane
+  local title = active_pane.title
+  
+  -- Clean up path strings to just show the base process name
+  if active_pane.foreground_process_name and #active_pane.foreground_process_name > 0 then
+    title = active_pane.foreground_process_name:gsub("(.*[/\\])", "")
+  end
+
+  -- Track true tab state transitions
+  if tab.is_active then
+    seen_tabs[tab.tab_id] = true
+  end
+
+  -- Filter for real background data updates
+  local has_unseen_output = false
+  if seen_tabs[tab.tab_id] then
+    for _, pane in ipairs(tab.panes) do
+      if pane.has_unseen_output then
+        has_unseen_output = true
+        break
+      end
+    end
+  end
+
+  local activity_symbol = ""
+  if has_unseen_output and not tab.is_active then
+    activity_symbol = "• " 
+  end
+
+  local tab_index = tab.tab_index + 1 
+  local display_text = string.format(" %d: %s%s ", tab_index, activity_symbol, title)
+
+  -- Render Colors
+  if tab.is_active then
+    return {
+      { Attribute = { Intensity = 'Bold' } },
+      { Background = { Color = '#333333' } }, 
+      { Foreground = { Color = '#ffffff' } },
+      { Text = display_text },
+    }
+  elseif has_unseen_output then
+    return {
+      { Attribute = { Intensity = 'Bold' } },
+      { Background = { Color = '#4a154b' } }, 
+      { Foreground = { Color = '#ff5555' } }, 
+      { Text = display_text },
+    }
+  else
+    return {
+      { Background = { Color = '#1a1a1a' } }, 
+      { Foreground = { Color = '#888888' } },
+      { Text = display_text },
+    }
+  end
+end)
+
 return config
+
