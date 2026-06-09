@@ -51,12 +51,18 @@ alias strip-code-block="sed -e '/^#+begin_/d' -e '/^#+end_/d'"
 alias emacs-find-backups="fd --glob '*~' -tf -u -E .emacs.d/backups/"
 alias emacs-delete-backups="fd --glob '*~' -tf -u -E .emacs.d/backups/ -X rm"
 
-# Multipass
-alias mp="multipass"
-
 # Kitty
 alias kitten="/Applications/kitty.app/Contents/MacOS/kitten"
 alias kitty="/Applications/kitty.app/Contents/MacOS/kitty"
+
+if [[ -n "$KITTY_WINDOW_ID" ]]; then
+    # Kitty ssh
+    alias ssh="kitten ssh"
+    # Kitty image viewer
+    alias icat="kitten icat"
+    # Send commands to Kitty directly
+    alias kcat="kitten @"
+fi
 
 # Ghostty
 alias ghostty="/Applications/Ghostty.app/Contents/MacOS/ghostty"
