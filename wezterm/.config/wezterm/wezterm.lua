@@ -10,6 +10,7 @@ config.quit_when_all_windows_are_closed = false
 -- ==========================================================================
 -- TYPOGRAPHY & TEXT
 -- ==========================================================================
+-- problem with term window too large on external monitor, Asus 'PA248QV'
 config.font = wezterm.font('Monaco')
 config.font_size = 16.0
 
@@ -25,6 +26,7 @@ config.macos_window_background_blur = 40 -- Apple-specific background blur depth
 config.window_decorations = "TITLE | RESIZE"
 config.initial_cols = 80
 config.initial_rows = 24
+-- config.adjust_window_size_when_changing_font_size = false
 
 -- Compact & Balanced Padding: Maps '0 1.5' (Kitty scale) to WezTerm pixel spacing
 config.window_padding = {
