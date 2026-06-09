@@ -42,3 +42,6 @@ Exult.app
 Makefile.in
 .deps
 .libs
+
+# wezterm
+hosts_private.lua
