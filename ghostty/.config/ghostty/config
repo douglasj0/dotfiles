@@ -50,7 +50,7 @@ bold-is-bright = false
 font-thicken = false
 
 # macOS Specific
-macos-titlebar-style = tabs
+#macos-titlebar-style = tabs
 macos-titlebar-proxy-icon = hidden
 macos-option-as-alt = true
 clipboard-read = allow
