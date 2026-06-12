@@ -20,7 +20,7 @@
 (package-initialize)
 
 ;; Load custom configuration file
-(setq custom-file (expand-file-name "custom.el" "~/sync/org/emacs_d/"))
+(setq custom-file (expand-file-name "custom.el" "~/Sync/org/emacs_d/"))
 (when (file-exists-p custom-file)
   (load custom-file))
 
