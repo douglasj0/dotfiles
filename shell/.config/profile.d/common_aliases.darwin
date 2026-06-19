@@ -49,3 +49,5 @@ ssh-forget() {
 ssh-fix-host() {
   ssh-keygen -f "$HOME/.ssh/known_hosts" -R $@
 }
+
+getip() { rg $@ /etc/hosts }
