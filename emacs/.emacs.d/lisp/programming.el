@@ -162,9 +162,11 @@
 ;  :ensure nil
 ;  :mode "\\.jsonc\\'")
 
-;(use-package yaml-mode
-;  :ensure t
-;  :mode ("\\.yaml\\'" "\\.yml\\'"))
+(use-package yaml-mode
+  :ensure t
+  :mode ("\\.yaml\\'" "\\.yml\\'")
+  :config
+  (setq yaml-indent-offset 2))
 
 ;(use-package toml-mode
 ;  :ensure t
