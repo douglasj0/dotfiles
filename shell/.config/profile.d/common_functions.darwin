@@ -39,4 +39,72 @@ qlook() { qlmanage -p "$@" >& /dev/null & }
 #        sudo codesign --force --deep --sign - "$file"
 #        sudo chmod +x "$file"
 #    done
-#} 
+#}
+
+# replacement getent function for macos
+# override zsh completion in /usr/share/zsh/5.9/functions/compaudit
+getent() {
+    case "$1" in
+        hosts)
+            awk -v q="$2" '
+                /^[[:space:]]*#/ || NF == 0 { next }
+
+                # Reverse lookup (IP address)
+                $1 == q {
+                    print
+                    exit
+                }
+
+                # Forward lookup (hostname or alias)
+                {
+                    for (i = 2; i <= NF; i++)
+                        if ($i == q) {
+                            print
+                            exit
+                        }
+                }
+            ' /etc/hosts
+            ;;
+
+        passwd)
+            awk -F: -v q="$2" '
+                # Lookup by username
+                $1 == q { print; exit }
+
+                # Lookup by UID
+                $3 == q { print; exit }
+            ' /etc/passwd
+            ;;
+
+        group)
+            awk -F: -v q="$2" '
+                # Lookup by group name
+                $1 == q { print; exit }
+
+                # Lookup by GID
+                $3 == q { print; exit }
+            ' /etc/group
+            ;;
+
+        *)
+            printf 'getent: unsupported database: %s\n' "$1" >&2
+            return 1
+            ;;
+    esac
+}
+
+# call getent with hosts database
+ldig() { getent hosts "$1" | awk '{print $1}' }
+
+lhost() {
+    local entry
+
+    entry=$(getent hosts "$1") || return 1
+
+    if [[ -n $entry ]]; then
+        printf "%s has address %s\n" "$1" "${entry%% *}"
+    else
+        printf "Host %s not found\n" "$1" >&2
+        return 1
+    fi
+}

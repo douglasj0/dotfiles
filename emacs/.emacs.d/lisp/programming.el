@@ -9,25 +9,25 @@
 ;; It's Magit! A Git porcelain inside Emacs. https://magit.vc
 ;; https://github.com/magit/magit
 
-;(use-package magit
-;  :ensure t
-;  :defer t
-;  :commands magit
-;  :bind
-;    (("C-x g"   . magit-status)
-;     ("C-x G"   . magit-status-with-prefix)
-;     ("C-x M-g" . magit-dispatch)
-;     ("C-c M-g" . global-magit-file-mode))
-;  :custom
-;  ;(magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
-;  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
-;  (set-variable 'magit-emacsclient-executable "emacsclient")
-;  :config
-;  (add-to-list 'magit-status-sections-hook
-;               'magit-insert-worktrees
-;               t)
-;  (setq magit-log-section-commit-count 25
-;        magit-copy-revision-abbreviated t))
+(use-package magit
+  :ensure t
+  :defer t
+  :commands magit
+  :bind
+    (("C-x g"   . magit-status)
+     ("C-x G"   . magit-status-with-prefix)
+     ("C-x M-g" . magit-dispatch)
+     ("C-c M-g" . global-magit-file-mode))
+  :custom
+  ;(magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+  (set-variable 'magit-emacsclient-executable "emacsclient")
+  :config
+  (add-to-list 'magit-status-sections-hook
+               'magit-insert-worktrees
+               t)
+  (setq magit-log-section-commit-count 25
+        magit-copy-revision-abbreviated t))
 
 ;;; Minimal magit setup for debugging
 ;;(use-package magit
@@ -100,22 +100,25 @@
 ;; gfm-mode = github-markdown-mode
 ;; Install pandoc for preview
 ;; $ brew install pandoc
-;(use-package markdown-mode
-;  :ensure t
-;  :commands (markdown-mode gfm-mode) ; Autoloads markdown-mode and gfm-mode
-;  :mode (("README\\.md\\'" . gfm-mode) ; Use gfm-mode for README.md files
-;         ("\\.md\\'" . markdown-mode) ; Use markdown-mode for .md files
-;         ("\\.markdown\\'" . markdown-mode)) ; Use markdown-mode for .markdown files
-;  :init
-;  ;; Optional: Configure a specific Markdown processor (e.g., pandoc)
-;  ;; (setq markdown-command "pandoc")
-;  ;; Optional: Hide markup by default
-;  ;; (setq-default markdown-hide-markup t)
-;  :config
-;  ;; Optional: Further configuration specific to markdown-mode
-;  ;; For example, enable math support
-;  ;; (setq markdown-enable-math t)
-;)
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode) ; Autoloads markdown-mode and gfm-mode
+  :mode (("README\\.md\\'" . gfm-mode) ; Use gfm-mode for README.md files
+         ("\\.md\\'" . markdown-mode) ; Use markdown-mode for .md files
+         ("\\.markdown\\'" . markdown-mode)) ; Use markdown-mode for .markdown files
+  :init (setq markdown-command "multimarkdown")
+  ;; Optional: Configure a specific Markdown processor (e.g., pandoc)
+  ;; (setq markdown-command "pandoc")
+  ;; Optional: Hide markup by default
+  ;; (setq-default markdown-hide-markup t)
+  :bind (:map markdown-mode-map
+         ("C-c C-e" . markdown-do))
+  :config
+  (setq markdown-fontify-code-blocks-natively t) ;; fontify ``` blocks
+  ;; Optional: Further configuration specific to markdown-mode
+  ;; For example, enable math support
+  ;; (setq markdown-enable-math t)
+)
 
 
 ;;;; * sed, awk, perl
