@@ -103,6 +103,32 @@ setopt HIST_NO_STORE           # Do not save history built-in commands (like fc 
 #bindkey '^[[A' history-beginning-search-backward  # NOTE: these put the cursor
 #bindkey '^[[B' history-beginning-search-forward   # at the begining of the line
 
+# Mimic Bash history -d behavior
+history() {
+  if [[ "$1" == "-d" ]]; then
+    local target_line=$2
+    if [[ -z "$target_line" ]]; then
+      echo "Error: Please specify a history line number."
+      return 1
+    fi
+    # Fetch the exact command string from that line number
+    local cmd=$(fc -l $target_line $target_line | awk '{$1=""; print $0}' | sed 's/^[ \t]*//')
+    if [[ -n "$cmd" ]]; then
+      # Use the native HISTORY_IGNORE trick to purge it
+      HISTORY_IGNORE="$cmd"
+      fc -W
+      fc -p $HISTFILE $HISTSIZE $SAVEHIST
+      echo "Deleted line $target_line from history."
+    else
+      echo "Error: Line $target_line not found."
+    fi
+  else
+    # Default to normal Zsh history behavior if -d isn't used
+    builtin history "$@"
+  fi
+}
+
+
 ### --- Directory navigation ---
 setopt AUTO_CD      # interactive cd command to directory
 setopt AUTO_PUSHD   # Make cd push old directory onto the directory stack
