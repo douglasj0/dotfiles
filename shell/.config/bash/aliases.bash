@@ -1,3 +1,5 @@
+# bash .bash_aliases
+#
 alias ll="ls -la"
 alias keepalive='while true; do date >/dev/null; sleep 120; done'
 
@@ -24,4 +26,25 @@ check_port() {
         echo "Connection to $host port $port [tcp] failed."
         return 1
     fi
+}
+
+swap_usage() {
+  for file in /proc/[0-9]*/status; do
+    awk '
+      /^Name:/   { name=$2 }
+      /^VmSwap:/ { swap=$2 }
+      END { if (swap+0 > 0) printf "%20s %10s kB\n", name, swap }
+    ' $file 2>/dev/null
+  done | sort -nrk2,2
+}
+
+swap_pid_usage() {
+    for file in /proc/[0-9]*/status; do
+        pid=$(basename "$(dirname "$file")")
+        awk -v pid="$pid" '
+            /^Name:/   { name=$2 }
+            /^VmSwap:/ { swap=$2 }
+            END { if (swap+0 > 0) printf "%-20s pid=%-8s swap=%10s kB\n", name, pid, swap }
+        ' "$file" 2>/dev/null
+    done | sort -nrk4,4
 }
