@@ -1,18 +1,3 @@
-# $HOME/.config/alacritty/alacritty.toml
-# by Douglas Jackson 2024-07-23
-
-# Related Links
-# Alacrity
-# Themes: https://github.com/alacritty/alacritty-theme
-# Specification: https://github.com/alacritty/alacritty/blob/master/extra/man/alacritty.5.scd
-# TOML homepage: https://toml.io/en/v1.0.0
-# Config locations: https://github.com/alacritty/alacritty/tree/master#configuration
-
-import = [
-    "~/.config/alacritty/themes/ubuntu.toml"
-]
-
-live_config_reload = true
 
 [env]
 TERM = "xterm-256color"
@@ -36,3 +21,20 @@ normal = { family = "Monaco", style = "Regular" }
 bold = { family = "Monaco", style = "Bold" }
 italic = { family = "Monaco", style = "Italic" }
 bold_italic = { family = "Monaco", style = "Bold Italic" }
+
+[general]
+
+live_config_reload = true
+# $HOME/.config/alacritty/alacritty.toml
+# by Douglas Jackson 2024-07-23
+
+# Related Links
+# Alacrity
+# Themes: https://github.com/alacritty/alacritty-theme
+# Specification: https://github.com/alacritty/alacritty/blob/master/extra/man/alacritty.5.scd
+# TOML homepage: https://toml.io/en/v1.0.0
+# Config locations: https://github.com/alacritty/alacritty/tree/master#configuration
+
+import = [
+    "~/.config/alacritty/themes/ubuntu.toml"
+]
