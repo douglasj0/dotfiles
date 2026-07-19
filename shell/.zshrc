@@ -302,7 +302,17 @@ fi
 ##fi
 
 ## Load work specific aliases, functions, etc.
-[[ -f ~/.workrc ]] && { debug_log ".. loading workrc"; source ~/.workrc }
+[[ -r "$HOME/.workrc" ]] && { debug_log ".. loading workrc"; source "$HOME/.workrc" }
+
+# Ghostty: load the ssh() theme-switching wrapper from its own file.
+if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
+    if [[ -r "$HOME/.config/ghostty/ghostty_ssh" ]]; then
+        debug_log ".. loading ghostty_ssh"
+        source "$HOME/.config/ghostty/ghostty_ssh"
+    else
+        debug_log ".. ghostty_ssh not found, skipping"
+    fi
+fi
 
 
 ###################
