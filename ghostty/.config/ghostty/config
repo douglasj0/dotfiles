@@ -1,3 +1,5 @@
+# ghostty-core
+#
 # Notes:
 # Docs:
 #   ghostty +show-config --default --docs | less
@@ -9,10 +11,26 @@
 # Generate a config
 #   https://ghostty.zerebos.com/settings/application
 
+# window splits
+#split vertically (to right): cmd - d
+#split horizontally (pane below): cmd - shift - d
+# navigating between splits
+#move focus to adjacent split: cmd + [ -or- cmd + ]
+# window controls
+#maximize/zoom a single pane: cmd + shift + enter
+#(hides other panes temporarily so you can focus)
+#close the current pane: cmd + w
+
 # Default
 command = /bin/zsh
 click-repeat-interval = 500
 auto-update-channel = stable
+
+# Bell
+# Disable audio and system beep bells
+bell-features = no-system,no-audio
+# Enable visual and window attention bells
+bell-features = border,attention
 
 # Theme: ghostty +list-themes
 window-theme = auto
@@ -97,3 +115,11 @@ right-click-action = ignore
 keybind = global:alt+grave_accent=toggle_quick_terminal
 keybind = shift+ctrl+left_bracket=previous_tab
 keybind = shift+ctrl+right_bracket=next_tab
+
+# Override ghostty terminal
+term = xterm-256color
+
+# OS Specific settings (manage through stow, ex: stow ghostty-macos)
+config-file = ? macos.conf
+config-file = ? linux.conf
+config-file = ? local.conf
