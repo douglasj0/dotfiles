@@ -21,105 +21,110 @@
 #(hides other panes temporarily so you can focus)
 #close the current pane: cmd + w
 
-# Default
+# ==============================================================================
+# Ghostty Core & Application Behavior
+# ==============================================================================
 command = /bin/zsh
 click-repeat-interval = 500
 auto-update-channel = stable
+quit-after-last-window-closed = false
 
-# Bell
-# Disable audio and system beep bells
-bell-features = no-system,no-audio
-# Enable visual and window attention bells
-bell-features = border,attention
+# ==============================================================================
+# Window Size, Layout, & Decoration
+# ==============================================================================
+window-width = 80
+window-height = 24
 
-# Theme: ghostty +list-themes
+# Set to 'never' to stop macOS from overriding the explicit width/height above
+window-save-state = never
+
+# Theme & Window Styling
 window-theme = auto
-# catppuccin theme: Frappe / Latte / Macchiato / Mocha
 theme = Ubuntu
-#theme = "Catppuccin Macchiato"
-#theme = Dracula
 background-opacity = 0.94
 background-blur-radius = 40
 
-# Cursor
-# shell integration sets the cursor to a bar at a prompt
+# Window Padding (Currently commented out, but preserved for your tests)
+#window-padding-x = 4,2
+#window-padding-y = 6,0
+#window-padding-balance = true
+
+# ==============================================================================
+# Typography & Fonts
+# ==============================================================================
+font-family = Monaco
+font-size = 16
+bold-is-bright = false
+font-thicken = false
+
+# ==============================================================================
+# Cursor & Shell Integration
+# ==============================================================================
 shell-integration-features = no-cursor,sudo,title
+#shell-integration-features = no-cursor,sudo,title,ssh-env,ssh-terminfo
+#- ssh-env: Automatically handles environment variables. It tells the terminal to request forwarding of values like COLORTERM and TERM_PROGRAM so remote tools know you are using Ghostty. If the remote server lacks Ghostty files, it forces a safe fallback to TERM=xterm-256color so your text formatting does not break.
+#- ssh-terminfo: Silently checks if the remote server understands the modern xterm-ghostty terminal type. If the server is missing the definition, Ghostty uses native background hooks (infocmp and tic) to securely install its terminfo file directly to your user profile on that remote machine
+
 cursor-style = block
 cursor-style-blink = false
 cursor-opacity = 0.7
 cursor-invert-fg-bg = false
-# linux: alt-click, macOS: option-click
 cursor-click-to-move = true
 
-# Scrollback limit in bytes
-scrollback-limit = 10000000
+# ==============================================================================
+# Notifications & Alert Bells
+# ==============================================================================
+# Disables system/audio alerts; Enables visual flashes and red indicator dots
+bell-features = border,attention,no-system,no-audio
+notify-on-command-finish = unfocused
 
-# Set working directory, default inherits previous process
+# ==============================================================================
+# Scrollback Buffer & Pane Memory Allocation
+# ==============================================================================
+scrollback-limit = 200000000
+
+# ==============================================================================
+# Working Directory Constraints
+# ==============================================================================
 working-directory = home
-# new tabs inherit the PWD
 window-inherit-working-directory = false
+tab-inherit-working-directory = true
+split-inherit-working-directory = true
 
-# Fonts: ghostty +list-fonts
-##font-family = Symbols Nerd Font Mono # messes with primary font
-font-family = Monaco
-font-size = 16
-selection-invert-fg-bg = false
-bold-is-bright = false
-font-thicken = false
-
-# macOS Specific
-#macos-titlebar-style = tabs
-macos-titlebar-proxy-icon = hidden
-macos-option-as-alt = true
+# ==============================================================================
+# Mouse Behavior & Clipboard
+# ==============================================================================
+mouse-hide-while-typing = true
+right-click-action = ignore
 clipboard-read = allow
 clipboard-write = allow
 clipboard-trim-trailing-spaces = true
 clipboard-paste-protection = false
+
+# ==============================================================================
+# macOS Specific Layer Adjustments
+# ==============================================================================
+macos-titlebar-style = native
+macos-option-as-alt = true
 macos-non-native-fullscreen = visible-menu
 macos-window-shadow = true
 
-# Quick Terminal animation duration (in seconds)
-# Set to 0 to disable animation, can be changed at runtime.
+# ==============================================================================
+# Quick Terminal Environment
+# ==============================================================================
 quick-terminal-animation-duration = 0.08
 quick-terminal-position = top
-#window-save-state = never
-window-save-state = default
 
-# Notifications
-notify-on-command-finish = unfocused
-
-# Initial window width and height
-window-height = 24
-window-width = 80
-
-# window padding
-window-padding-x = 4,2
-window-padding-y = 6,0
-window-padding-balance = true
-
-# quit app after closing last window
-quit-after-last-window-closed = false
-
-# Mouse
-mouse-hide-while-typing = true
-# mouse-scroll-multiplier = 1
-# focus-follows-mouse = false
-
-# Right Click context menu
-#right-click-action = paste
-right-click-action = ignore
-#mouse-reporting = true
-
-# Key Bindings remap toggle_quick_term to avoid app window switch key)
-#keybind = global:super+grave_accent=toggle_quick_terminal
+# ==============================================================================
+# Custom Key Bindings
+# ==============================================================================
 keybind = global:alt+grave_accent=toggle_quick_terminal
 keybind = shift+ctrl+left_bracket=previous_tab
 keybind = shift+ctrl+right_bracket=next_tab
 
-# Override ghostty terminal
-term = xterm-256color
-
-# OS Specific settings (manage through stow, ex: stow ghostty-macos)
+# ==============================================================================
+# Conditional External Runtime Loading
+# ==============================================================================
 config-file = ? macos.conf
 config-file = ? linux.conf
 config-file = ? local.conf
