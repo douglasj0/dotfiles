@@ -45,6 +45,10 @@ ssh-forget() {
   ssh -O exit $1
 }
 
+ssh-check() {
+  ssh -O check $1
+}
+
 # fix ssh hosts
 ssh-fix-host() {
   ssh-keygen -f "$HOME/.ssh/known_hosts" -R $@
