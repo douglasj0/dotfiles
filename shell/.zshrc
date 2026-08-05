@@ -305,10 +305,10 @@ fi
 [[ -r "$HOME/.workrc" ]] && { debug_log ".. loading workrc"; source "$HOME/.workrc" }
 
 # Ghostty: load the ssh() theme-switching wrapper from its own file.
-if [[ "$TERM_PROGRAM" == "ghostty" ]] &&
-   [[ -r "$HOME/.config/ghostty/ghostty_ssh" ]]; then
-    source "$HOME/.config/ghostty/ghostty_ssh"
-fi
+#if [[ "$TERM_PROGRAM" == "ghostty" ]] &&
+#   [[ -r "$HOME/.config/ghostty/ghostty_ssh" ]]; then
+#    source "$HOME/.config/ghostty/ghostty_ssh"
+#fi
 
 
 ###################
