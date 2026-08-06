@@ -304,11 +304,28 @@ fi
 ## Load work specific aliases, functions, etc.
 [[ -r "$HOME/.workrc" ]] && { debug_log ".. loading workrc"; source "$HOME/.workrc" }
 
-# Ghostty: load the ssh() theme-switching wrapper from its own file.
-#if [[ "$TERM_PROGRAM" == "ghostty" ]] &&
-#   [[ -r "$HOME/.config/ghostty/ghostty_ssh" ]]; then
-#    source "$HOME/.config/ghostty/ghostty_ssh"
-#fi
+# Ghostty settings
+alias ghostty="/Applications/Ghostty.app/Contents/MacOS/ghostty"
+alias ghostty-docs="ghostty +show-config --default --docs | less"
+
+# load the ssh() theme-switching wrapper from its own file.
+if [[ "$TERM_PROGRAM" == "ghostty" ]] &&
+   [[ -r "$HOME/.config/ghostty/ghostty_ssh" ]]; then
+    source "$HOME/.config/ghostty/ghostty_ssh"
+fi
+
+# Kitty settings
+alias kitten="/Applications/kitty.app/Contents/MacOS/kitten"
+alias kitty="/Applications/kitty.app/Contents/MacOS/kitty"
+
+if [[ -n "$KITTY_WINDOW_ID" ]]; then
+    # Kitty ssh
+    alias ssh="kitten ssh"
+    # Kitty image viewer
+    alias icat="kitten icat"
+    # Send commands to Kitty directly
+    alias kcat="kitten @"
+fi
 
 
 ###################
