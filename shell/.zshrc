@@ -321,6 +321,7 @@ alias kitty="/Applications/kitty.app/Contents/MacOS/kitty"
 if [[ -n "$KITTY_WINDOW_ID" ]]; then
     # Kitty ssh
     alias ssh="kitten ssh"
+    alias ossh="/usr/bin/ssh"
     # Kitty image viewer
     alias icat="kitten icat"
     # Send commands to Kitty directly
