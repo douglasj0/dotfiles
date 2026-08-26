@@ -45,10 +45,11 @@
   (corfu-auto-prefix 2))
 
 ;; Use corfu in tui, replace child frames with overlay-based popups
-(use-package corfu-terminal
-  :ensure t
-  :hook
-  (corfu-mode . corfu-terminal-mode))
+;; emacs 31.1 - not needed
+;(use-package corfu-terminal
+;  :ensure t
+;  :hook
+;  (corfu-mode . corfu-terminal-mode))
 
 ;; marginalia.el - Marginalia in the minibuffer
 ;; https://github.com/minad/marginalia
