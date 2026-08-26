@@ -354,12 +354,12 @@ Darwin)  # Darwin Environment
     # Tell homebrew to not autoupdate every single time I run it (just once a week).
     export HOMEBREW_AUTO_UPDATE_SECS=604800
 
-
     # Configure EDITOR, VISUAL, Emacs and Emacsclient
     # -s socket, -c create frame, -a alt-editor, -n no-wait, -t/-nw/-tty use terminal
-    alias emacs="/Applications/Emacs.app/Contents/MacOS/bin/emacs"
-    alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
-
+    if [ -d "/Applications/Emacs.app/Contents/MacOS/bin" ]; then
+        export PATH="/Applications/Emacs.app/Contents/MacOS/bin:$PATH"
+        #alias emacs="emacs -nw" # Always launch "emacs" in terminal mode.
+    fi
 
     ediff() {
         emacs --eval "(ediff-files \"$1\" \"$2\")"
@@ -368,11 +368,11 @@ Darwin)  # Darwin Environment
     # Emacs magit, function to open magit buffer from current git repo
     magit() {
       if git status > /dev/null 2>&1; then
-          #emacsclient -nw --eval "(call-interactively #'magit-status)"
-          emacsclient -n -a emacs --eval "(call-interactivel    y #'magit-status)"
+        #emacsclient -nw --eval "(call-interactively #'magit-status)"
+        emacsclient -n -a emacs --eval "(call-interactivel    y #'magit-status)"
       else
-          echo "Not in a git repo"
-          return 1
+        echo "Not in a git repo"
+        return 1
       fi
     }
 
@@ -420,7 +420,7 @@ Linux)  # Based off of Ubuntu
     fi
 
     # On laptop, emacsclient cannot find emacs socket
-    # emacs <= 26
+    # emacs >= 26
     export EMACS_SOCKET=${TMPDIR:-/tmp}/emacs${UID}/server
     # emacs 27+ (but didn't work for me with emacs 30.1)
     # export EMACS_SOCKET=$XDG_RUNTIME_DIR/emacs/server
