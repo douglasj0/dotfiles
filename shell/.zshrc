@@ -13,6 +13,7 @@
 
 ## If not running interactively, don't do anything and return early
 #[[ $- == *i* ]] || return
+#[[ $- != *i* ]] && return
 #[[ -o interactive ]] || (delete-selection-mode 1)
 
 

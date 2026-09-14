@@ -77,6 +77,17 @@
 ;;; silence warnings?
 ;;(setq comp-async-report-warnings-errors nil)
 
+;;; The Emacs security settings that might silently compromise your system
+;; https://www.jamescherti.com/emacs-security-settings/
+;; gnutls-verify-error: Controls GnuTLS certificate verification. Setting this to t makes any certificate validation failure fatal.
+;; tls-checktrust: Controls external TLS binaries. Setting this to t ensures certificate validation is enforced if Emacs falls back to using external tools.
+;; gnutls-min-prime-bits: Defines the minimum acceptable size for Diffie-Hellman key exchange primes. Setting this to 3072 rejects handshakes using primes smaller than 3072 bits.
+(setq gnutls-verify-error t)
+(setq tls-checktrust t)
+(setq gnutls-min-prime-bits 3072)
+;; prevent ffap from probing hostnames with known domains
+(setq ffap-machine-p-known 'reject)
+
 
 ;;; 3. Post-Startup Cleanup and Reporting
 (add-hook 'emacs-startup-hook
