@@ -26,6 +26,9 @@ alias nameservers="scutil --dns | grep 'nameserver\[[0-9]*\]'"
 # visual studio alias
 alias vs="/Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron"
 
+# Tiger VNC
+alias vncviewer="/Applications/TigerVNC.app/Contents/MacOS/vncviewer"
+
 # keepassxc
 alias keepassxc-cli="/Applications/KeePassXC.app/Contents/MacOS/keepassxc-cli"
 
