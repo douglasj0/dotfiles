@@ -313,6 +313,7 @@ alias ghostty-docs="ghostty +show-config --default --docs | less"
 if [[ "$TERM_PROGRAM" == "ghostty" ]] &&
    [[ -r "$HOME/.config/ghostty/ghostty_ssh" ]]; then
     source "$HOME/.config/ghostty/ghostty_ssh"
+    alias ossh="/usr/bin/ssh"
 fi
 
 # Kitty settings
@@ -321,8 +322,18 @@ alias kitty="/Applications/kitty.app/Contents/MacOS/kitty"
 
 if [[ -n "$KITTY_WINDOW_ID" ]]; then
     # Kitty ssh
-    alias ssh="kitten ssh"
+    #alias ssh="kitten ssh"
     alias ossh="/usr/bin/ssh"
+    # bypass the kitten theme injector on text commands
+    ssh() {
+        # If a quote, space, or standard automated arguments are passed,
+        # use native macOS ssh to avoid breaking background pipes.
+        if [[ "$*" == *\"* ]] || [[ "$*" == *\'* ]] || [[ -n "$3" ]]; then
+            /usr/bin/ssh "$@"
+        else
+            kitten ssh "$@"
+        fi
+    }
     # Kitty image viewer
     alias icat="kitten icat"
     # Send commands to Kitty directly
