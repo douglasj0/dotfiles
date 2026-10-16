@@ -112,9 +112,9 @@
 
 ")
            :unnarrowed t)
-          ;; Template for "grubhub" subdirectory
-          ("g" "grubhub" plain "%?"
-           :target (file+head "grubhub/%<%Y%m%d%H%M%S>-${slug}.org"
+          ;; Template for "misc" subdirectory
+          ("m" "misc" plain "%?"
+           :target (file+head "misc/%<%Y%m%d%H%M%S>-${slug}.org"
 "#+title:    ${title}
 #+date:     %U
 #+modified: %<[%Y-%m-%d %a %H:%M]>
