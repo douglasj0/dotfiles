@@ -208,5 +208,29 @@
 ;;    )
 ;;  (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
 
+;; Recommended to add exec-path-from-shell package above emacs-pet
+(use-package exec-path-from-shell
+  :ensure t
+  :if (memq window-system '(mac ns))
+  :config
+  (exec-path-from-shell-initialize))
+
+;; emacs-pet (Python Executable Tracker)
+(use-package pet
+  :ensure t
+  :config
+  ;; Global Fallback: Route through UV to respect your pinned global version
+  (setq python-shell-interpreter "uv"
+        python-shell-interpreter-args "run python")
+
+  ;; Project Overrides: Let emacs-pet take the wheel when a project env exists
+  (add-hook 'python-base-mode-hook 'pet-mode -10)
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (when-let ((pet-python (pet-executable-find "python")))
+                (setq-local python-shell-interpreter pet-python
+                            python-shell-virtualenv-root (pet-virtualenv-root))))))
+
+
 (provide 'programming)
 ;;; programming.el ends here

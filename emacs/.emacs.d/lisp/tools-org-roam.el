@@ -58,7 +58,8 @@
 
   ;; Custom Templates
   (setq org-roam-capture-templates
-        '(("d" "default" plain "%?"
+        '(
+          ("d" "default" plain "%?"
            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
 "#+title:    ${title}
 #+date:     %U
@@ -68,6 +69,19 @@
 
 ")
            :unnarrowed t)
+
+          ;; Template for "jaj" subdirectory
+          ("j" "jaj" plain "%?"
+           :target (file+head "jaj/%<%Y%m%d%H%M%S>-${slug}.org"
+"#+title:    ${title}
+#+date:     %U
+#+modified: %<[%Y-%m-%d %a %H:%M]>
+#+startup:  overview
+#+filetags: :jaj:%^g
+
+")
+           :unnarrowed t)
+
           ;; Template for "projects" subdirectory
           ("p" "project" plain "%?"
            :target (file+head "projects/%<%Y%m%d%H%M%S>-${slug}.org"
@@ -79,6 +93,7 @@
 
 ")
            :unnarrowed t)
+
           ;; Template for "work" subdirectory
           ("w" "work" plain "%?"
            :target (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org"
@@ -90,6 +105,7 @@
 
 ")
            :unnarrowed t)
+
           ;; Template for "abbys_lab" subdirectory
           ("a" "abbys_lab" plain "%?"
            :target (file+head "abbys_lab/%<%Y%m%d%H%M%S>-${slug}.org"
@@ -101,6 +117,7 @@
 
 ")
            :unnarrowed t)
+
           ;; Template for "chuck" subdirectory
           ("c" "chuck" plain "%?"
            :target (file+head "chuck/%<%Y%m%d%H%M%S>-${slug}.org"
@@ -112,6 +129,7 @@
 
 ")
            :unnarrowed t)
+
           ;; Template for "misc" subdirectory
           ("m" "misc" plain "%?"
            :target (file+head "misc/%<%Y%m%d%H%M%S>-${slug}.org"

@@ -278,29 +278,33 @@ export RIPGREP_CONFIG_PATH=$HOME/.config/ripgrep/config
 
 
 # pyenv init
-if [[ -f "$HOME/.config/NO_ZSH_PYENV" ]]; then
-  debug_log ". skipping .zshrc init pyenv"
-elif [[ ! -d "$HOME/.pyenv" ]]; then
-  debug_log ".. pyenv directory not found, exiting"
-elif [[ -n "$PYENV_SHELL" ]]; then
-  debug_log ".. pyenv already initialized, skipping"
-else
-  debug_log ". initialize pyenv"
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-fi
+#if [[ -f "$HOME/.config/NO_ZSH_PYENV" ]]; then
+#  debug_log ". skipping .zshrc init pyenv"
+#elif [[ ! -d "$HOME/.pyenv" ]]; then
+#  debug_log ".. pyenv directory not found, exiting"
+#elif [[ -n "$PYENV_SHELL" ]]; then
+#  debug_log ".. pyenv already initialized, skipping"
+#else
+#  debug_log ". initialize pyenv"
+#  export PYENV_ROOT="$HOME/.pyenv"
+#  export PATH="$PYENV_ROOT/bin:$PATH"
+#  eval "$(pyenv init -)"
+#  eval "$(pyenv virtualenv-init -)"
+#fi
 
+# Enable tab-completion for uv and uvx (python)
+eval "$(uv generate-shell-completion zsh)"
+eval "$(uvx --generate-shell-completion zsh)"
 
-# Activate mise for zsh if installed
-# https://mise.jdx.dev/getting-started.html
-# https://mise.jdx.dev/lang/python.html
-# venv: python -m venv /path/to/venv
-##if command -v mise >/dev/null 2>&1; then
-##    echo ". activating mise"
-##    eval "$(mise activate zsh)"
-##fi
+# Force the system python command to use your uv global pin
+alias python="uv run python"
+alias python3="uv run python"
+alias pip="uv run pip"
+alias pip3="uv run pip"
+
+# install ansible using: uv tool install ansible-core
+# install in: ~/.local/share/uv/tools/ansible/
+# run from: ~/.local/bin/
 
 ## Load work specific aliases, functions, etc.
 [[ -r "$HOME/.workrc" ]] && { debug_log ".. loading workrc"; source "$HOME/.workrc" }

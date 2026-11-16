@@ -192,12 +192,12 @@ disable = ["system"]
 
 # Additional git repositories to pull
 repos = [
-    "~/.dotfiles",
-    "~/.pyenv/plugins/pyenv-update"
+    "~/.dotfiles"
 ]
 
 # moved pyenv gitrepos out due to pyenv-setup plugin
 # https://github.com/pyenv/pyenv-update.git
+#    "~/.pyenv/plugins/pyenv-update",
 #    "~/.pyenv/plugins/pyenv-virtualenv",
 #    "~/.pyenv/plugins/pyenv-alias",
 #    "~/.pyenv"
