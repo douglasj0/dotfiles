@@ -146,28 +146,34 @@
 ;;; consult-org-roam
 ;; https://github.com/jgru/consult-org-roam
 ;; TODO look into consult-notes:
-;; https://github.com/mclear-tools/consult-notes
+;; # moved https://github.com/mclear-tools/consult-notes
+;; https://codeberg.org/mclear-tools/consult-notes
 (use-package consult-org-roam
   :ensure t
-  :defer t
+  :after org-roam
+  ;:defer t
+  :custom
+  ;; Use `ripgrep' for searching with `consult-org-roam-search'
+  (consult-org-roam-grep-func #'consult-ripgrep)
+  ;; Configure a custom narrow key for `consult-buffer'
+  (consult-org-roam-buffer-narrow-key ?r)
+  ;; Display org-roam buffers right after non-org-roam buffers
+  ;; in consult-buffer (and not down at the bottom)
+  (consult-org-roam-buffer-after-buffers t)
+  :config
+  ;; Eventually suppress previewing for certain functions
+  (consult-customize
+   consult-org-roam-forward-links
+   :preview-key "M-.")
+  ;; Activate the minor mode
+  (consult-org-roam-mode 1)
   :bind
-  ;; These bindings will now trigger the package to load only when pressed
+  ;; Define some convenient keybindings as an addition
   ("C-c n e" . consult-org-roam-file-find)
   ("C-c n b" . consult-org-roam-backlinks)
   ("C-c n B" . consult-org-roam-backlinks-recursive)
   ("C-c n L" . consult-org-roam-forward-links)
-  ("C-c n r" . consult-org-roam-search)
-  :custom
-  (consult-org-roam-grep-func #'consult-ripgrep)
-  (consult-org-roam-buffer-narrow-key ?r)
-  (consult-org-roam-buffer-after-buffers t)
-  :config
-  ;; This only runs AFTER the package is loaded via a keybinding
-  (consult-org-roam-mode 1)
-  (consult-customize
-   consult-org-roam-forward-links
-  :preview-key "M-.") )
-
+  ("C-c n s" . consult-org-roam-search)) ;; was C-c n r - rg?
 
 (provide 'tools-org-roam)
 ;;; tools-org-roam.el ends here
