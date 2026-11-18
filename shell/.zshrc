@@ -296,12 +296,6 @@ export RIPGREP_CONFIG_PATH=$HOME/.config/ripgrep/config
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
 
-# Force the system python command to use your uv global pin
-alias python="uv run python"
-alias python3="uv run python"
-alias pip="uv run pip"
-alias pip3="uv run pip"
-
 # install ansible using: uv tool install ansible-core
 # install in: ~/.local/share/uv/tools/ansible/
 # run from: ~/.local/bin/
