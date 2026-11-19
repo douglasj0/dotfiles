@@ -46,3 +46,4 @@ Makefile.in
 # terms
 wezterm/.config/wezterm/hosts_private.lua
 kitty/.config/kitty/ssh.conf
+ghostty/.config/ghostty/ghostty_ssh
