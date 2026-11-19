@@ -11,7 +11,7 @@
 (use-package org-roam
   :ensure t
   :defer t  ;; Don't load until a command is called
-  :hook (org-roam-mode . consult-org-roam-mode)
+  ;:hook (org-roam-mode . consult-org-roam-mode) ;; redundent
   :custom
   (org-roam-directory (file-truename "~/org-roam"))
   ;; Show tags in the Vertico/Consult menu
@@ -52,7 +52,8 @@
             t)  ;; run last after other hooks
 
   ; Ensure IDs are created when file saved
-  (org-id-update-id-locations)
+  ;(org-id-update-id-locations) ;; removed, loading my agenda files
+  ;(org-id-update-id-locations (org-roam-list-files))
   (org-roam-db-autosync-mode)
 
 
@@ -151,7 +152,6 @@
 (use-package consult-org-roam
   :ensure t
   :after org-roam
-  ;:defer t
   :custom
   ;; Use `ripgrep' for searching with `consult-org-roam-search'
   (consult-org-roam-grep-func #'consult-ripgrep)

@@ -379,7 +379,7 @@ Darwin)  # Darwin Environment
     magit() {
       if git status > /dev/null 2>&1; then
         #emacsclient -nw --eval "(call-interactively #'magit-status)"
-        emacsclient -n -a emacs --eval "(call-interactivel    y #'magit-status)"
+        emacsclient -n -a emacs --eval "(call-interactively #'magit-status)"
       else
         echo "Not in a git repo"
         return 1
