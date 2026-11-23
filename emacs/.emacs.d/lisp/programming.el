@@ -8,26 +8,20 @@
 ;;; * magit
 ;; It's Magit! A Git porcelain inside Emacs. https://magit.vc
 ;; https://github.com/magit/magit
-
 (use-package magit
   :ensure t
-  :defer t
-  :commands magit
   :bind
-    (("C-x g"   . magit-status)
-     ("C-x G"   . magit-status-with-prefix)
-     ("C-x M-g" . magit-dispatch)
-     ("C-c M-g" . global-magit-file-mode))
+  (("C-x g"   . magit-status)
+   ("C-x G"   . magit-status-with-prefix)
+   ("C-x M-g" . magit-dispatch)
+   ("C-c M-g" . magit-file-dispatch))
   :custom
-  ;(magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
-  (set-variable 'magit-emacsclient-executable "emacsclient")
+  (magit-emacsclient-executable "emacsclient")
+  (magit-log-section-commit-count 25)
+  (magit-copy-revision-abbreviated t)
   :config
-  (add-to-list 'magit-status-sections-hook
-               'magit-insert-worktrees
-               t)
-  (setq magit-log-section-commit-count 25
-        magit-copy-revision-abbreviated t))
+  (add-to-list 'magit-status-sections-hook #'magit-insert-worktrees t))
 
 ;;; Minimal magit setup for debugging
 ;;(use-package magit
@@ -227,7 +221,7 @@
   (add-hook 'python-base-mode-hook 'pet-mode -10)
   (add-hook 'python-mode-hook
             (lambda ()
-              (when-let ((pet-python (pet-executable-find "python")))
+              (when-let* ((pet-python (pet-executable-find "python")))
                 (setq-local python-shell-interpreter pet-python
                             python-shell-virtualenv-root (pet-virtualenv-root))))))
 
